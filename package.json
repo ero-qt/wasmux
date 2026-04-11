@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "An in-browser, privacy-first, WASM-powered video editor.",
+  "description": "an in-browser, privacy-first, wasm-powered video editor",
   "license": "MIT",
   "packageManager": "bun@1.1.42",
   "engines": {

@@ -1,5 +1,4 @@
-<img src="assets/logo-monochrome.svg" alt="wasmux logo" width="128" align="right" />
-<h1 style="display: inline-block;">wasmux</h1>
+# wasmux <img src="assets/logo-monochrome.svg" alt="wasmux logo" align="right" style="height: 1em;" />
 
 an in-browser, privacy-first, wasm-powered video editor.
 work in progress!
