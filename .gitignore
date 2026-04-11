@@ -1,0 +1,16 @@
+# IDE options/cache directories
+.vs/*
+.vscode/*
+.fleet/*
+.idea/*
+.zed/*
+
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Build artifacts
+node_modules/
+artifacts/
+
+# User-specific files
+.claude/

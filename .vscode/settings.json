@@ -1,0 +1,22 @@
+{
+  "editor.defaultFormatter": "biomejs.biome",
+
+  "files.exclude": {
+    "artifacts/": true,
+    "node_modules/": true,
+
+    "bun.lock": true
+  },
+
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.tsx": "${capture}.css.ts, ${capture}.test.ts, ${capture}.test.tsx",
+    "*.ts": "${capture}.test.ts",
+    "package.json": "bun.lock, biome.json, tsconfig.json, vite.config.ts, vitest.config.ts",
+    ".gitignore": ".gitattributes, .editorconfig",
+    "readme.md": "changelog.md, contributing.md, license.md, security.md"
+  },
+
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
+}

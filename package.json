@@ -1,0 +1,40 @@
+{
+  "name": "wasmux",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An in-browser, privacy-first, WASM-powered video editor.",
+  "license": "MIT",
+  "packageManager": "bun@1.1.42",
+  "engines": {
+    "bun": ">=1.1.0",
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "build": "vite build",
+    "serve:dev": "vite",
+    "serve:preview": "vite preview",
+    "check": "bun run check:types && bun run check:lint && bun run check:test",
+    "check:types": "tsc --noEmit",
+    "check:lint": "biome check .",
+    "check:test": "vitest run",
+    "check:test:coverage": "vitest run --coverage",
+    "fix": "bun run fix:lint",
+    "fix:lint": "biome check --write --unsafe ."
+  },
+  "dependencies": {
+    "solid-js": "^1.9.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "^1.1.14",
+    "@vanilla-extract/css": "^1.16.0",
+    "@vanilla-extract/vite-plugin": "^4.0.18",
+    "@vitest/coverage-v8": "^2.1.0",
+    "jsdom": "^25.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vite-plugin-solid": "^2.11.0",
+    "vitest": "^2.1.0"
+  }
+}
