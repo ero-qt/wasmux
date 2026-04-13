@@ -18,5 +18,8 @@
     "readme.md": "changelog.md, contributing.md, license.md, security.md"
   },
 
-  "js/ts.tsdk.path": "node_modules/typescript/lib"
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "[typescript]": {
+    "editor.rulers": [100]
+  }
 }

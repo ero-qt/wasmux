@@ -12,5 +12,8 @@
 node_modules/
 artifacts/
 
-# User-specific files
+# AI assistant files
 .claude/
+claude.md
+
+# User-specific files
