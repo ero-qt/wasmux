@@ -10,8 +10,15 @@
     "useEditorconfig": true,
     "lineWidth": 100
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": { "identifierOrder": "lexicographic" }
+        }
+      }
+    }
   },
   "linter": {
     "enabled": true,

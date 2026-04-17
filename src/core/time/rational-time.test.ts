@@ -67,7 +67,7 @@ describe("RationalTime", () => {
     expect(() => time(1, 23.976)).toThrow();
   });
 
-  // ZERO constant
+  // ZERO
 
   test("ZERO is 0/1", () => {
     expect(ZERO.num).toBe(0);
@@ -89,8 +89,8 @@ describe("RationalTime", () => {
   });
 
   test("fromSeconds rounds to nearest frame", () => {
-    // 1/3 second at 24fps is frame 8, but floating point
-    // might not land exactly. fromSeconds should round.
+    // 1/3 second at 24fps is frame 8, but floating point might
+    // not land exactly. fromSeconds should round.
     const t = fromSeconds(1 / 3, 24);
     expect(t.num).toBe(8);
     expect(t.den).toBe(24);
@@ -107,7 +107,7 @@ describe("RationalTime", () => {
   });
 
   test("converts to frame count at different rate using floor", () => {
-    // 5 frames at 24fps = 5/24s. At 30fps that's 6.25 frames.
+    // 5 frames at 24fps = 5/24s. at 30fps that's 6.25 frames.
     expect(toFrames(time(5, 24), 30, "floor")).toBe(6);
   });
 
@@ -220,7 +220,7 @@ describe("RationalTime", () => {
   });
 
   test("rescale floors by default when conversion is not exact", () => {
-    // 1/24 at 30fps: 1/24 * 30 = 1.25 frames. Floor = 1.
+    // 1/24 at 30fps: 1/24 * 30 = 1.25 frames. floor = 1.
     const result = rescale(time(1, 24), 30);
     expect(result.num).toBe(1);
     expect(result.den).toBe(30);
@@ -233,12 +233,12 @@ describe("RationalTime", () => {
   });
 
   test("rescale rounds when requested", () => {
-    // 5/24 at 30fps: 5/24 * 30 = 6.25. Round = 6.
+    // 5/24 at 30fps: 5/24 * 30 = 6.25. round = 6.
     const a = rescale(time(5, 24), 30, "round");
     expect(a.num).toBe(6);
     expect(a.den).toBe(30);
 
-    // 7/24 at 30fps: 7/24 * 30 = 8.75. Round = 9.
+    // 7/24 at 30fps: 7/24 * 30 = 8.75. round = 9.
     const b = rescale(time(7, 24), 30, "round");
     expect(b.num).toBe(9);
     expect(b.den).toBe(30);
@@ -266,6 +266,7 @@ describe("RationalTime", () => {
 
   test("concatenating clip durations does not accumulate error", () => {
     // 1000 clips of 1001/30000 seconds (one frame at 29.97fps).
+
     const frame = time(1001, 30000);
     let total: RationalTime = ZERO;
 
@@ -273,7 +274,7 @@ describe("RationalTime", () => {
       total = add(total, frame);
     }
 
-    // Should be exactly 1001000/30000 = 1001/30.
+    // should be exactly 1001000/30000 = 1001/30.
     expect(total.num).toBe(1001);
     expect(total.den).toBe(30);
   });
@@ -286,7 +287,7 @@ describe("RationalTime", () => {
   });
 
   test("NTSC 29.97fps frame is representable exactly", () => {
-    // 29.97fps = 30000/1001. One frame = 1001/30000 seconds.
+    // 29.97fps = 30000/1001. one frame = 1001/30000 seconds.
     const oneFrame = time(1001, 30000);
     expect(toSeconds(oneFrame)).toBe(1001 / 30000);
   });
@@ -295,7 +296,7 @@ describe("RationalTime", () => {
     const rates = [24, 25, 30, 48, 50, 60];
 
     for (const rate of rates) {
-      // One hour at each rate.
+      // one hour at each rate.
       const oneHour = time(3600 * rate, rate);
       expect(toSeconds(oneHour)).toBe(3600);
     }

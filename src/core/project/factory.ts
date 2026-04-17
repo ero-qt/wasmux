@@ -13,7 +13,7 @@ import type {
 } from "~/core/project/types";
 import { type RationalTime, ZERO, time } from "~/core/time/rational-time";
 
-/** Options for creating a {@link VideoClip} with {@link videoClip}. */
+/** Options for {@link videoClip}. */
 export interface VideoClipOptions {
   startTime?: RationalTime;
   sourceIn?: RationalTime;
@@ -23,7 +23,6 @@ export interface VideoClipOptions {
   enabled?: boolean;
 }
 
-/** Creates a {@link VideoClip}. */
 export function videoClip(
   assetId: string,
   sourceDuration: RationalTime,
@@ -42,7 +41,7 @@ export function videoClip(
   };
 }
 
-/** Options for creating an {@link AudioClip} with {@link audioClip}. */
+/** Options for {@link audioClip}. */
 export interface AudioClipOptions {
   startTime?: RationalTime;
   sourceIn?: RationalTime;
@@ -50,7 +49,6 @@ export interface AudioClipOptions {
   enabled?: boolean;
 }
 
-/** Creates an {@link AudioClip}. */
 export function audioClip(
   assetId: string,
   sourceDuration: RationalTime,
@@ -67,7 +65,7 @@ export function audioClip(
   };
 }
 
-/** Options for creating an {@link ImageClip} with {@link imageClip}. */
+/** Options for {@link imageClip}. */
 export interface ImageClipOptions {
   startTime?: RationalTime;
   transform?: Transform;
@@ -75,7 +73,6 @@ export interface ImageClipOptions {
   enabled?: boolean;
 }
 
-/** Creates an {@link ImageClip}. */
 export function imageClip(
   assetId: string,
   duration: RationalTime,
@@ -92,7 +89,6 @@ export function imageClip(
   };
 }
 
-/** Creates a video {@link Asset}. */
 export function videoAsset(params: {
   id: string;
   name: string;
@@ -124,7 +120,6 @@ export function videoAsset(params: {
   };
 }
 
-/** Creates an audio {@link Asset}. */
 export function audioAsset(params: {
   id: string;
   name: string;
@@ -148,7 +143,6 @@ export function audioAsset(params: {
   };
 }
 
-/** Creates an image {@link Asset}. */
 export function imageAsset(params: {
   id: string;
   name: string;
@@ -168,7 +162,7 @@ export function imageAsset(params: {
   };
 }
 
-/** Creates a {@link Transform} with sensible defaults for unspecified fields. */
+/** Fills unspecified fields with defaults (centered, 100% scale, no rotation, full opacity). */
 export function transform(overrides?: Partial<Transform>): Transform {
   return {
     position: overrides?.position ?? { x: 0, y: 0 },
@@ -178,7 +172,7 @@ export function transform(overrides?: Partial<Transform>): Transform {
   };
 }
 
-/** Creates a {@link Crop} with sensible defaults for unspecified fields. */
+/** Fills unspecified edges with 0. */
 export function crop(overrides?: Partial<Crop>): Crop {
   return {
     top: overrides?.top ?? 0,
@@ -188,7 +182,6 @@ export function crop(overrides?: Partial<Crop>): Crop {
   };
 }
 
-/** Creates a uniform {@link Scale}. */
 export function uniformScale(factor: number): Scale {
   return {
     x: factor,
@@ -196,7 +189,6 @@ export function uniformScale(factor: number): Scale {
   };
 }
 
-/** Creates a {@link Resolution}. */
 export function resolution(width: number, height: number): Resolution {
   return {
     width,
@@ -204,7 +196,6 @@ export function resolution(width: number, height: number): Resolution {
   };
 }
 
-/** Creates a {@link Track}. */
 export function track(name: string, item: Track["item"]): Track {
   return {
     kind: "track",
@@ -213,7 +204,7 @@ export function track(name: string, item: Track["item"]): Track {
   };
 }
 
-/** Options for creating a {@link Project} with {@link project}. */
+/** Options for {@link project}. */
 export interface ProjectOptions {
   assets?: readonly Asset[] | Readonly<Record<string, Asset>>;
   tracks?: readonly Track[];
@@ -224,10 +215,7 @@ export interface ProjectOptions {
 const DEFAULT_RESOLUTION: Resolution = { width: 1920, height: 1080 };
 const DEFAULT_FRAME_RATE = time(30, 1);
 
-/**
- * Creates a {@link Project}. Every field has a sensible default so
- * a blank "untitled" project can be constructed with no arguments.
- */
+/** Every field has a default so a blank "untitled" project can be constructed with no arguments. */
 export function project(options?: ProjectOptions): Project {
   return {
     kind: "project",

@@ -111,7 +111,7 @@ describe("history", () => {
     });
     h.redo();
 
-    // Redo should have nothing to do since the new mutation cleared it.
+    // redo should have nothing to do since the new mutation cleared it.
     expect(h.current().value).toBe(99);
   });
 
@@ -158,7 +158,7 @@ describe("history", () => {
     expect(h.current().value).toBe(2);
     expect(h.current().label).toBe("updated");
 
-    // One undo should revert all three changes.
+    // one undo should revert all three changes.
     h.undo();
     expect(h.current().value).toBe(0);
     expect(h.current().label).toBe("default");
@@ -188,7 +188,7 @@ describe("history", () => {
       });
     }
 
-    // Only the last 3 mutations are undoable.
+    // only the last 3 mutations are undoable.
     expect(h.current().value).toBe(5);
     h.undo();
     expect(h.current().value).toBe(4);
@@ -197,7 +197,7 @@ describe("history", () => {
     h.undo();
     expect(h.current().value).toBe(2);
 
-    // No more undos.
+    // no more undos.
     h.undo();
     expect(h.current().value).toBe(2);
   });
@@ -259,8 +259,8 @@ describe("history", () => {
       draft.value = 5;
     });
 
-    // This is Immer's behavior: even no-op produces patches.
-    // We don't optimize this away; the user expects undo to work.
+    // immer's behavior: even no-op produces patches. we don't optimize this
+    // away; the user expects undo to work.
     expect(h.canUndo()).toBe(true);
   });
 });

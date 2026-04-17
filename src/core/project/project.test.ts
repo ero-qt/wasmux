@@ -369,8 +369,8 @@ describe("duration computation", () => {
       tracks: [track("V1", footage), track("V2", logo)],
     });
 
-    // Footage: 0 + 720/24 = 30s. Logo: 48/24 + 240/24 = 288/24 = 12s.
-    // Project duration = 30s.
+    // footage: 0 + 720/24 = 30s. logo: 48/24 + 240/24 = 288/24 = 12s.
+    // project duration = 30s.
     expect(eq(projectDuration(p), time(720, 24))).toBe(true);
     expect(p.tracks).toHaveLength(2);
     const logoItem = p.tracks[1]?.item;

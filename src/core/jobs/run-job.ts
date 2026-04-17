@@ -1,19 +1,12 @@
 import type { Job, JobReport, JobResult, JobStatus } from "~/core/jobs/types";
 
-/** Optional configuration for {@link runJob}. */
+/** Options for {@link runJob}. */
 export interface RunJobOptions {
-  /** Abort signal used for cancellation. */
   signal?: AbortSignal | undefined;
-
-  /** Callback for each {@link JobReport} the job yields. */
   onReport?: ((report: JobReport) => void) | undefined;
 }
 
-/**
- * Clamps {@link JobReport.progress} to [0, 1] so consumers can
- * trust the range. Returns the original object unchanged when
- * progress is absent or already in range.
- */
+/** Clamps progress to `[0, 1]` so consumers can trust the range. */
 function clampProgress(report: JobReport): JobReport {
   if (report.progress === undefined) {
     return report;
@@ -24,13 +17,13 @@ function clampProgress(report: JobReport): JobReport {
     return report;
   }
 
-  return { ...report, progress: clamped };
+  return {
+    ...report,
+    progress: clamped,
+  };
 }
 
-/**
- * Drives a {@link Job} generator to completion, collecting reports
- * and timing along the way.
- */
+/** Drives a {@link Job} to completion, collecting reports and timing. */
 export async function runJob<T>(
   name: string,
   job: Job<T>,
@@ -56,8 +49,8 @@ export async function runJob<T>(
     };
   }
 
-  // Wire up cancellation; when the signal fires, return() the generator
-  // to trigger its finally blocks and stop iteration.
+  // on abort, return() the generator so its finally blocks run and
+  // iteration stops.
   let onAbort: (() => void) | undefined;
   if (options?.signal) {
     onAbort = () => job.return(undefined as T);
@@ -68,7 +61,6 @@ export async function runJob<T>(
     let next = await job.next();
 
     while (!next.done) {
-      // Check cancellation between iterations.
       if (options?.signal?.aborted) {
         status = "cancelled";
         break;
@@ -81,7 +73,7 @@ export async function runJob<T>(
       next = await job.next();
     }
 
-    // The signal is the source of truth for cancellation, even if the
+    // the signal is the source of truth for cancellation, even if the
     // generator handled the abort internally and returned a value.
     if (status === "running" && options?.signal?.aborted) {
       status = "cancelled";
@@ -93,7 +85,6 @@ export async function runJob<T>(
     status = "failed";
     error = e;
   } finally {
-    // Clean up cancellation listener.
     if (onAbort && options?.signal) {
       options.signal.removeEventListener("abort", onAbort);
     }

@@ -45,7 +45,7 @@ describe("TimeRange", () => {
   });
 
   test("handles ranges with different rates in start and duration", () => {
-    // Start at 1/24, duration of 1/30.
+    // start at 1/24, duration of 1/30.
     const r = range(time(1, 24), time(1, 30));
     const end = endExclusive(r);
 
@@ -91,7 +91,7 @@ describe("TimeRange", () => {
   });
 
   test("contains works across different rates", () => {
-    // Range: [0/24, 10/24) = [0, 5/12)
+    // range: [0/24, 10/24) = [0, 5/12)
     const r = range(time(0, 24), time(10, 24));
     // 5/30 = 1/6 which is inside [0, 5/12)
     expect(contains(r, time(5, 30))).toBe(true);
@@ -185,14 +185,7 @@ describe("TimeRange", () => {
   test("clamps a time after the range to just before the end", () => {
     const r = range(time(5, 24), time(10, 24));
     const clamped = clampTime(r, time(20, 24));
-    // Clamped to end - 1 tick at the end's denominator? No, just to start + duration - epsilon.
-    // Actually, clamp to the last valid position: endExclusive - smallest unit.
-    // For simplicity, clamp to endExclusive (let the caller decide about exclusivity).
-    // Re-thinking: clamp to [start, endExclusive). A time at or past end gets clamped to end - epsilon?
-    // Most implementations clamp to [start, end] inclusive. Let's clamp to [start, endExclusive - 1 frame].
-    // Actually the simplest: clamp to max(start, min(t, endExclusive)).
-    // But that would include the exclusive end. Let's just clamp to [start, endExclusive] and
-    // document that the result may equal the exclusive end.
+    // clamps to endExclusive (may equal the exclusive end; caller decides).
     expect(eq(clamped, time(15, 24))).toBe(true);
   });
 
