@@ -2,12 +2,6 @@ import { type Draft, type Patch, applyPatches, enablePatches, produceWithPatches
 
 enablePatches();
 
-/** Options for {@link createHistory}. */
-export interface HistoryOptions {
-  /** Max undo entries. Oldest entries are dropped when exceeded. Defaults to 200. */
-  maxHistory?: number | undefined;
-}
-
 interface HistoryEntry {
   readonly patches: Patch[];
   readonly inversePatches: Patch[];
@@ -41,8 +35,7 @@ function applyPatchesTyped<T extends object>(state: T, patches: Patch[]): T {
   return applyPatches(state as Record<string, unknown>, patches) as T;
 }
 
-export function createHistory<T extends object>(initial: T, options?: HistoryOptions): History<T> {
-  const maxHistory = options?.maxHistory ?? 200;
+export function createHistory<T extends object>(initial: T): History<T> {
   const undoStack: HistoryEntry[] = [];
   const redoStack: HistoryEntry[] = [];
 
@@ -51,10 +44,6 @@ export function createHistory<T extends object>(initial: T, options?: HistoryOpt
 
   function pushEntry(entry: HistoryEntry): void {
     undoStack.push(entry);
-
-    if (undoStack.length > maxHistory) {
-      undoStack.shift();
-    }
 
     // new mutations invalidate the redo stack.
     redoStack.length = 0;

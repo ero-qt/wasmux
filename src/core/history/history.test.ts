@@ -177,31 +177,6 @@ describe("history", () => {
     expect(h.current().value).toBe(0);
   });
 
-  // cap
-
-  test("respects the max undo stack size", () => {
-    const h = createHistory(makeCounter(), { maxHistory: 3 });
-
-    for (let i = 1; i <= 5; i++) {
-      h.apply((draft) => {
-        draft.value = i;
-      });
-    }
-
-    // only the last 3 mutations are undoable.
-    expect(h.current().value).toBe(5);
-    h.undo();
-    expect(h.current().value).toBe(4);
-    h.undo();
-    expect(h.current().value).toBe(3);
-    h.undo();
-    expect(h.current().value).toBe(2);
-
-    // no more undos.
-    h.undo();
-    expect(h.current().value).toBe(2);
-  });
-
   // nested objects
 
   test("tracks changes in nested objects", () => {
