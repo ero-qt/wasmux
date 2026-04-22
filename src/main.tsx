@@ -1,7 +1,11 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
-import { App } from "~/App";
 import "~/styles/global.css";
+import "~/styles/button.css";
+import { defaultDark } from "~/styles/themes/default-dark.css";
+import { App } from "~/ui";
+
+document.documentElement.classList.add(defaultDark);
 
 const root = document.getElementById("root");
 if (!root) {
