@@ -11,3 +11,4 @@ it follows [keep a changelog](https://keepachangelog.com) principles and wasmux 
 - repo metadata (changelog, readme)
 - logo
 - basic check workflow
+- hotkey registry with `event.code`-based combos and platform-aware `mod` resolution
