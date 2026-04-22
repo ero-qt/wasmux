@@ -12,3 +12,4 @@ it follows [keep a changelog](https://keepachangelog.com) principles and wasmux 
 - logo
 - basic check workflow
 - hotkey registry with `event.code`-based combos and platform-aware `mod` resolution
+- theme contract, default-dark theme, and WCAG contrast tests
