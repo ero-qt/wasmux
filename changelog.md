@@ -14,3 +14,4 @@ it follows [keep a changelog](https://keepachangelog.com) principles and wasmux 
 - hotkey registry with `event.code`-based combos and platform-aware `mod` resolution
 - theme contract, default-dark theme, and WCAG contrast tests
 - `App` mounted from `src/ui`, plus `HotkeyButton` and `mountHotkeys` lifecycle helper
+- reactive project store, `ProjectContext` + `useProject` hook, editor undo/redo hotkey helper
