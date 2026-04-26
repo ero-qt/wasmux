@@ -22,7 +22,7 @@ export interface TimeRange {
   readonly duration: RationalTime;
 }
 
-export function range(start: RationalTime, dur: RationalTime): TimeRange {
+export function createRange(start: RationalTime, dur: RationalTime): TimeRange {
   return {
     start,
     duration: dur,
@@ -30,7 +30,7 @@ export function range(start: RationalTime, dur: RationalTime): TimeRange {
 }
 
 /** Builds a range from start and exclusive end. */
-export function rangeFromStartEnd(start: RationalTime, end: RationalTime): TimeRange {
+export function createRangeFromStartEnd(start: RationalTime, end: RationalTime): TimeRange {
   return {
     start,
     duration: sub(end, start),

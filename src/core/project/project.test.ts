@@ -1,33 +1,33 @@
 import { describe, expect, test } from "vitest";
 import { clipDuration, clipEndTime, projectDuration } from "~/core/project/duration";
 import {
-  audioAsset,
-  audioClip,
-  crop,
-  imageAsset,
-  imageClip,
-  project,
-  resolution,
-  track,
-  transform,
-  uniformScale,
-  videoAsset,
-  videoClip,
+  createAudioAsset,
+  createAudioClip,
+  createCrop,
+  createImageAsset,
+  createImageClip,
+  createProject,
+  createResolution,
+  createTrack,
+  createTransform,
+  createUniformScale,
+  createVideoAsset,
+  createVideoClip,
 } from "~/core/project/factory";
-import { eq, time } from "~/core/time/rational-time";
+import { createTime, eq } from "~/core/time/rational-time";
 
 describe("project model", () => {
   // factory: assets
 
   test("creates a video asset", () => {
-    const a = videoAsset({
+    const a = createVideoAsset({
       id: "sha-1",
       name: "clip.mp4",
       source: { kind: "opfs", path: "/media/clip.mp4" },
       width: 1920,
       height: 1080,
-      frameRate: time(24, 1),
-      duration: time(240, 24),
+      frameRate: createTime(24, 1),
+      duration: createTime(240, 24),
       hasAudio: true,
       videoCodec: "avc1.64001F",
       audioCodec: "mp4a.40.2",
@@ -46,14 +46,14 @@ describe("project model", () => {
   });
 
   test("creates a video asset without audio", () => {
-    const a = videoAsset({
+    const a = createVideoAsset({
       id: "sha-2",
       name: "silent.mp4",
       source: { kind: "url", url: "https://example.com/silent.mp4" },
       width: 1280,
       height: 720,
-      frameRate: time(30, 1),
-      duration: time(300, 30),
+      frameRate: createTime(30, 1),
+      duration: createTime(300, 30),
       hasAudio: false,
       videoCodec: "avc1.42E01E",
     });
@@ -65,11 +65,11 @@ describe("project model", () => {
   });
 
   test("creates an audio asset", () => {
-    const a = audioAsset({
+    const a = createAudioAsset({
       id: "sha-3",
       name: "music.flac",
       source: { kind: "opfs", path: "/media/music.flac" },
-      duration: time(180, 1),
+      duration: createTime(180, 1),
       codec: "flac",
       channels: 2,
       sampleRate: 48000,
@@ -85,7 +85,7 @@ describe("project model", () => {
   });
 
   test("creates an image asset", () => {
-    const a = imageAsset({
+    const a = createImageAsset({
       id: "sha-4",
       name: "logo.png",
       source: { kind: "opfs", path: "/media/logo.png" },
@@ -104,33 +104,33 @@ describe("project model", () => {
   // factory: video clip
 
   test("creates a video clip with defaults", () => {
-    const c = videoClip("asset-1", time(48, 24));
+    const c = createVideoClip("asset-1", createTime(48, 24));
 
     expect(c.kind).toBe("video");
     expect(c.assetId).toBe("asset-1");
-    expect(eq(c.startTime, time(0, 1))).toBe(true);
-    expect(eq(c.sourceIn, time(0, 1))).toBe(true);
-    expect(eq(c.sourceDuration, time(48, 24))).toBe(true);
-    expect(c.transform).toEqual(transform());
+    expect(eq(c.startTime, createTime(0, 1))).toBe(true);
+    expect(eq(c.sourceIn, createTime(0, 1))).toBe(true);
+    expect(eq(c.sourceDuration, createTime(48, 24))).toBe(true);
+    expect(c.transform).toEqual(createTransform());
     expect(c.crop).toBeUndefined();
     expect(c.volume).toBe(1);
     expect(c.enabled).toBe(true);
   });
 
   test("creates a video clip with explicit options", () => {
-    const t = transform({ opacity: 0.5 });
-    const cr = crop({ top: 10 });
-    const c = videoClip("asset-1", time(48, 24), {
-      startTime: time(24, 24),
-      sourceIn: time(10, 24),
+    const t = createTransform({ opacity: 0.5 });
+    const cr = createCrop({ top: 10 });
+    const c = createVideoClip("asset-1", createTime(48, 24), {
+      startTime: createTime(24, 24),
+      sourceIn: createTime(10, 24),
       transform: t,
       crop: cr,
       volume: 0.5,
       enabled: false,
     });
 
-    expect(eq(c.startTime, time(24, 24))).toBe(true);
-    expect(eq(c.sourceIn, time(10, 24))).toBe(true);
+    expect(eq(c.startTime, createTime(24, 24))).toBe(true);
+    expect(eq(c.sourceIn, createTime(10, 24))).toBe(true);
     expect(c.transform.opacity).toBe(0.5);
     expect(c.crop?.top).toBe(10);
     expect(c.volume).toBe(0.5);
@@ -140,13 +140,13 @@ describe("project model", () => {
   // factory: audio clip
 
   test("creates an audio clip with defaults", () => {
-    const c = audioClip("asset-1", time(240, 1));
+    const c = createAudioClip("asset-1", createTime(240, 1));
 
     expect(c.kind).toBe("audio");
     expect(c.assetId).toBe("asset-1");
-    expect(eq(c.startTime, time(0, 1))).toBe(true);
-    expect(eq(c.sourceIn, time(0, 1))).toBe(true);
-    expect(eq(c.sourceDuration, time(240, 1))).toBe(true);
+    expect(eq(c.startTime, createTime(0, 1))).toBe(true);
+    expect(eq(c.sourceIn, createTime(0, 1))).toBe(true);
+    expect(eq(c.sourceDuration, createTime(240, 1))).toBe(true);
     expect(c.volume).toBe(1);
     expect(c.enabled).toBe(true);
   });
@@ -154,13 +154,13 @@ describe("project model", () => {
   // factory: image clip
 
   test("creates an image clip with defaults", () => {
-    const c = imageClip("asset-1", time(120, 24));
+    const c = createImageClip("asset-1", createTime(120, 24));
 
     expect(c.kind).toBe("image");
     expect(c.assetId).toBe("asset-1");
-    expect(eq(c.startTime, time(0, 1))).toBe(true);
-    expect(eq(c.duration, time(120, 24))).toBe(true);
-    expect(c.transform).toEqual(transform());
+    expect(eq(c.startTime, createTime(0, 1))).toBe(true);
+    expect(eq(c.duration, createTime(120, 24))).toBe(true);
+    expect(c.transform).toEqual(createTransform());
     expect(c.crop).toBeUndefined();
     expect(c.enabled).toBe(true);
   });
@@ -168,7 +168,7 @@ describe("project model", () => {
   // factory: transform
 
   test("creates a transform with defaults", () => {
-    const t = transform();
+    const t = createTransform();
 
     expect(t.position).toEqual({ x: 0, y: 0 });
     expect(t.scale).toEqual({ x: 1, y: 1 });
@@ -177,7 +177,7 @@ describe("project model", () => {
   });
 
   test("creates a transform with overrides", () => {
-    const t = transform({
+    const t = createTransform({
       position: { x: 100, y: 50 },
       rotation: 45,
     });
@@ -191,12 +191,12 @@ describe("project model", () => {
   // factory: crop
 
   test("creates a crop with defaults", () => {
-    const c = crop();
+    const c = createCrop();
     expect(c).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
   });
 
   test("creates a crop with overrides", () => {
-    const c = crop({ top: 10, left: 20 });
+    const c = createCrop({ top: 10, left: 20 });
     expect(c.top).toBe(10);
     expect(c.left).toBe(20);
     expect(c.right).toBe(0);
@@ -206,14 +206,14 @@ describe("project model", () => {
   // factory: uniformScale
 
   test("creates a uniform scale", () => {
-    expect(uniformScale(0.5)).toEqual({ x: 0.5, y: 0.5 });
+    expect(createUniformScale(0.5)).toEqual({ x: 0.5, y: 0.5 });
   });
 
   // factory: track
 
   test("creates a track", () => {
-    const c = videoClip("asset-1", time(48, 24));
-    const t = track("V1", c);
+    const c = createVideoClip("asset-1", createTime(48, 24));
+    const t = createTrack("V1", c);
 
     expect(t.kind).toBe("track");
     expect(t.name).toBe("V1");
@@ -223,59 +223,59 @@ describe("project model", () => {
   // factory: project
 
   test("creates an empty project with defaults", () => {
-    const p = project();
+    const p = createProject();
 
     expect(p.kind).toBe("project");
     expect(p.assets).toEqual({});
     expect(p.tracks).toEqual([]);
     expect(p.resolution).toEqual({ width: 1920, height: 1080 });
-    expect(eq(p.frameRate, time(30, 1))).toBe(true);
+    expect(eq(p.frameRate, createTime(30, 1))).toBe(true);
   });
 
   test("creates a project with explicit settings", () => {
-    const asset = imageAsset({
+    const asset = createImageAsset({
       id: "a1",
       name: "logo.png",
       source: { kind: "opfs", path: "/logo.png" },
       width: 100,
       height: 100,
     });
-    const v1 = track("V1", imageClip("a1", time(48, 24)));
-    const p = project({
-      resolution: resolution(1280, 720),
-      frameRate: time(24, 1),
+    const v1 = createTrack("V1", createImageClip("a1", createTime(48, 24)));
+    const p = createProject({
+      resolution: createResolution(1280, 720),
+      frameRate: createTime(24, 1),
       assets: [asset],
       tracks: [v1],
     });
 
     expect(p.resolution).toEqual({ width: 1280, height: 720 });
-    expect(eq(p.frameRate, time(24, 1))).toBe(true);
+    expect(eq(p.frameRate, createTime(24, 1))).toBe(true);
     expect(p.assets.a1).toBe(asset);
     expect(p.tracks).toHaveLength(1);
   });
 
   test("accepts assets as a record keyed by id", () => {
-    const asset = imageAsset({
+    const asset = createImageAsset({
       id: "a1",
       name: "logo.png",
       source: { kind: "opfs", path: "/logo.png" },
       width: 100,
       height: 100,
     });
-    const p = project({ assets: { a1: asset } });
+    const p = createProject({ assets: { a1: asset } });
     expect(p.assets.a1).toBe(asset);
   });
 });
 
 describe("duration computation", () => {
-  const asset = videoAsset({
+  const asset = createVideoAsset({
     id: "a1",
     name: "clip.mp4",
     source: { kind: "opfs", path: "/clip.mp4" },
     width: 1920,
     height: 1080,
-    frameRate: time(24, 1),
-    duration: time(240, 24),
+    frameRate: createTime(24, 1),
+    duration: createTime(240, 24),
     hasAudio: false,
     videoCodec: "avc1.64001F",
   });
@@ -283,70 +283,70 @@ describe("duration computation", () => {
   // clip duration
 
   test("clip duration of video uses sourceDuration", () => {
-    const c = videoClip("a1", time(48, 24));
-    expect(eq(clipDuration(c), time(48, 24))).toBe(true);
+    const c = createVideoClip("a1", createTime(48, 24));
+    expect(eq(clipDuration(c), createTime(48, 24))).toBe(true);
   });
 
   test("clip duration of audio uses sourceDuration", () => {
-    const c = audioClip("a1", time(90, 1));
-    expect(eq(clipDuration(c), time(90, 1))).toBe(true);
+    const c = createAudioClip("a1", createTime(90, 1));
+    expect(eq(clipDuration(c), createTime(90, 1))).toBe(true);
   });
 
   test("clip duration of image uses duration", () => {
-    const c = imageClip("a1", time(120, 24));
-    expect(eq(clipDuration(c), time(120, 24))).toBe(true);
+    const c = createImageClip("a1", createTime(120, 24));
+    expect(eq(clipDuration(c), createTime(120, 24))).toBe(true);
   });
 
   // clip end time
 
   test("clip end time is start plus clip duration", () => {
-    const c = videoClip("a1", time(48, 24), { startTime: time(10, 24) });
+    const c = createVideoClip("a1", createTime(48, 24), { startTime: createTime(10, 24) });
     // 10/24 + 48/24 = 58/24
-    expect(eq(clipEndTime(c), time(58, 24))).toBe(true);
+    expect(eq(clipEndTime(c), createTime(58, 24))).toBe(true);
   });
 
   test("clip at zero starts and ends at its duration", () => {
-    const c = videoClip("a1", time(48, 24));
-    expect(eq(clipEndTime(c), time(48, 24))).toBe(true);
+    const c = createVideoClip("a1", createTime(48, 24));
+    expect(eq(clipEndTime(c), createTime(48, 24))).toBe(true);
   });
 
   // project duration
 
   test("empty project has zero duration", () => {
-    const p = project();
-    expect(eq(projectDuration(p), time(0, 1))).toBe(true);
+    const p = createProject();
+    expect(eq(projectDuration(p), createTime(0, 1))).toBe(true);
   });
 
   test("project duration is the latest clip end", () => {
-    const c1 = videoClip("a1", time(48, 24), { startTime: time(0, 24) });
-    const c2 = videoClip("a1", time(24, 24), { startTime: time(100, 24) });
+    const c1 = createVideoClip("a1", createTime(48, 24), { startTime: createTime(0, 24) });
+    const c2 = createVideoClip("a1", createTime(24, 24), { startTime: createTime(100, 24) });
 
-    const p = project({
+    const p = createProject({
       assets: [asset],
-      tracks: [track("V1", c1), track("V2", c2)],
+      tracks: [createTrack("V1", c1), createTrack("V2", c2)],
     });
 
     // c1 ends at 48/24, c2 ends at 124/24. Max = 124/24 = 31/6.
-    expect(eq(projectDuration(p), time(31, 6))).toBe(true);
+    expect(eq(projectDuration(p), createTime(31, 6))).toBe(true);
   });
 
   // real-world: logo overlay
 
   test("models a logo overlay on top of footage", () => {
-    const footageAsset = videoAsset({
+    const footageAsset = createVideoAsset({
       id: "footage",
       name: "footage.mp4",
       source: { kind: "opfs", path: "/media/footage.mp4" },
       width: 1920,
       height: 1080,
-      frameRate: time(24, 1),
-      duration: time(720, 24),
+      frameRate: createTime(24, 1),
+      duration: createTime(720, 24),
       hasAudio: true,
       videoCodec: "avc1.64001F",
       audioCodec: "mp4a.40.2",
     });
 
-    const logoAsset = imageAsset({
+    const logoAsset = createImageAsset({
       id: "logo",
       name: "logo.png",
       source: { kind: "opfs", path: "/media/logo.png" },
@@ -354,24 +354,24 @@ describe("duration computation", () => {
       height: 512,
     });
 
-    const footage = videoClip("footage", time(720, 24));
-    const logo = imageClip("logo", time(240, 24), {
-      startTime: time(48, 24),
-      transform: transform({
+    const footage = createVideoClip("footage", createTime(720, 24));
+    const logo = createImageClip("logo", createTime(240, 24), {
+      startTime: createTime(48, 24),
+      transform: createTransform({
         position: { x: 1720, y: 50 },
         scale: { x: 0.2, y: 0.2 },
         opacity: 0.8,
       }),
     });
 
-    const p = project({
+    const p = createProject({
       assets: [footageAsset, logoAsset],
-      tracks: [track("V1", footage), track("V2", logo)],
+      tracks: [createTrack("V1", footage), createTrack("V2", logo)],
     });
 
     // footage: 0 + 720/24 = 30s. logo: 48/24 + 240/24 = 288/24 = 12s.
     // project duration = 30s.
-    expect(eq(projectDuration(p), time(720, 24))).toBe(true);
+    expect(eq(projectDuration(p), createTime(720, 24))).toBe(true);
     expect(p.tracks).toHaveLength(2);
     const logoItem = p.tracks[1]?.item;
     expect(logoItem?.kind).toBe("image");
@@ -382,12 +382,12 @@ describe("duration computation", () => {
   });
 
   test("the same asset can back multiple clips (dedup via id reference)", () => {
-    const c1 = videoClip("a1", time(24, 24), { startTime: time(0, 24) });
-    const c2 = videoClip("a1", time(24, 24), { startTime: time(48, 24) });
+    const c1 = createVideoClip("a1", createTime(24, 24), { startTime: createTime(0, 24) });
+    const c2 = createVideoClip("a1", createTime(24, 24), { startTime: createTime(48, 24) });
 
-    const p = project({
+    const p = createProject({
       assets: [asset],
-      tracks: [track("V1", c1), track("V2", c2)],
+      tracks: [createTrack("V1", c1), createTrack("V2", c2)],
     });
 
     expect(Object.keys(p.assets)).toHaveLength(1);

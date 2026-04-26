@@ -8,26 +8,20 @@ export type { Platform };
  */
 export interface Action {
   readonly id: string;
-
   /** Short human-readable sentence. Shown in help overlays and tooltips. */
   readonly description: string;
-
   /**
    * Combos using `event.code` for the base key (`"Space"`, `"KeyS"`,
    * `"ArrowLeft"`) and `ctrl` / `shift` / `alt` / `meta` modifiers.
    * `mod` resolves to ctrl on non-Mac, meta on Mac.
    */
   readonly keys: readonly string[];
-
   /** Optional grouping label for help overlays (e.g. "Playback", "Editing"). */
   readonly category?: string;
-
   /** Fire `handler` on OS-level key-repeat keydowns. Defaults to `false`. */
   readonly repeat?: boolean;
-
   /** Fired on keydown when any of `keys` matches. */
   readonly handler: () => void;
-
   /** Called on keyup whose `event.code` matches the keydown that fired `handler`. */
   readonly onRelease?: () => void;
 }
@@ -35,16 +29,12 @@ export interface Action {
 export interface HotkeyRegistry {
   /** @throws if `a.id` is already registered. */
   register(a: Action): void;
-
   /** No-op for unknown ids. */
   unregister(id: string): void;
-
   /** Registration order preserved. */
   list(): readonly Action[];
-
   /** Returns whether any binding matched, regardless of whether `handler` fired. */
   dispatch(e: KeyboardEvent): boolean;
-
   /** Fires `onRelease` for every held action whose base key matches `e.code`. */
   release(e: KeyboardEvent): void;
 }

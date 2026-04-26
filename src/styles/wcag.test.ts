@@ -19,7 +19,10 @@ function parse(input: string): Color {
   const hex = input.match(/^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i);
   if (hex) {
     const h = hex[1] ?? "";
+
+    // expand 3- or 4-digit hex to 6- or 8-digit (#rgba to #rrggbbaa)
     const full = h.length <= 4 ? h.replace(/(.)/g, "$1$1") : h;
+
     return {
       r: parseInt(full.slice(0, 2), 16),
       g: parseInt(full.slice(2, 4), 16),
@@ -89,7 +92,7 @@ describe.each(Object.entries(themes))("%s theme WCAG contrast", (_, p) => {
     expect(contrast(p.fg, flatten(p.accentSoft, p.bg))).toBeGreaterThanOrEqual(AA_NORMAL);
   });
 
-  // exhaustiveness gate — fails when a new AppTheme key is added without a contrast assertion
+  // fail when a new AppTheme color is added without a contrast test
   test("every theme key is covered by an assertion", () => {
     const tested = new Set<keyof AppTheme>(["bg", "fg", "accent", "accentSoft"]);
     expect(tested).toEqual(new Set(Object.keys(themeContract)));

@@ -11,9 +11,9 @@ import type {
   Transform,
   VideoClip,
 } from "~/core/project/types";
-import { type RationalTime, ZERO, time } from "~/core/time/rational-time";
+import { type RationalTime, ZERO, createTime } from "~/core/time/rational-time";
 
-/** Options for {@link videoClip}. */
+/** Options for {@link createVideoClip}. */
 export interface VideoClipOptions {
   startTime?: RationalTime;
   sourceIn?: RationalTime;
@@ -23,7 +23,7 @@ export interface VideoClipOptions {
   enabled?: boolean;
 }
 
-export function videoClip(
+export function createVideoClip(
   assetId: string,
   sourceDuration: RationalTime,
   options?: VideoClipOptions,
@@ -34,14 +34,14 @@ export function videoClip(
     startTime: options?.startTime ?? ZERO,
     sourceIn: options?.sourceIn ?? ZERO,
     sourceDuration,
-    transform: options?.transform ?? transform(),
+    transform: options?.transform ?? createTransform(),
     ...(options?.crop !== undefined ? { crop: options.crop } : {}),
     volume: options?.volume ?? 1,
     enabled: options?.enabled ?? true,
   };
 }
 
-/** Options for {@link audioClip}. */
+/** Options for {@link createAudioClip}. */
 export interface AudioClipOptions {
   startTime?: RationalTime;
   sourceIn?: RationalTime;
@@ -49,7 +49,7 @@ export interface AudioClipOptions {
   enabled?: boolean;
 }
 
-export function audioClip(
+export function createAudioClip(
   assetId: string,
   sourceDuration: RationalTime,
   options?: AudioClipOptions,
@@ -65,7 +65,7 @@ export function audioClip(
   };
 }
 
-/** Options for {@link imageClip}. */
+/** Options for {@link createImageClip}. */
 export interface ImageClipOptions {
   startTime?: RationalTime;
   transform?: Transform;
@@ -73,7 +73,7 @@ export interface ImageClipOptions {
   enabled?: boolean;
 }
 
-export function imageClip(
+export function createImageClip(
   assetId: string,
   duration: RationalTime,
   options?: ImageClipOptions,
@@ -83,13 +83,13 @@ export function imageClip(
     assetId,
     startTime: options?.startTime ?? ZERO,
     duration,
-    transform: options?.transform ?? transform(),
+    transform: options?.transform ?? createTransform(),
     ...(options?.crop !== undefined ? { crop: options.crop } : {}),
     enabled: options?.enabled ?? true,
   };
 }
 
-export function videoAsset(params: {
+export function createVideoAsset(params: {
   id: string;
   name: string;
   source: AssetSource;
@@ -120,7 +120,7 @@ export function videoAsset(params: {
   };
 }
 
-export function audioAsset(params: {
+export function createAudioAsset(params: {
   id: string;
   name: string;
   source: AssetSource;
@@ -143,7 +143,7 @@ export function audioAsset(params: {
   };
 }
 
-export function imageAsset(params: {
+export function createImageAsset(params: {
   id: string;
   name: string;
   source: AssetSource;
@@ -163,7 +163,7 @@ export function imageAsset(params: {
 }
 
 /** Fills unspecified fields with defaults (centered, 100% scale, no rotation, full opacity). */
-export function transform(overrides?: Partial<Transform>): Transform {
+export function createTransform(overrides?: Partial<Transform>): Transform {
   return {
     position: overrides?.position ?? { x: 0, y: 0 },
     scale: overrides?.scale ?? { x: 1, y: 1 },
@@ -173,7 +173,7 @@ export function transform(overrides?: Partial<Transform>): Transform {
 }
 
 /** Fills unspecified edges with 0. */
-export function crop(overrides?: Partial<Crop>): Crop {
+export function createCrop(overrides?: Partial<Crop>): Crop {
   return {
     top: overrides?.top ?? 0,
     right: overrides?.right ?? 0,
@@ -182,21 +182,21 @@ export function crop(overrides?: Partial<Crop>): Crop {
   };
 }
 
-export function uniformScale(factor: number): Scale {
+export function createUniformScale(factor: number): Scale {
   return {
     x: factor,
     y: factor,
   };
 }
 
-export function resolution(width: number, height: number): Resolution {
+export function createResolution(width: number, height: number): Resolution {
   return {
     width,
     height,
   };
 }
 
-export function track(name: string, item: Track["item"]): Track {
+export function createTrack(name: string, item: Track["item"]): Track {
   return {
     kind: "track",
     name,
@@ -204,7 +204,7 @@ export function track(name: string, item: Track["item"]): Track {
   };
 }
 
-/** Options for {@link project}. */
+/** Options for {@link createProject}. */
 export interface ProjectOptions {
   assets?: readonly Asset[] | Readonly<Record<string, Asset>>;
   tracks?: readonly Track[];
@@ -213,10 +213,10 @@ export interface ProjectOptions {
 }
 
 const DEFAULT_RESOLUTION: Resolution = { width: 1920, height: 1080 };
-const DEFAULT_FRAME_RATE = time(30, 1);
+const DEFAULT_FRAME_RATE = createTime(30, 1);
 
 /** Every field has a default so a blank "untitled" project can be constructed with no arguments. */
-export function project(options?: ProjectOptions): Project {
+export function createProject(options?: ProjectOptions): Project {
   return {
     kind: "project",
     assets: normalizeAssets(options?.assets),

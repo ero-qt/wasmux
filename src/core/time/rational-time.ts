@@ -36,7 +36,7 @@ function lcm(a: number, b: number): number {
  *
  * @throws if den is zero or either argument is not an integer.
  */
-export function time(num: number, den: number): RationalTime {
+export function createTime(num: number, den: number): RationalTime {
   if (den === 0) {
     throw new RangeError("Denominator must not be zero.");
   }
@@ -71,7 +71,7 @@ export function time(num: number, den: number): RationalTime {
 export const ZERO: RationalTime = { num: 0, den: 1 };
 
 /**
- * Frame `n` at `rate` fps as `n/rate` seconds. Unlike {@link time}, the
+ * Frame `n` at `rate` fps as `n/rate` seconds. Unlike {@link createTime}, the
  * result is not reduced — the rate is preserved as the denominator.
  */
 export function fromFrames(frames: number, rate: number): RationalTime {
@@ -110,13 +110,13 @@ export function toFrames(t: RationalTime, rate: number, rounding: RoundingMode =
 
 export function add(a: RationalTime, b: RationalTime): RationalTime {
   if (a.den === b.den) {
-    return time(a.num + b.num, a.den);
+    return createTime(a.num + b.num, a.den);
   }
 
   const commonDen = lcm(a.den, b.den);
   const aNum = a.num * (commonDen / a.den);
   const bNum = b.num * (commonDen / b.den);
-  return time(aNum + bNum, commonDen);
+  return createTime(aNum + bNum, commonDen);
 }
 
 export function sub(a: RationalTime, b: RationalTime): RationalTime {
@@ -124,11 +124,11 @@ export function sub(a: RationalTime, b: RationalTime): RationalTime {
 }
 
 export function mul(t: RationalTime, scalar: number): RationalTime {
-  return time(t.num * scalar, t.den);
+  return createTime(t.num * scalar, t.den);
 }
 
 export function neg(t: RationalTime): RationalTime {
-  return time(-t.num, t.den);
+  return createTime(-t.num, t.den);
 }
 
 /** Returns -1 if a < b, 0 if equal, 1 if a > b. */

@@ -1,11 +1,10 @@
-/** Public API for the time system. */
-
 export {
   type RationalTime,
   type RoundingMode,
   ZERO,
   add,
   compare,
+  createTime,
   eq,
   fromFrames,
   fromSeconds,
@@ -18,7 +17,6 @@ export {
   neg,
   rescale,
   sub,
-  time,
   toFrames,
   toSeconds,
 } from "~/core/time/rational-time";
@@ -27,10 +25,10 @@ export {
   clampTime,
   contains,
   containsRange,
+  createRange,
+  createRangeFromStartEnd,
   duration,
   endExclusive,
   isEmptyRange,
   overlaps,
-  range,
-  rangeFromStartEnd,
 } from "~/core/time/time-range";

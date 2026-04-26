@@ -6,7 +6,6 @@ export interface AttachOptions {
    * Defaults to `true`.
    */
   ignoreInputs?: boolean;
-
   /**
    * Call {@link KeyboardEvent.preventDefault()} when a hotkey matches.
    * Defaults to `true`.

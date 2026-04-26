@@ -1,23 +1,21 @@
-/** Public API for the project model. */
-
 export { clipDuration, clipEndTime, projectDuration } from "~/core/project/duration";
 export {
   type AudioClipOptions,
   type ImageClipOptions,
   type ProjectOptions,
   type VideoClipOptions,
-  audioAsset,
-  audioClip,
-  crop,
-  imageAsset,
-  imageClip,
-  project,
-  resolution,
-  track,
-  transform,
-  uniformScale,
-  videoAsset,
-  videoClip,
+  createAudioAsset,
+  createAudioClip,
+  createCrop,
+  createImageAsset,
+  createImageClip,
+  createProject,
+  createResolution,
+  createTrack,
+  createTransform,
+  createUniformScale,
+  createVideoAsset,
+  createVideoClip,
 } from "~/core/project/factory";
 export type {
   Asset,
