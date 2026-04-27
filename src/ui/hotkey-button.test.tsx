@@ -53,10 +53,46 @@ describe("HotkeyButton", () => {
         Play
       </HotkeyButton>
     ));
-    expect(btn.textContent).toBe("Play");
+    // textContent includes the visually-hidden combo hint
+    expect(btn.textContent).toContain("Play");
   });
 
-  test("appends the formatted combo to title and aria-label", () => {
+  // accessible name (WCAG 2.5.3 Label in Name)
+
+  test("accessible name is derived from contents, not aria-label", () => {
+    const btn = mount(() => (
+      <HotkeyButton
+        registry={r}
+        id="save"
+        description="Save project"
+        keys={["mod+KeyS"]}
+        onClick={() => {}}
+      >
+        Save
+      </HotkeyButton>
+    ));
+    expect(btn.hasAttribute("aria-label")).toBe(false);
+    // visible label is present in the accessible name
+    expect(btn.textContent).toContain("Save");
+  });
+
+  test("visually-hidden span carries the combo hint", () => {
+    const btn = mount(() => (
+      <HotkeyButton
+        registry={r}
+        id="save"
+        description="Save project"
+        keys={["mod+KeyS"]}
+        onClick={() => {}}
+      >
+        Save
+      </HotkeyButton>
+    ));
+    const hint = btn.querySelector("span");
+    expect(hint?.textContent).toBe(" (Ctrl+S)");
+  });
+
+  test("title attribute contains description and combo for mouse tooltip", () => {
     const btn = mount(() => (
       <HotkeyButton
         registry={r}
@@ -69,7 +105,6 @@ describe("HotkeyButton", () => {
       </HotkeyButton>
     ));
     expect(btn.getAttribute("title")).toBe("Save project (Ctrl+S)");
-    expect(btn.getAttribute("aria-label")).toBe("Save project (Ctrl+S)");
   });
 
   test("joins multiple combos with ' / '", () => {
@@ -85,16 +120,64 @@ describe("HotkeyButton", () => {
       </HotkeyButton>
     ));
     expect(btn.getAttribute("title")).toBe("Play (Space / K)");
+    expect(btn.querySelector("span")?.textContent).toBe(" (Space / K)");
   });
 
-  test("omits the combo parenthetical when there are no keys", () => {
+  test("omits the combo hint and visually-hidden span when there are no keys", () => {
     const btn = mount(() => (
       <HotkeyButton registry={r} id="x" description="Just a button" keys={[]} onClick={() => {}}>
         X
       </HotkeyButton>
     ));
     expect(btn.getAttribute("title")).toBe("Just a button");
+    expect(btn.querySelector("span")).toBeNull();
+    expect(btn.textContent).toBe("X");
   });
+
+  // toggle state (WCAG 4.1.2, aria-pressed)
+
+  test("sets aria-pressed='true' when toggled is true", () => {
+    const btn = mount(() => (
+      <HotkeyButton
+        registry={r}
+        id="mute"
+        description="Mute"
+        keys={["KeyM"]}
+        toggled={true}
+        onClick={() => {}}
+      >
+        Mute
+      </HotkeyButton>
+    ));
+    expect(btn.getAttribute("aria-pressed")).toBe("true");
+  });
+
+  test("sets aria-pressed='false' when toggled is false", () => {
+    const btn = mount(() => (
+      <HotkeyButton
+        registry={r}
+        id="mute"
+        description="Mute"
+        keys={["KeyM"]}
+        toggled={false}
+        onClick={() => {}}
+      >
+        Mute
+      </HotkeyButton>
+    ));
+    expect(btn.getAttribute("aria-pressed")).toBe("false");
+  });
+
+  test("omits aria-pressed when toggled is not provided", () => {
+    const btn = mount(() => (
+      <HotkeyButton registry={r} id="play" description="Play" keys={["Space"]} onClick={() => {}}>
+        Play
+      </HotkeyButton>
+    ));
+    expect(btn.hasAttribute("aria-pressed")).toBe(false);
+  });
+
+  // registration lifecycle
 
   test("registers the action on mount and unregisters on dispose", () => {
     mount(() => (
@@ -125,6 +208,8 @@ describe("HotkeyButton", () => {
     ));
     expect(r.list()[0]?.repeat).toBe(true);
   });
+
+  // interaction
 
   test("clicking the button fires onClick", () => {
     const onClick = vi.fn();

@@ -1,6 +1,7 @@
-import { type Component, type JSX, createSignal, onCleanup, onMount } from "solid-js";
+import { type Component, type JSX, Show, createSignal, onCleanup, onMount } from "solid-js";
 import { formatCombo } from "~/core/hotkeys/format-combo";
 import type { HotkeyRegistry } from "~/core/hotkeys/hotkey-registry";
+import { visuallyHidden } from "~/styles/visually-hidden.css";
 
 export interface HotkeyButtonProps {
   /** Registry the action will be added to on mount and removed from on cleanup. */
@@ -12,6 +13,12 @@ export interface HotkeyButtonProps {
   keys: string[];
   /** Fire on OS-level key-repeat (e.g. prev/next frame). Defaults to `false`. */
   repeat?: boolean;
+  /**
+   * Persistent toggle state. Maps to `aria-pressed` so assistive technology
+   * announces "on" / "off". Distinct from the transient `data-pressed` styling
+   * hook that mirrors `:active` during a hotkey hold.
+   */
+  toggled?: boolean;
   /** Fired both on real mouse clicks and on hotkey activation. */
   onClick: () => void;
   /** Visible button label. */
@@ -19,17 +26,21 @@ export interface HotkeyButtonProps {
 }
 
 /**
- * A plain `<button>` bound to one or more hotkeys. The combo is appended to the
- * `title` / `aria-label` tooltip; we don't render a visible kbd hint.
- * Gets `data-pressed="true"` while the hotkey is held, so CSS can mirror :active.
+ * A plain `<button>` bound to one or more hotkeys. The formatted combo is
+ * injected into a visually-hidden `<span>` so the accessible name is
+ * derived from the button's contents (visible text + hidden combo), which
+ * satisfies WCAG 2.5.3 Label in Name without an overriding `aria-label`.
+ * Gets `data-pressed="true"` while the hotkey is held so CSS can mirror :active.
  */
 export const HotkeyButton: Component<HotkeyButtonProps> = (props) => {
   const [pressed, setPressed] = createSignal(false);
   let buttonRef: HTMLButtonElement | undefined;
 
-  const label = (): string => {
-    const combos = props.keys.map((k) => formatCombo(k)).join(" / ");
-    return combos ? `${props.description} (${combos})` : props.description;
+  const combos = (): string => props.keys.map((k) => formatCombo(k)).join(" / ");
+
+  const title = (): string => {
+    const c = combos();
+    return c ? `${props.description} (${c})` : props.description;
   };
 
   onMount(() => {
@@ -55,11 +66,14 @@ export const HotkeyButton: Component<HotkeyButtonProps> = (props) => {
       ref={buttonRef}
       type="button"
       onClick={props.onClick}
-      title={label()}
-      aria-label={label()}
+      title={title()}
+      aria-pressed={props.toggled !== undefined ? String(props.toggled) : undefined}
       data-pressed={pressed() ? "true" : undefined}
     >
       {props.children}
+      <Show when={combos()}>
+        {(c) => <span class={visuallyHidden}> ({c()})</span>}
+      </Show>
     </button>
   );
 };
