@@ -7,8 +7,9 @@ export interface AttachOptions {
    */
   ignoreInputs?: boolean;
   /**
-   * Call {@link KeyboardEvent.preventDefault()} when a hotkey matches.
-   * Defaults to `true`.
+   * Global fallback for `e.preventDefault()`. Set to `false` to disable entirely.
+   * Per-action `Action.preventDefault` takes precedence when present; when absent,
+   * the default is `true` for modifier combos and `false` for bare-key combos.
    */
   preventDefault?: boolean;
 }
@@ -19,14 +20,22 @@ export interface AttachOptions {
  */
 export function attachToWindow(registry: HotkeyRegistry, options?: AttachOptions): () => void {
   const ignoreInputs = options?.ignoreInputs ?? true;
-  const preventDefault = options?.preventDefault ?? true;
 
   const onKeydown = (e: KeyboardEvent): void => {
     if (ignoreInputs && isTypableTarget(e.target)) {
       return;
     }
 
-    if (registry.dispatch(e) && preventDefault) {
+    const matched = registry.dispatch(e);
+    if (matched.length === 0 || options?.preventDefault === false) {
+      return;
+    }
+
+    const hasMod = e.altKey || e.ctrlKey || e.metaKey || e.shiftKey;
+    const shouldPrevent = matched.some((a) =>
+      a.preventDefault !== undefined ? a.preventDefault : hasMod,
+    );
+    if (shouldPrevent) {
       e.preventDefault();
     }
   };

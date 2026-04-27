@@ -79,6 +79,30 @@ describe("attachToWindow", () => {
     expect(e.defaultPrevented).toBe(false);
   });
 
+  test("does not call preventDefault for a bare-key match by default", () => {
+    r.register({ id: "play", description: "Play", keys: ["Space"], handler: () => {} });
+
+    detach = attachToWindow(r);
+    const e = keydown("Space");
+
+    expect(e.defaultPrevented).toBe(false);
+  });
+
+  test("calls preventDefault for a bare-key match when action opts in", () => {
+    r.register({
+      id: "play",
+      description: "Play",
+      keys: ["Space"],
+      handler: () => {},
+      preventDefault: true,
+    });
+
+    detach = attachToWindow(r);
+    const e = keydown("Space");
+
+    expect(e.defaultPrevented).toBe(true);
+  });
+
   // input focus handling
 
   test("ignores events while focus is in <input>", () => {

@@ -70,7 +70,7 @@ describe("hotkey registry", () => {
     r.register({ id: "play", description: "Play", keys: ["Space"], handler });
 
     const matched = r.dispatch(keyEvent("Space"));
-    expect(matched).toBe(true);
+    expect(matched).toHaveLength(1);
     expect(handler).toHaveBeenCalledOnce();
   });
 
@@ -79,7 +79,7 @@ describe("hotkey registry", () => {
     r.register({ id: "play", description: "Play", keys: ["Space"], handler });
 
     const matched = r.dispatch(keyEvent("KeyZ"));
-    expect(matched).toBe(false);
+    expect(matched).toHaveLength(0);
     expect(handler).not.toHaveBeenCalled();
   });
 
@@ -140,7 +140,7 @@ describe("hotkey registry", () => {
     r.register({ id: "b", description: "B", keys: ["Space"], handler: b });
 
     const matched = r.dispatch(keyEvent("Space"));
-    expect(matched).toBe(true);
+    expect(matched).toHaveLength(2);
     expect(a).toHaveBeenCalledOnce();
     expect(b).toHaveBeenCalledOnce();
   });
@@ -189,7 +189,40 @@ describe("hotkey registry", () => {
   test("still reports match on skipped repeat so preventDefault runs", () => {
     r.register({ id: "play", description: "Play", keys: ["Space"], handler: () => {} });
 
-    expect(r.dispatch(keyEvent("Space", { repeat: true }))).toBe(true);
+    expect(r.dispatch(keyEvent("Space", { repeat: true }))).toHaveLength(1);
+  });
+
+  // when predicate (WCAG 2.1.4 scope)
+
+  test("when: false blocks dispatch — action not fired, not in matched set", () => {
+    const handler = vi.fn();
+    r.register({ id: "play", description: "Play", keys: ["Space"], handler, when: () => false });
+
+    const matched = r.dispatch(keyEvent("Space"));
+    expect(matched).toHaveLength(0);
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  test("when: true allows dispatch normally", () => {
+    const handler = vi.fn();
+    r.register({ id: "play", description: "Play", keys: ["Space"], handler, when: () => true });
+
+    const matched = r.dispatch(keyEvent("Space"));
+    expect(matched).toHaveLength(1);
+    expect(handler).toHaveBeenCalledOnce();
+  });
+
+  test("when predicate is re-evaluated on each keydown", () => {
+    let active = false;
+    const handler = vi.fn();
+    r.register({ id: "play", description: "Play", keys: ["Space"], handler, when: () => active });
+
+    r.dispatch(keyEvent("Space"));
+    expect(handler).not.toHaveBeenCalled();
+
+    active = true;
+    r.dispatch(keyEvent("Space"));
+    expect(handler).toHaveBeenCalledOnce();
   });
 
   // release: held-state tracking

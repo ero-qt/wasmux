@@ -20,6 +20,19 @@ export interface Action {
   readonly category?: string;
   /** Fire `handler` on OS-level key-repeat keydowns. Defaults to `false`. */
   readonly repeat?: boolean;
+  /**
+   * Guard predicate evaluated on every keydown. The action is skipped entirely
+   * (handler not called, not included in the matched set) when this returns
+   * `false`. Use to satisfy WCAG 2.1.4: bare-key shortcuts should be scoped
+   * to a focused region, e.g. `() => timeline.contains(document.activeElement)`.
+   */
+  readonly when?: () => boolean;
+  /**
+   * Whether `e.preventDefault()` is called when this action matches.
+   * If omitted: `true` for combos that include at least one modifier key,
+   * `false` for bare-key combos (preserves native browser behaviour).
+   */
+  readonly preventDefault?: boolean;
   /** Fired on keydown when any of `keys` matches. */
   readonly handler: () => void;
   /** Called on keyup whose `event.code` matches the keydown that fired `handler`. */
@@ -33,8 +46,12 @@ export interface HotkeyRegistry {
   unregister(id: string): void;
   /** Registration order preserved. */
   list(): readonly Action[];
-  /** Returns whether any binding matched, regardless of whether `handler` fired. */
-  dispatch(e: KeyboardEvent): boolean;
+  /**
+   * Dispatches a keydown event. Returns all matched actions (empty if none).
+   * An action is included when its combo matches and its `when` predicate (if
+   * present) returns `true`, even when the handler is skipped due to key-repeat.
+   */
+  dispatch(e: KeyboardEvent): readonly Action[];
   /** Fires `onRelease` for every held action whose base key matches `e.code`. */
   release(e: KeyboardEvent): void;
 }
@@ -76,18 +93,20 @@ export function createHotkeyRegistry(): HotkeyRegistry {
 
     dispatch(e) {
       const target = eventToCombo(e);
-      let matched = false;
+      const matched: Action[] = [];
 
       for (const a of actions) {
+        if (a.when && !a.when()) {
+          continue;
+        }
         for (const k of a.keys) {
           if (normalizeCombo(k, platform) === target) {
-            matched = true;
-            if (e.repeat && !a.repeat) {
-              break;
-            }
-            a.handler();
-            if (!e.repeat) {
-              held.set(a.id, e.code);
+            matched.push(a);
+            if (!(e.repeat && !a.repeat)) {
+              a.handler();
+              if (!e.repeat) {
+                held.set(a.id, e.code);
+              }
             }
             break;
           }
