@@ -1,8 +1,8 @@
 import { type Platform, detectPlatform, usesCmd } from "~/core/hotkeys/platform";
 
 /**
- * Renders a combo string like `"ctrl+KeyS"` into a human-readable
- * label like `"Ctrl+S"` suitable for help tables and tooltips.
+ * Renders a combo string like `"ctrl+KeyS"` into a human-readable label like
+ * `"Ctrl+S"` suitable for help tables and tooltips.
  *
  * `"mod"` resolves to the platform's primary modifier: Cmd on mac/iOS, Ctrl
  * elsewhere. `"meta"` renders as Cmd on mac/iOS, Win on Windows, Super on
@@ -62,7 +62,7 @@ function formatMeta(platform: Platform): string {
   }
 }
 
-/** `event.code` -> display label for keys that don't follow the `KeyX` / `DigitX` / `FN` patterns. */
+/** `event.code` → display label for keys that don't follow the `KeyX` / `DigitX` / `FN` patterns. */
 const NAMED_KEYS: Readonly<Record<string, string>> = {
   Space: "Space",
   Enter: "Enter",
@@ -92,7 +92,7 @@ const NAMED_KEYS: Readonly<Record<string, string>> = {
   Backquote: "`",
 };
 
-/** Turns a bare `event.code` into its on-screen label (`"KeyS"` -> `"S"`, `"ArrowUp"` -> `"Up"`). */
+/** Turns a bare `event.code` into its on-screen label (`"KeyS"` → `"S"`, `"ArrowUp"` → `"Up"`). */
 function formatKey(code: string): string {
   if (code.startsWith("Key") && code.length === 4) {
     return code.slice(3);

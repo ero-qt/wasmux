@@ -23,6 +23,7 @@ export interface VideoClipOptions {
   enabled?: boolean;
 }
 
+/** Constructs a {@link VideoClip} with sensible defaults for unspecified fields. */
 export function createVideoClip(
   assetId: string,
   sourceDuration: RationalTime,
@@ -49,6 +50,7 @@ export interface AudioClipOptions {
   enabled?: boolean;
 }
 
+/** Constructs an {@link AudioClip} with sensible defaults for unspecified fields. */
 export function createAudioClip(
   assetId: string,
   sourceDuration: RationalTime,
@@ -73,6 +75,7 @@ export interface ImageClipOptions {
   enabled?: boolean;
 }
 
+/** Constructs an {@link ImageClip} with sensible defaults for unspecified fields. */
 export function createImageClip(
   assetId: string,
   duration: RationalTime,
@@ -89,6 +92,7 @@ export function createImageClip(
   };
 }
 
+/** Constructs a video {@link Asset} from its detected properties. */
 export function createVideoAsset(params: {
   id: string;
   name: string;
@@ -120,6 +124,7 @@ export function createVideoAsset(params: {
   };
 }
 
+/** Constructs an audio {@link Asset} from its detected properties. */
 export function createAudioAsset(params: {
   id: string;
   name: string;
@@ -143,6 +148,7 @@ export function createAudioAsset(params: {
   };
 }
 
+/** Constructs an image {@link Asset} from its detected properties. */
 export function createImageAsset(params: {
   id: string;
   name: string;
@@ -162,7 +168,10 @@ export function createImageAsset(params: {
   };
 }
 
-/** Fills unspecified fields with defaults (centered, 100% scale, no rotation, full opacity). */
+/**
+ * Constructs a {@link Transform} filling unspecified fields with defaults
+ * (centered, 100% scale, no rotation, full opacity).
+ */
 export function createTransform(overrides?: Partial<Transform>): Transform {
   return {
     position: overrides?.position ?? { x: 0, y: 0 },
@@ -172,7 +181,7 @@ export function createTransform(overrides?: Partial<Transform>): Transform {
   };
 }
 
-/** Fills unspecified edges with 0. */
+/** Constructs a {@link Crop} filling unspecified edges with 0. */
 export function createCrop(overrides?: Partial<Crop>): Crop {
   return {
     top: overrides?.top ?? 0,
@@ -182,6 +191,7 @@ export function createCrop(overrides?: Partial<Crop>): Crop {
   };
 }
 
+/** Constructs a {@link Scale} with identical x and y factors. */
 export function createUniformScale(factor: number): Scale {
   return {
     x: factor,
@@ -189,6 +199,7 @@ export function createUniformScale(factor: number): Scale {
   };
 }
 
+/** Constructs a {@link Resolution}. */
 export function createResolution(width: number, height: number): Resolution {
   return {
     width,
@@ -196,6 +207,7 @@ export function createResolution(width: number, height: number): Resolution {
   };
 }
 
+/** Constructs a {@link Track} wrapping a single clip. */
 export function createTrack(name: string, item: Track["item"]): Track {
   return {
     kind: "track",
@@ -215,7 +227,7 @@ export interface ProjectOptions {
 const DEFAULT_RESOLUTION: Resolution = { width: 1920, height: 1080 };
 const DEFAULT_FRAME_RATE = createTime(30, 1);
 
-/** Every field has a default so a blank "untitled" project can be constructed with no arguments. */
+/** Constructs a {@link Project}; every field has a default so a blank "untitled" project needs no arguments. */
 export function createProject(options?: ProjectOptions): Project {
   return {
     kind: "project",
@@ -235,7 +247,6 @@ function normalizeAssets(
 
   if (Array.isArray(input)) {
     const out: Record<string, Asset> = {};
-
     for (const a of input) {
       out[a.id] = a;
     }

@@ -2,17 +2,17 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// wasmux makes a hard guarantee: nothing leaves the user's device. This file
-// is the test-time gate that keeps that guarantee true. Any time someone adds
-// a network or storage primitive in production source, one of these tests
-// fails and the regression is caught before merge.
+// wasmux makes a hard guarantee: nothing leaves the user's device.
+// this file is the test-time gate that keeps that guarantee true.
+// any time someone adds a network or storage primitive in production source,
+// one of these tests fails and the regression is caught before merge.
 
 interface Ban {
   readonly name: string;
   readonly pattern: RegExp;
 }
 
-// Network primitives — production source must not initiate any I/O.
+// network primitives: production source must not initiate any i/o.
 const BANNED_NETWORK: readonly Ban[] = [
   { name: "fetch(", pattern: /\bfetch\s*\(/ },
   { name: "XMLHttpRequest", pattern: /\bXMLHttpRequest\b/ },
@@ -22,7 +22,7 @@ const BANNED_NETWORK: readonly Ban[] = [
   { name: "importScripts(", pattern: /\bimportScripts\s*\(/ },
 ];
 
-// Storage primitives — only OPFS is allowed, and only under explicit user save.
+// storage primitives: only OPFS is allowed, and only under explicit user save.
 const BANNED_STORAGE: readonly Ban[] = [
   { name: "localStorage", pattern: /\blocalStorage\b/ },
   { name: "sessionStorage", pattern: /\bsessionStorage\b/ },
@@ -31,7 +31,7 @@ const BANNED_STORAGE: readonly Ban[] = [
   { name: "caches.* (Cache API)", pattern: /\bcaches\.(open|match|delete|keys|has)\s*\(/ },
 ];
 
-// Sensor / hardware APIs — every one of these triggers a permission prompt.
+// sensor/hardware APIs: every one of these triggers a permission prompt.
 const BANNED_HARDWARE: readonly Ban[] = [
   { name: "navigator.geolocation", pattern: /\bnavigator\.geolocation\b/ },
   { name: "navigator.bluetooth", pattern: /\bnavigator\.bluetooth\b/ },
@@ -43,7 +43,7 @@ const BANNED_HARDWARE: readonly Ban[] = [
 
 const ALL_BANNED: readonly Ban[] = [...BANNED_NETWORK, ...BANNED_STORAGE, ...BANNED_HARDWARE];
 
-// This test file references every banned token by name to ban it. Don't scan it.
+// this test file references every banned token by name to define it. don't scan it.
 const SKIP = new Set<string>([join("src", "privacy.test.ts")]);
 
 function* walkSource(dir: string): Generator<string> {

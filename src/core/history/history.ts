@@ -2,6 +2,7 @@ import { type Draft, type Patch, applyPatches, enablePatches, produceWithPatches
 
 enablePatches();
 
+/** Immer patch pair representing a single mutation step. */
 interface HistoryEntry {
   readonly patches: Patch[];
   readonly inversePatches: Patch[];
@@ -12,21 +13,28 @@ export type Recipe<T> = (draft: Draft<T>) => void;
 
 /**
  * Undo/redo history over an immutable state tree. Stores Immer
- * patches (diffs), not full snapshots. State is frozen between
- * mutations.
+ * patches (diffs), not full snapshots. State is frozen between mutations.
  */
 export interface History<T> {
-  /** Current state. Frozen. */
+  /** Returns the current frozen state. */
   current(): T;
+
   /** Applies a mutation and pushes it onto the undo stack. */
   apply(recipe: Recipe<T>): void;
+
   /** Groups multiple mutations into a single undo step. */
   transaction(fn: (apply: (recipe: Recipe<T>) => void) => void): void;
-  /** No-op if the undo stack is empty. */
+
+  /** Reverts the last mutation. No-op if the undo stack is empty. */
   undo(): void;
-  /** No-op if the redo stack is empty. */
+
+  /** Reapplies the last undone mutation. No-op if the redo stack is empty. */
   redo(): void;
+
+  /** Returns `true` when there is a mutation to undo. */
   canUndo(): boolean;
+
+  /** Returns `true` when there is a mutation to redo. */
   canRedo(): boolean;
 }
 
@@ -35,16 +43,16 @@ function applyPatchesTyped<T extends object>(state: T, patches: Patch[]): T {
   return applyPatches(state as Record<string, unknown>, patches) as T;
 }
 
+/** Creates a new history starting from `initial`. */
 export function createHistory<T extends object>(initial: T): History<T> {
   const undoStack: HistoryEntry[] = [];
   const redoStack: HistoryEntry[] = [];
 
-  // no-op produce freezes the initial state, so current() is always frozen.
+  // no-op produce freezes the initial state so current() is always frozen.
   let state = produceWithPatches(initial, () => {})[0];
 
   function pushEntry(entry: HistoryEntry): void {
     undoStack.push(entry);
-
     // new mutations invalidate the redo stack.
     redoStack.length = 0;
   }

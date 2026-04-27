@@ -13,9 +13,9 @@ interface NavigatorUAData {
 /**
  * Best-effort OS detection.
  *
- * Prefers `navigator.userAgentData` (reduced-entropy Client Hints,
- * Chromium) and falls back to the deprecated but stable `navigator.platform`
- * on Firefox/Safari, with `userAgent` as a last resort for mobile sniffing.
+ * Prefers `navigator.userAgentData` (reduced-entropy Client Hints, Chromium)
+ * and falls back to the deprecated but stable `navigator.platform` on
+ * Firefox/Safari, with `userAgent` as a last resort for mobile sniffing.
  *
  * Returns `"other"` when there's no `navigator` (SSR, Workers) or nothing matches.
  */

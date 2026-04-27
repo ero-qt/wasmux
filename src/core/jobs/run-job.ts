@@ -23,7 +23,7 @@ function clampProgress(report: JobReport): JobReport {
   };
 }
 
-/** Drives a {@link Job} to completion, collecting reports and timing. */
+/** Drives a {@link Job} to completion, collecting reports and timing the run. */
 export async function runJob<T>(
   name: string,
   job: Job<T>,
@@ -49,8 +49,7 @@ export async function runJob<T>(
     };
   }
 
-  // on abort, return() the generator so its finally blocks run and
-  // iteration stops.
+  // on abort, return() the generator so its finally blocks run and iteration stops.
   let onAbort: (() => void) | undefined;
   if (options?.signal) {
     onAbort = () => job.return(undefined as T);

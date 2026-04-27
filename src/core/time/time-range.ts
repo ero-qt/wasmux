@@ -37,6 +37,7 @@ export function createRangeFromStartEnd(start: RationalTime, end: RationalTime):
   };
 }
 
+/** Returns `r.duration`. */
 export function duration(r: TimeRange): RationalTime {
   return r.duration;
 }
@@ -46,11 +47,12 @@ export function endExclusive(r: TimeRange): RationalTime {
   return add(r.start, r.duration);
 }
 
+/** Returns `true` when the range has zero duration. */
 export function isEmptyRange(r: TimeRange): boolean {
   return isZero(r.duration);
 }
 
-/** Whether `t` falls within `[start, start + duration)`. Empty ranges contain nothing. */
+/** Returns `true` when `t` falls within `[start, start + duration)`. Empty ranges contain nothing. */
 export function contains(r: TimeRange, t: RationalTime): boolean {
   if (isEmptyRange(r)) {
     return false;
@@ -60,7 +62,7 @@ export function contains(r: TimeRange, t: RationalTime): boolean {
   return compare(r.start, t) <= 0 && lt(t, end);
 }
 
-/** Whether `outer` fully contains `inner`. An empty inner is contained if its start is in outer. */
+/** Returns `true` when `outer` fully contains `inner`. An empty inner is contained if its start is in outer. */
 export function containsRange(outer: TimeRange, inner: TimeRange): boolean {
   if (isEmptyRange(inner)) {
     return contains(outer, inner.start) || isEmptyRange(outer);
@@ -69,7 +71,7 @@ export function containsRange(outer: TimeRange, inner: TimeRange): boolean {
   return lte(outer.start, inner.start) && lte(endExclusive(inner), endExclusive(outer));
 }
 
-/** Whether two ranges share any common time. Empty ranges never overlap. */
+/** Returns `true` when two ranges share any common time. Empty ranges never overlap. */
 export function overlaps(a: TimeRange, b: TimeRange): boolean {
   if (isEmptyRange(a) || isEmptyRange(b)) {
     return false;

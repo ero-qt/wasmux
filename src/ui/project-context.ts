@@ -8,11 +8,15 @@ import type { ProjectStore } from "~/ui/project-store";
  */
 export const ProjectContext = createContext<ProjectStore>();
 
-/** @throws when called outside a {@link ProjectContext.Provider}. */
+/**
+ * Returns the nearest {@link ProjectStore} from context.
+ * @throws when called outside a {@link ProjectContext.Provider}.
+ */
 export function useProject(): ProjectStore {
   const ctx = useContext(ProjectContext);
   if (!ctx) {
     throw new Error("useProject must be called inside a <ProjectContext.Provider>");
   }
+
   return ctx;
 }
