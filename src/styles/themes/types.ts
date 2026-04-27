@@ -2,6 +2,7 @@ export interface AppTheme {
   bg: string;
   fg: string;
   accent: string;
+
   /** Translucent accent wash for hover surfaces. */
   accentSoft: string;
 }

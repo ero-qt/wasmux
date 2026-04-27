@@ -8,6 +8,7 @@ export type Job<T> = AsyncGenerator<JobReport, T, undefined>;
 export interface JobReport {
   /** User-facing description of the step. */
   message?: string | undefined;
+
   /** 0 to 1. */
   progress?: number | undefined;
 }
@@ -24,13 +25,18 @@ export type JobStatus = "running" | "completed" | "failed" | "cancelled";
 export interface JobResult<T> {
   /** Name passed to `runJob`. Used to identify the job in logs and UI. */
   readonly name: string;
+
   readonly status: JobStatus;
+
   /** Present when `status === "completed"`. */
   readonly value: T | undefined;
+
   /** Present when `status === "failed"`. */
   readonly error: unknown;
+
   /** Every report yielded during execution, in order. */
   readonly reports: readonly JobReport[];
+
   readonly startedAt: number;
   readonly endedAt: number;
 }

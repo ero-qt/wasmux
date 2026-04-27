@@ -8,18 +8,26 @@ export type { Platform };
  */
 export interface Action {
   readonly id: string;
-  /** Short human-readable sentence. Shown in help overlays and tooltips. */
+
+  /** Short human-readable sentence, shown in help overlays and tooltips. */
   readonly description: string;
+
   /**
    * Combos using `event.code` for the base key (`"Space"`, `"KeyS"`,
    * `"ArrowLeft"`) and `ctrl` / `shift` / `alt` / `meta` modifiers.
-   * `mod` resolves to ctrl on non-Mac, meta on Mac.
+   * `mod` resolves to Ctrl on non-Mac, Cmd on Mac.
    */
   readonly keys: readonly string[];
+
   /** Optional grouping label for help overlays (e.g. "Playback", "Editing"). */
   readonly category?: string;
-  /** Fire `handler` on OS-level key-repeat keydowns. Defaults to `false`. */
+
+  /**
+   * When `true`, fires `handler` on OS-level key-repeat keydown events too.
+   * @defaultValue false
+   */
   readonly repeat?: boolean;
+
   /**
    * Guard predicate evaluated on every keydown. The action is skipped entirely
    * (handler not called, not included in the matched set) when this returns
@@ -27,31 +35,41 @@ export interface Action {
    * to a focused region, e.g. `() => timeline.contains(document.activeElement)`.
    */
   readonly when?: () => boolean;
+
   /**
-   * Whether `e.preventDefault()` is called when this action matches.
-   * If omitted: `true` for combos that include at least one modifier key,
-   * `false` for bare-key combos (preserves native browser behaviour).
+   * When `true`, calls `e.preventDefault()` for any keydown matching this
+   * action. When `false`, never calls it. When absent, modifier-combo keydowns
+   * call it and bare-key keydowns do not (preserves native browser behaviour).
    */
   readonly preventDefault?: boolean;
+
   /** Fired on keydown when any of `keys` matches. */
   readonly handler: () => void;
+
   /** Called on keyup whose `event.code` matches the keydown that fired `handler`. */
   readonly onRelease?: () => void;
 }
 
 export interface HotkeyRegistry {
-  /** @throws if `a.id` is already registered. */
+  /**
+   * Adds `a` to the registry.
+   * @throws if `a.id` is already registered.
+   */
   register(a: Action): void;
-  /** No-op for unknown ids. */
+
+  /** Removes the action with `id`. No-op for unknown ids. */
   unregister(id: string): void;
-  /** Registration order preserved. */
+
+  /** Returns all registered actions in registration order. */
   list(): readonly Action[];
+
   /**
    * Dispatches a keydown event. Returns all matched actions (empty if none).
    * An action is included when its combo matches and its `when` predicate (if
    * present) returns `true`, even when the handler is skipped due to key-repeat.
    */
   dispatch(e: KeyboardEvent): readonly Action[];
+
   /** Fires `onRelease` for every held action whose base key matches `e.code`. */
   release(e: KeyboardEvent): void;
 }
@@ -61,7 +79,7 @@ export function createHotkeyRegistry(): HotkeyRegistry {
   const platform = detectPlatform();
   const actions: Action[] = [];
   const byId = new Map<string, Action>();
-  // action id → the event.code that most recently fired it. Used by release()
+  // action id → the event.code that most recently fired it, used by release()
   // so we can fire onRelease for the matching keyup.
   const held = new Map<string, string>();
 
@@ -99,15 +117,19 @@ export function createHotkeyRegistry(): HotkeyRegistry {
         if (a.when && !a.when()) {
           continue;
         }
+
         for (const k of a.keys) {
           if (normalizeCombo(k, platform) === target) {
             matched.push(a);
+
             if (!(e.repeat && !a.repeat)) {
               a.handler();
+
               if (!e.repeat) {
                 held.set(a.id, e.code);
               }
             }
+
             break;
           }
         }
@@ -118,11 +140,13 @@ export function createHotkeyRegistry(): HotkeyRegistry {
 
     release(e) {
       const toRelease: string[] = [];
+
       for (const [id, code] of held) {
         if (code === e.code) {
           toRelease.push(id);
         }
       }
+
       for (const id of toRelease) {
         held.delete(id);
         byId.get(id)?.onRelease?.();
@@ -134,19 +158,22 @@ export function createHotkeyRegistry(): HotkeyRegistry {
 /** Canonical modifier names sorted alphabetically so combos compare as strings. */
 const MODIFIERS_BY_FLAG = ["alt", "ctrl", "meta", "shift"] as const;
 
-/** Builds a canonical `"ctrl+alt+KeyS"`-style combo string from a live KeyboardEvent. */
+/** Builds a canonical `"ctrl+alt+KeyS"`-style combo string from a live `KeyboardEvent`. */
 function eventToCombo(e: KeyboardEvent): string {
   const mods: string[] = [];
 
   if (e.altKey) {
     mods.push("alt");
   }
+
   if (e.ctrlKey) {
     mods.push("ctrl");
   }
+
   if (e.metaKey) {
     mods.push("meta");
   }
+
   if (e.shiftKey) {
     mods.push("shift");
   }
