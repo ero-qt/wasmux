@@ -2,8 +2,8 @@
 import { render } from "solid-js/web";
 import "~/styles/global.css";
 import "~/styles/button.css";
+import { App } from "~/App";
 import { defaultDark } from "~/styles/themes/default-dark.css";
-import { App } from "~/ui";
 
 document.documentElement.classList.add(defaultDark);
 

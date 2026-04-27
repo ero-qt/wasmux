@@ -12,7 +12,7 @@
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     "*.tsx": "${capture}.css.ts, ${capture}.test.ts, ${capture}.test.tsx",
-    "*.ts": "${capture}.test.ts",
+    "*.ts": "${capture}.test.ts, ${capture}.test.tsx",
     "package.json": "bun.lock, biome.json, tsconfig.json, vite.config.ts, vitest.config.ts",
     ".gitignore": ".gitattributes, .editorconfig",
     "readme.md": "changelog.md, contributing.md, license.md, security.md"
