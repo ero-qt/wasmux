@@ -15,3 +15,4 @@ it follows [keep a changelog](https://keepachangelog.com) principles and wasmux 
 - theme contract, default-dark theme, and WCAG contrast tests
 - `App` mounted from `src/ui`, plus `HotkeyButton` and `mountHotkeys` lifecycle helper
 - reactive project store, `ProjectContext` + `useProject` hook, editor undo/redo hotkey helper
+- privacy gate: test-time bans on network/storage/sensor APIs in production source, CSP-shape assertions, type-level restriction of `AssetSource.url` to `blob:` and `data:`, deny-by-default `Permissions-Policy` header, hidden production source maps

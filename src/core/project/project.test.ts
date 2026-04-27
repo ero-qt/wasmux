@@ -14,6 +14,7 @@ import {
   createVideoAsset,
   createVideoClip,
 } from "~/core/project/factory";
+import type { AssetSource } from "~/core/project/types";
 import { createTime, eq } from "~/core/time/rational-time";
 
 describe("project model", () => {
@@ -49,7 +50,7 @@ describe("project model", () => {
     const a = createVideoAsset({
       id: "sha-2",
       name: "silent.mp4",
-      source: { kind: "url", url: "https://example.com/silent.mp4" },
+      source: { kind: "url", url: "blob:https://wasmux.local/silent" },
       width: 1280,
       height: 720,
       frameRate: createTime(30, 1),
@@ -264,6 +265,21 @@ describe("project model", () => {
     });
     const p = createProject({ assets: { a1: asset } });
     expect(p.assets.a1).toBe(asset);
+  });
+
+  // type-level: AssetSource.url is restricted to local schemes
+
+  test("AssetSource.url accepts blob: and data:", () => {
+    const blobSrc: AssetSource = { kind: "url", url: "blob:https://wasmux.local/x" };
+    const dataSrc: AssetSource = { kind: "url", url: "data:video/mp4;base64,AAAA" };
+    expect(blobSrc.kind).toBe("url");
+    expect(dataSrc.kind).toBe("url");
+  });
+
+  test("AssetSource.url rejects remote URLs at compile time", () => {
+    // @ts-expect-error -- url must be blob: or data:, not https:
+    const remote: AssetSource = { kind: "url", url: "https://evil.example/x.mp4" };
+    expect(remote.kind).toBe("url");
   });
 });
 

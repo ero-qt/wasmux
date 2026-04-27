@@ -39,10 +39,14 @@ export interface Crop {
 /**
  * Where the bytes of an {@link Asset} live. Extensible via the
  * discriminator so new sources (cloud, stream, etc.) are additive.
+ *
+ * The `url` variant is constrained at the type level to local schemes
+ * (`blob:` or `data:`) so a project file cannot smuggle in a remote URL
+ * that would later leak the user's IP and file inventory to a third party.
  */
 export type AssetSource =
   | { readonly kind: "opfs"; readonly path: string }
-  | { readonly kind: "url"; readonly url: string }
+  | { readonly kind: "url"; readonly url: `blob:${string}` | `data:${string}` }
   | { readonly kind: "blob"; readonly blobId: string };
 
 /**

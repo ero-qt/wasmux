@@ -12,6 +12,43 @@ const crossOriginIsolationHeaders = {
   "Cross-Origin-Resource-Policy": "same-origin",
 };
 
+// Deny every powerful browser feature by default. Re-enable individual
+// directives here only when a feature lands that legitimately needs them.
+// Production deployments must echo this header.
+const permissionsPolicyHeader = {
+  "Permissions-Policy": [
+    "accelerometer=()",
+    "ambient-light-sensor=()",
+    "autoplay=(self)",
+    "battery=()",
+    "bluetooth=()",
+    "camera=()",
+    "clipboard-read=(self)",
+    "clipboard-write=(self)",
+    "display-capture=()",
+    "encrypted-media=()",
+    "fullscreen=(self)",
+    "gamepad=()",
+    "geolocation=()",
+    "gyroscope=()",
+    "hid=()",
+    "idle-detection=()",
+    "magnetometer=()",
+    "microphone=()",
+    "midi=()",
+    "payment=()",
+    "picture-in-picture=()",
+    "publickey-credentials-get=()",
+    "screen-wake-lock=(self)",
+    "serial=()",
+    "usb=()",
+    "web-share=()",
+    "xr-spatial-tracking=()",
+  ].join(", "),
+};
+
+const securityHeaders = { ...crossOriginIsolationHeaders, ...permissionsPolicyHeader };
+
 export default defineConfig({
   plugins: [solid(), vanillaExtractPlugin()],
   resolve: {
@@ -20,19 +57,19 @@ export default defineConfig({
     },
   },
   server: {
-    headers: crossOriginIsolationHeaders,
+    headers: securityHeaders,
     strictPort: true,
     port: 5173,
   },
   preview: {
-    headers: crossOriginIsolationHeaders,
+    headers: securityHeaders,
     strictPort: true,
     port: 4173,
   },
   build: {
     outDir: "artifacts/build",
     target: "es2022",
-    sourcemap: true,
+    sourcemap: "hidden",
     cssCodeSplit: true,
   },
 });
