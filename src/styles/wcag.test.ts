@@ -7,6 +7,7 @@ import { type AppTheme, themeContract, themes } from "~/styles/themes";
 // 1.4.11 Non-text Contrast AA:   3:1 for UI component boundaries and states.
 const AAA_NORMAL = 7;
 const AA_NORMAL = 4.5;
+const AA_NON_TEXT = 3;
 
 interface Color {
   r: number;
@@ -90,6 +91,14 @@ describe.each(Object.entries(themes))("%s theme WCAG contrast", (_, p) => {
 
   test("1.4.3 AA: body text on hover wash — accentSoft composited over bg (4.5:1)", () => {
     expect(contrast(p.fg, flatten(p.accentSoft, p.bg))).toBeGreaterThanOrEqual(AA_NORMAL);
+  });
+
+  test("1.4.11 AA: accent border against bg (3:1 non-text)", () => {
+    expect(contrast(p.accent, p.bg)).toBeGreaterThanOrEqual(AA_NON_TEXT);
+  });
+
+  test("1.4.3 AA: bg text on pressed accent surface (4.5:1)", () => {
+    expect(contrast(p.bg, p.accent)).toBeGreaterThanOrEqual(AA_NORMAL);
   });
 
   // fail when a new AppTheme color is added without a contrast test

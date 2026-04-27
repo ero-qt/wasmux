@@ -8,7 +8,13 @@ globalStyle("button", {
   background: "transparent",
   border: `1px solid ${tokens.theme.accent}`,
   padding: "0.4em 1em",
+  minBlockSize: "24px",
   cursor: "pointer",
+});
+
+globalStyle("button:focus-visible", {
+  outline: "2px solid",
+  outlineOffset: "2px",
 });
 
 globalStyle("button:hover", {
