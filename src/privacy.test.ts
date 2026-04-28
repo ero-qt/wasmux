@@ -82,6 +82,51 @@ describe("privacy: no banned APIs in production source", () => {
   }
 });
 
+describe("security: production _headers file", () => {
+  const raw = readFileSync("public/_headers", "utf8");
+
+  function hasHeader(name: string, value: string): boolean {
+    const pattern = new RegExp(`^\\s+${name}:\\s*${value.replace(/[()]/g, "\\$&")}`, "im");
+    return pattern.test(raw);
+  }
+
+  test("Cross-Origin-Opener-Policy is same-origin", () => {
+    expect(hasHeader("Cross-Origin-Opener-Policy", "same-origin")).toBe(true);
+  });
+
+  test("Cross-Origin-Embedder-Policy is require-corp", () => {
+    expect(hasHeader("Cross-Origin-Embedder-Policy", "require-corp")).toBe(true);
+  });
+
+  test("Cross-Origin-Resource-Policy is same-origin", () => {
+    expect(hasHeader("Cross-Origin-Resource-Policy", "same-origin")).toBe(true);
+  });
+
+  test("frame-ancestors 'none' is set as HTTP header (not only meta)", () => {
+    expect(hasHeader("Content-Security-Policy", "frame-ancestors 'none'")).toBe(true);
+  });
+
+  test("Referrer-Policy is no-referrer", () => {
+    expect(hasHeader("Referrer-Policy", "no-referrer")).toBe(true);
+  });
+
+  test("X-Content-Type-Options is nosniff", () => {
+    expect(hasHeader("X-Content-Type-Options", "nosniff")).toBe(true);
+  });
+
+  test("Permissions-Policy denies geolocation", () => {
+    expect(raw).toContain("geolocation=()");
+  });
+
+  test("Permissions-Policy denies camera", () => {
+    expect(raw).toContain("camera=()");
+  });
+
+  test("Permissions-Policy denies microphone", () => {
+    expect(raw).toContain("microphone=()");
+  });
+});
+
 describe("privacy: CSP in index.html", () => {
   const html = readFileSync("index.html", "utf8");
   const cspMatch = html.match(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]+)"/i);

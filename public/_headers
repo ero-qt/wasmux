@@ -1,0 +1,21 @@
+# Netlify / Cloudflare Pages header rules.
+# Vite copies public/ verbatim into the build output, so this file lands at
+# the build root and is picked up automatically by both platforms.
+#
+# The headers below must come from the HTTP layer. They cannot be expressed in
+# a <meta http-equiv> tag and are therefore not in index.html.
+
+/*
+  # Cross-Origin Isolation (required for SharedArrayBuffer, WASM threads, memory64).
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: same-origin
+
+  # frame-ancestors is ignored when set via <meta>; it must be an HTTP header.
+  Content-Security-Policy: frame-ancestors 'none'
+
+  # Deny every powerful feature by default.
+  Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(self), battery=(), bluetooth=(), camera=(), clipboard-read=(self), clipboard-write=(self), display-capture=(), encrypted-media=(), fullscreen=(self), gamepad=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(self), serial=(), usb=(), web-share=(), xr-spatial-tracking=()
+
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff

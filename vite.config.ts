@@ -47,7 +47,12 @@ const permissionsPolicyHeader = {
   ].join(", "),
 };
 
-const securityHeaders = { ...crossOriginIsolationHeaders, ...permissionsPolicyHeader };
+const securityHeaders = {
+  ...crossOriginIsolationHeaders,
+  ...permissionsPolicyHeader,
+  "Referrer-Policy": "no-referrer",
+  "X-Content-Type-Options": "nosniff",
+};
 
 export default defineConfig({
   plugins: [solid(), vanillaExtractPlugin()],
