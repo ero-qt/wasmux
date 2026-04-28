@@ -79,6 +79,8 @@ export function createHotkeyRegistry(): HotkeyRegistry {
   const platform = detectPlatform();
   const actions: Action[] = [];
   const byId = new Map<string, Action>();
+  // action id → pre-normalized combo strings, computed once at registration.
+  const normalizedKeys = new Map<string, readonly string[]>();
   // action id → the event.code that most recently fired it, used by release()
   // so we can fire onRelease for the matching keyup.
   const held = new Map<string, string>();
@@ -91,6 +93,7 @@ export function createHotkeyRegistry(): HotkeyRegistry {
 
       byId.set(a.id, a);
       actions.push(a);
+      normalizedKeys.set(a.id, a.keys.map((k) => normalizeCombo(k, platform)));
     },
 
     unregister(id) {
@@ -99,6 +102,7 @@ export function createHotkeyRegistry(): HotkeyRegistry {
       }
 
       held.delete(id);
+      normalizedKeys.delete(id);
       const idx = actions.findIndex((a) => a.id === id);
       if (idx >= 0) {
         actions.splice(idx, 1);
@@ -118,8 +122,9 @@ export function createHotkeyRegistry(): HotkeyRegistry {
           continue;
         }
 
-        for (const k of a.keys) {
-          if (normalizeCombo(k, platform) === target) {
+        const keys = normalizedKeys.get(a.id) ?? [];
+        for (const k of keys) {
+          if (k === target) {
             matched.push(a);
 
             if (!(e.repeat && !a.repeat)) {
