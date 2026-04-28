@@ -1,4 +1,4 @@
-import { type Component, type JSX, Show, createSignal, onCleanup, onMount } from "solid-js";
+import { type Component, type JSX, Show, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import { formatCombo } from "~/core/hotkeys/format-combo";
 import type { HotkeyRegistry } from "~/core/hotkeys/hotkey-registry";
 import { visuallyHidden } from "~/styles/layout.css";
@@ -46,12 +46,12 @@ export const HotkeyButton: Component<HotkeyButtonProps> = (props) => {
   const [pressed, setPressed] = createSignal(false);
   let buttonRef: HTMLButtonElement | undefined;
 
-  const combos = (): string => props.keys.map((k) => formatCombo(k)).join(" / ");
+  const combos = createMemo(() => props.keys.map((k) => formatCombo(k)).join(" / "));
 
-  const title = (): string => {
+  const title = createMemo(() => {
     const c = combos();
     return c ? `${props.description} (${c})` : props.description;
-  };
+  });
 
   onMount(() => {
     props.registry.register({

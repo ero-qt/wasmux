@@ -201,9 +201,9 @@ describe("runJob", () => {
   // timing
 
   test("records startedAt and endedAt timestamps", async () => {
-    const before = Date.now();
+    const before = performance.now();
     const result = await runJob("timed", emptyJob());
-    const after = Date.now();
+    const after = performance.now();
 
     expect(result.startedAt).toBeGreaterThanOrEqual(before);
     expect(result.endedAt).toBeGreaterThanOrEqual(result.startedAt);

@@ -29,7 +29,7 @@ export async function runJob<T>(
   job: Job<T>,
   options?: RunJobOptions,
 ): Promise<JobResult<T>> {
-  const startedAt = Date.now();
+  const startedAt = performance.now();
   const reports: JobReport[] = [];
 
   let status: JobStatus = "running";
@@ -45,7 +45,7 @@ export async function runJob<T>(
       error: undefined,
       reports,
       startedAt,
-      endedAt: Date.now(),
+      endedAt: performance.now(),
     };
   }
 
@@ -96,6 +96,6 @@ export async function runJob<T>(
     error,
     reports,
     startedAt,
-    endedAt: Date.now(),
+    endedAt: performance.now(),
   };
 }

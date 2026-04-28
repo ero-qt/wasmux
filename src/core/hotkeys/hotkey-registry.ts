@@ -79,6 +79,8 @@ export function createHotkeyRegistry(): HotkeyRegistry {
   const platform = detectPlatform();
   const actions: Action[] = [];
   const byId = new Map<string, Action>();
+  // action id → index in actions[], kept in sync so unregister is O(1).
+  const indexById = new Map<string, number>();
   // action id → pre-normalized combo strings, computed once at registration.
   const normalizedKeys = new Map<string, readonly string[]>();
   // action id → the event.code that most recently fired it, used by release()
@@ -91,6 +93,7 @@ export function createHotkeyRegistry(): HotkeyRegistry {
         throw new Error(`Hotkey action already registered: ${a.id}`);
       }
 
+      indexById.set(a.id, actions.length);
       byId.set(a.id, a);
       actions.push(a);
       normalizedKeys.set(a.id, a.keys.map((k) => normalizeCombo(k, platform)));
@@ -103,9 +106,18 @@ export function createHotkeyRegistry(): HotkeyRegistry {
 
       held.delete(id);
       normalizedKeys.delete(id);
-      const idx = actions.findIndex((a) => a.id === id);
-      if (idx >= 0) {
+
+      const idx = indexById.get(id);
+      indexById.delete(id);
+
+      if (idx !== undefined) {
         actions.splice(idx, 1);
+        // shift every stored index that was after the removed slot.
+        for (const [otherId, otherIdx] of indexById) {
+          if (otherIdx > idx) {
+            indexById.set(otherId, otherIdx - 1);
+          }
+        }
       }
     },
 
