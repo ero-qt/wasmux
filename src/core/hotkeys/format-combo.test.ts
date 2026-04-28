@@ -93,6 +93,10 @@ describe("formatCombo", () => {
     expect(formatCombo("ctrl+mod+shift+KeyS", "mac")).toBe("Ctrl+Shift+Cmd+S");
   });
 
+  test("mod+meta deduplicate on Mac: renders as Cmd once, not Cmd+Cmd", () => {
+    expect(formatCombo("mod+meta+KeyS", "mac")).toBe("Cmd+S");
+  });
+
   test("modifier input is case-insensitive", () => {
     expect(formatCombo("Ctrl+Shift+KeyS")).toBe("Ctrl+Shift+S");
   });

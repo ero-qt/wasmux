@@ -99,7 +99,7 @@ export interface Asset {
 
 /**
  * A segment of video placed on a {@link Track}. Anything with more than one
- * frame — animated GIF, APNG, animated WebP — is a video clip.
+ * frame (animated GIF, APNG, animated WebP) is a video clip.
  */
 export interface VideoClip {
   readonly kind: "video";

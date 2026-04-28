@@ -70,7 +70,7 @@ describe("createProjectStore", () => {
       });
       expect(observed).toEqual([false, true]);
 
-      // a second apply doesn't flip canUndo — effect should not re-run.
+      // a second apply doesn't flip canUndo. effect should not re-run.
       store.apply((draft) => {
         draft.resolution = { width: 2, height: 2 };
       });
@@ -246,5 +246,21 @@ describe("createProjectStore", () => {
       expect(runs).toBe(2);
       dispose();
     });
+  });
+
+  test("transaction clears the redo stack", () => {
+    const store = createProjectStore(createProject());
+    store.apply((draft) => {
+      draft.resolution = { width: 1, height: 1 };
+    });
+    store.undo();
+    expect(store.canRedo()).toBe(true);
+
+    store.transaction((apply) => {
+      apply((draft) => {
+        draft.resolution = { width: 2, height: 2 };
+      });
+    });
+    expect(store.canRedo()).toBe(false);
   });
 });

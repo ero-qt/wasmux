@@ -168,6 +168,36 @@ describe("runJob", () => {
     expect(result.status).toBe("cancelled");
   });
 
+  // abort listener cleanup
+
+  test("removes the abort listener after normal completion", async () => {
+    const controller = new AbortController();
+    const removeSpy = vi.spyOn(controller.signal, "removeEventListener");
+
+    await runJob("cleanup-ok", emptyJob(), { signal: controller.signal });
+
+    expect(removeSpy).toHaveBeenCalledWith("abort", expect.any(Function));
+  });
+
+  test("removes the abort listener after job failure", async () => {
+    const controller = new AbortController();
+    const removeSpy = vi.spyOn(controller.signal, "removeEventListener");
+
+    await runJob("cleanup-fail", failingJob(), { signal: controller.signal });
+
+    expect(removeSpy).toHaveBeenCalledWith("abort", expect.any(Function));
+  });
+
+  test("removes the abort listener after cancellation", async () => {
+    const controller = new AbortController();
+    const removeSpy = vi.spyOn(controller.signal, "removeEventListener");
+    setTimeout(() => controller.abort(), 10);
+
+    await runJob("cleanup-cancel", slowJob(controller.signal), { signal: controller.signal });
+
+    expect(removeSpy).toHaveBeenCalledWith("abort", expect.any(Function));
+  });
+
   // timing
 
   test("records startedAt and endedAt timestamps", async () => {

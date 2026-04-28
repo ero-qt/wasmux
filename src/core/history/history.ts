@@ -38,7 +38,7 @@ export interface History<T> {
   canRedo(): boolean;
 }
 
-/** Typed wrapper — Immer's `applyPatches` returns `Objectish` instead of the input type. */
+/** Typed wrapper. Immer's `applyPatches` returns `Objectish` instead of the input type. */
 function applyPatchesTyped<T extends object>(state: T, patches: Patch[]): T {
   return applyPatches(state as Record<string, unknown>, patches) as T;
 }

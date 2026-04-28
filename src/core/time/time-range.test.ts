@@ -174,6 +174,19 @@ describe("TimeRange", () => {
     expect(overlaps(empty, r)).toBe(false);
   });
 
+  test("two empty ranges do not overlap each other", () => {
+    const empty = createRange(createTime(5, 24), createTime(0, 1));
+    expect(overlaps(empty, empty)).toBe(false);
+  });
+
+  test("adjacent cross-rate ranges do not overlap", () => {
+    // [0, 12/24) = [0, 0.5s) and [15/30, ...) starts exactly at 0.5, no shared instant
+    const a = createRangeFromStartEnd(createTime(0, 24), createTime(12, 24));
+    const b = createRange(createTime(15, 30), createTime(15, 30));
+    expect(overlaps(a, b)).toBe(false);
+    expect(overlaps(b, a)).toBe(false);
+  });
+
   // clampTime
 
   test("clamps a time before the range to the start", () => {

@@ -89,7 +89,7 @@ describe.each(Object.entries(themes))("%s theme WCAG contrast", (_, p) => {
     expect(contrast(p.accent, p.bg)).toBeGreaterThanOrEqual(AAA_NORMAL);
   });
 
-  test("1.4.3 AA: body text on hover wash — accentSoft composited over bg (4.5:1)", () => {
+  test("1.4.3 AA: body text on hover wash, accentSoft composited over bg (4.5:1)", () => {
     expect(contrast(p.fg, flatten(p.accentSoft, p.bg))).toBeGreaterThanOrEqual(AA_NORMAL);
   });
 

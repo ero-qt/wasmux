@@ -10,7 +10,7 @@ import {
 } from "~/core/time/rational-time";
 
 /**
- * An interval `[start, start + duration)` — end is exclusive.
+ * An interval `[start, start + duration)` (end is exclusive).
  *
  * Timeline queries (does this clip overlap that one, is the playhead
  * inside this clip) are frequent and subtle enough (exclusive end,

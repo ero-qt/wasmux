@@ -194,7 +194,7 @@ describe("hotkey registry", () => {
 
   // when predicate (WCAG 2.1.4 scope)
 
-  test("when: false blocks dispatch — action not fired, not in matched set", () => {
+  test("when: false blocks dispatch, action not fired (not in matched set)", () => {
     const handler = vi.fn();
     r.register({ id: "play", description: "Play", keys: ["Space"], handler, when: () => false });
 
@@ -270,5 +270,30 @@ describe("hotkey registry", () => {
     r.release(keyUp("Space"));
     r.release(keyUp("Space"));
     expect(onRelease).toHaveBeenCalledOnce();
+  });
+
+  test("release fires onRelease for all actions held by the same code", () => {
+    const onRelease1 = vi.fn();
+    const onRelease2 = vi.fn();
+    r.register({
+      id: "a",
+      description: "A",
+      keys: ["Space"],
+      handler: () => {},
+      onRelease: onRelease1,
+    });
+    r.register({
+      id: "b",
+      description: "B",
+      keys: ["Space"],
+      handler: () => {},
+      onRelease: onRelease2,
+    });
+
+    r.dispatch(keyEvent("Space"));
+    r.release(keyUp("Space"));
+
+    expect(onRelease1).toHaveBeenCalledOnce();
+    expect(onRelease2).toHaveBeenCalledOnce();
   });
 });

@@ -72,7 +72,7 @@ export const ZERO: RationalTime = { num: 0, den: 1 };
 
 /**
  * Frame `n` at `rate` fps as `n/rate` seconds. Unlike {@link createTime}, the
- * result is not reduced — the rate is preserved as the denominator.
+ * result is not reduced, the rate is preserved as the denominator.
  */
 export function fromFrames(frames: number, rate: number): RationalTime {
   if (!Number.isInteger(frames) || !Number.isInteger(rate) || rate <= 0) {
