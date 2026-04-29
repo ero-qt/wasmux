@@ -64,3 +64,26 @@ export function detectPlatform(): Platform {
 export function usesCmd(platform: Platform): boolean {
   return platform === "mac" || platform === "ios";
 }
+
+/** Parsed combo: lowercased modifiers with `mod` resolved to `meta`/`ctrl`, plus the base `event.code`. */
+export interface ParsedCombo {
+  readonly mods: readonly string[];
+  readonly code: string;
+}
+
+/**
+ * Splits a `"mod+shift+KeyZ"`-style combo into its lowercased modifiers and
+ * base code, resolving `"mod"` to the platform's primary modifier. Modifiers
+ * are returned in the order they appear; deduplication and ordering are left
+ * to the caller (canonical sort vs display order).
+ */
+export function parseCombo(combo: string, platform: Platform): ParsedCombo {
+  const parts = combo.split("+");
+  const code = parts[parts.length - 1] ?? "";
+  const mods = parts
+    .slice(0, -1)
+    .map((m) => m.toLowerCase())
+    .map((m) => (m === "mod" ? (usesCmd(platform) ? "meta" : "ctrl") : m));
+
+  return { mods, code };
+}

@@ -1,4 +1,4 @@
-import { type Platform, detectPlatform, usesCmd } from "~/core/hotkeys/platform";
+import { type Platform, detectPlatform, parseCombo } from "~/core/hotkeys/platform";
 
 /**
  * Renders a combo string like `"ctrl+KeyS"` into a human-readable label like
@@ -10,16 +10,12 @@ import { type Platform, detectPlatform, usesCmd } from "~/core/hotkeys/platform"
  */
 export function formatCombo(combo: string, platform?: Platform): string {
   const p = platform ?? detectPlatform();
-  const parts = combo.split("+");
-  const code = parts[parts.length - 1] ?? "";
-  const rawMods = parts.slice(0, -1).map((m) => m.toLowerCase());
-
-  const resolved = rawMods.map((m) => (m === "mod" ? (usesCmd(p) ? "meta" : "ctrl") : m));
+  const { mods, code } = parseCombo(combo, p);
   const seen = new Set<string>();
   const ordered: string[] = [];
 
   for (const name of MODIFIER_ORDER) {
-    if (resolved.includes(name) && !seen.has(name)) {
+    if (mods.includes(name) && !seen.has(name)) {
       seen.add(name);
       ordered.push(formatModifier(name, p));
     }

@@ -1,4 +1,12 @@
-import { type Component, type JSX, Show, createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import {
+  type Component,
+  type JSX,
+  Show,
+  createMemo,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import { formatCombo } from "~/core/hotkeys/format-combo";
 import type { HotkeyRegistry } from "~/core/hotkeys/hotkey-registry";
 import { visuallyHidden } from "~/styles/layout.css";
@@ -13,7 +21,7 @@ export interface HotkeyButtonProps {
   description: string;
 
   /** Hotkey combos as accepted by the registry (e.g. `["Space", "mod+KeyK"]`). */
-  keys: string[];
+  keys: readonly string[];
 
   /**
    * When `true`, fires `onClick` on OS-level key-repeat keydown events too.

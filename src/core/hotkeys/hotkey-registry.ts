@@ -1,4 +1,4 @@
-import { type Platform, detectPlatform, usesCmd } from "~/core/hotkeys/platform";
+import { type Platform, detectPlatform, parseCombo } from "~/core/hotkeys/platform";
 
 export type { Platform };
 
@@ -79,8 +79,6 @@ export function createHotkeyRegistry(): HotkeyRegistry {
   const platform = detectPlatform();
   const actions: Action[] = [];
   const byId = new Map<string, Action>();
-  // action id → index in actions[], kept in sync so unregister is O(1).
-  const indexById = new Map<string, number>();
   // action id → pre-normalized combo strings, computed once at registration.
   const normalizedKeys = new Map<string, readonly string[]>();
   // action id → the event.code that most recently fired it, used by release()
@@ -93,10 +91,12 @@ export function createHotkeyRegistry(): HotkeyRegistry {
         throw new Error(`Hotkey action already registered: ${a.id}`);
       }
 
-      indexById.set(a.id, actions.length);
       byId.set(a.id, a);
       actions.push(a);
-      normalizedKeys.set(a.id, a.keys.map((k) => normalizeCombo(k, platform)));
+      normalizedKeys.set(
+        a.id,
+        a.keys.map((k) => normalizeCombo(k, platform)),
+      );
     },
 
     unregister(id) {
@@ -107,17 +107,9 @@ export function createHotkeyRegistry(): HotkeyRegistry {
       held.delete(id);
       normalizedKeys.delete(id);
 
-      const idx = indexById.get(id);
-      indexById.delete(id);
-
-      if (idx !== undefined) {
+      const idx = actions.findIndex((a) => a.id === id);
+      if (idx !== -1) {
         actions.splice(idx, 1);
-        // shift every stored index that was after the removed slot.
-        for (const [otherId, otherIdx] of indexById) {
-          if (otherIdx > idx) {
-            indexById.set(otherId, otherIdx - 1);
-          }
-        }
       }
     },
 
@@ -204,12 +196,8 @@ function eventToCombo(e: KeyboardEvent): string {
  * resolved to the platform's primary modifier.
  */
 function normalizeCombo(combo: string, platform: Platform): string {
-  const parts = combo.split("+");
-  const code = parts[parts.length - 1] ?? "";
-  const rawMods = parts.slice(0, -1).map((m) => m.toLowerCase());
-
-  const resolved = rawMods.map((m) => (m === "mod" ? (usesCmd(platform) ? "meta" : "ctrl") : m));
-  const unique = Array.from(new Set(resolved))
+  const { mods, code } = parseCombo(combo, platform);
+  const unique = Array.from(new Set(mods))
     .filter((m): m is (typeof MODIFIERS_BY_FLAG)[number] =>
       (MODIFIERS_BY_FLAG as readonly string[]).includes(m),
     )

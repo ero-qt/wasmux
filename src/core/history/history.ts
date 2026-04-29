@@ -38,11 +38,6 @@ export interface History<T> {
   canRedo(): boolean;
 }
 
-/** Typed wrapper. Immer's `applyPatches` returns `Objectish` instead of the input type. */
-function applyPatchesTyped<T extends object>(state: T, patches: Patch[]): T {
-  return applyPatches(state as Record<string, unknown>, patches) as T;
-}
-
 /** Creates a new history starting from `initial`. */
 export function createHistory<T extends object>(initial: T): History<T> {
   const undoStack: HistoryEntry[] = [];
@@ -96,7 +91,7 @@ export function createHistory<T extends object>(initial: T): History<T> {
         return;
       }
 
-      state = applyPatchesTyped(state, entry.inversePatches);
+      state = applyPatches(state as Record<string, unknown>, entry.inversePatches) as T;
       redoStack.push(entry);
     },
 
@@ -106,7 +101,7 @@ export function createHistory<T extends object>(initial: T): History<T> {
         return;
       }
 
-      state = applyPatchesTyped(state, entry.patches);
+      state = applyPatches(state as Record<string, unknown>, entry.patches) as T;
       undoStack.push(entry);
     },
 
