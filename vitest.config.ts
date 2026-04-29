@@ -1,10 +1,10 @@
 import { defineConfig, mergeConfig } from "vitest/config";
 import viteConfig from "./vite.config";
 
-// Vitest ships its own nested copy of Vite, so the plugin types from
+// vitest ships its own nested copy of vite, so the plugin types from
 // vite-plugin-solid (typed against the top-level vite) don't unify with
-// vitest's nested vite under exactOptionalPropertyTypes. Splitting the
-// configs and using mergeConfig is the canonical Vitest workaround.
+// vitest's nested vite under exactOptionalPropertyTypes. splitting the
+// configs and using mergeConfig is the canonical vitest workaround.
 export default mergeConfig(
   viteConfig,
   defineConfig({

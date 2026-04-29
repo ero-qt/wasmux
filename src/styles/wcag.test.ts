@@ -42,6 +42,16 @@ function parse(input: string): Color {
     };
   }
 
+  // color-mix(in <space>, <color> N%, transparent): treat as <color> at alpha N/100.
+  // sufficient for the theme's translucent washes; not a general color-mix evaluator.
+  const mix = input.match(
+    /^color-mix\(\s*in\s+[\w-]+\s*,\s*(\S.+?)\s+([\d.]+)%\s*,\s*transparent\s*\)$/i,
+  );
+  if (mix) {
+    const base = parse(mix[1] ?? "");
+    return { ...base, a: base.a * (Number(mix[2]) / 100) };
+  }
+
   throw new Error(`unsupported color: ${input}`);
 }
 
