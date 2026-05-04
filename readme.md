@@ -31,6 +31,7 @@ then open the local vite url shown in your terminal.
 
 ---
 
+[architecture](docs/architecture.md)
 [changelog.md](changelog.md)
 [contributing.md](contributing.md)
 [license.md](license.md)
