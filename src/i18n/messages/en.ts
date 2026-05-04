@@ -9,6 +9,20 @@ export const en = {
       redo: "Redo",
     },
   },
+  region: {
+    bin: "Project bin",
+    program: "Program",
+    inspector: "Inspector",
+    timeline: "Timeline",
+    status: "Status",
+  },
+  theme: {
+    dark: "Dark",
+    light: "Light",
+    toggle: {
+      description: "Toggle theme",
+    },
+  },
   hotkey: {
     modifier: {
       ctrl: "Ctrl",

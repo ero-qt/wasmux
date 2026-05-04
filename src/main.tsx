@@ -4,10 +4,12 @@ import "~/styles/global.css";
 import "~/styles/button.css";
 import { App } from "~/App";
 import { negotiateLocale, setLocale } from "~/i18n";
-import { defaultDark } from "~/styles/themes/default-dark.css";
+// importing the theme store kicks off the createRoot effect that syncs the
+// active theme onto <html>'s class. side-effectful import is the price of
+// having theme state at module level.
+import "~/ui/theme/theme-store";
 
 setLocale(negotiateLocale(navigator.languages));
-document.documentElement.classList.add(defaultDark);
 
 // register the service worker only in production builds; dev caching would
 // fight Vite's HMR and confuse "why didn't my edit show up".
