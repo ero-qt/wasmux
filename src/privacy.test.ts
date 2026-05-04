@@ -46,6 +46,14 @@ const ALL_BANNED: readonly Ban[] = [...BANNED_NETWORK, ...BANNED_STORAGE, ...BAN
 // this test file references every banned token by name to define it. don't scan it.
 const SKIP = new Set<string>([join("src", "privacy.test.ts")]);
 
+// per-file exemptions: ban → set of files that are allowed to use it. keep this
+// list tight; every entry is a deliberate carve-out, not a default.
+const ALLOW: ReadonlyMap<string, ReadonlySet<string>> = new Map([
+  // main.tsx is the single place that registers the service worker. the SW
+  // source itself lives in public/sw.js (not scanned) and is reviewed by hand.
+  ["navigator.serviceWorker", new Set([join("src", "main.tsx")])],
+]);
+
 function* walkSource(dir: string): Generator<string> {
   for (const entry of readdirSync(dir)) {
     const path = join(dir, entry);
@@ -70,7 +78,13 @@ describe("privacy: no banned APIs in production source", () => {
     test(`no \`${ban.name}\` anywhere in src/`, () => {
       const offenders: string[] = [];
 
+      const allowed = ALLOW.get(ban.name) ?? new Set<string>();
+
       for (const file of SOURCES) {
+        if (allowed.has(file)) {
+          continue;
+        }
+
         const content = readFileSync(file, "utf8");
         if (ban.pattern.test(content)) {
           offenders.push(relative(".", file));
@@ -124,6 +138,38 @@ describe("security: production _headers file", () => {
 
   test("Permissions-Policy denies microphone", () => {
     expect(raw).toContain("microphone=()");
+  });
+});
+
+describe("PWA: manifest.webmanifest", () => {
+  const raw = readFileSync("public/manifest.webmanifest", "utf8");
+  const manifest = JSON.parse(raw) as {
+    readonly name?: string;
+    readonly start_url?: string;
+    readonly scope?: string;
+    readonly id?: string;
+    readonly display?: string;
+    readonly icons?: ReadonlyArray<{
+      readonly src: string;
+      readonly sizes: string;
+      readonly type: string;
+      readonly purpose?: string;
+    }>;
+  };
+
+  test("declares the install-criteria fields", () => {
+    expect(manifest.name).toBe("wasmux");
+    expect(manifest.start_url).toBe("/");
+    expect(manifest.scope).toBe("/");
+    expect(manifest.id).toBe("/");
+    expect(manifest.display).toBe("standalone");
+  });
+
+  test("ships 192 and 512 PNG icons plus a 512 maskable", () => {
+    const icons = manifest.icons ?? [];
+    expect(icons.some((i) => i.sizes === "192x192" && i.type === "image/png")).toBe(true);
+    expect(icons.some((i) => i.sizes === "512x512" && i.type === "image/png")).toBe(true);
+    expect(icons.some((i) => i.sizes === "512x512" && i.purpose === "maskable")).toBe(true);
   });
 });
 
