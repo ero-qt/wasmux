@@ -1,4 +1,5 @@
 import type { HotkeyRegistry } from "~/core/hotkeys";
+import { t } from "~/i18n";
 import type { ProjectStore } from "~/ui/project-store";
 
 /**
@@ -8,7 +9,7 @@ import type { ProjectStore } from "~/ui/project-store";
 export function registerEditorHotkeys(registry: HotkeyRegistry, store: ProjectStore): void {
   registry.register({
     id: "undo",
-    description: "Undo",
+    description: t("editor.history.undo"),
     category: "history",
     keys: ["mod+KeyZ"],
     handler: () => store.undo(),
@@ -16,7 +17,7 @@ export function registerEditorHotkeys(registry: HotkeyRegistry, store: ProjectSt
 
   registry.register({
     id: "redo",
-    description: "Redo",
+    description: t("editor.history.redo"),
     category: "history",
     keys: ["mod+shift+KeyZ", "mod+KeyY"],
     handler: () => store.redo(),
