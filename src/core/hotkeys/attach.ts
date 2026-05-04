@@ -25,6 +25,13 @@ export function attachToWindow(registry: HotkeyRegistry, options?: AttachOptions
   const ignoreInputs = options?.ignoreInputs ?? true;
 
   const onKeydown = (e: KeyboardEvent): void => {
+    // never treat composition keystrokes as hotkeys; CJK / Korean / Vietnamese
+    // IMEs send keydowns mid-composition (often with keyCode 229) that the user
+    // intends as text input, not shortcut activation.
+    if (e.isComposing || e.keyCode === 229) {
+      return;
+    }
+
     if (ignoreInputs && isTypableTarget(e.target)) {
       return;
     }

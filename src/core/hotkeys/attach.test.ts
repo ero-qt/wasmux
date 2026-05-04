@@ -161,4 +161,27 @@ describe("attachToWindow", () => {
 
     expect(handler).toHaveBeenCalledOnce();
   });
+
+  test("ignores keydowns flagged isComposing (IME mid-composition)", () => {
+    const handler = vi.fn();
+    r.register({ id: "play", description: "Play", keys: ["Space"], handler });
+
+    detach = attachToWindow(r);
+    const e = new KeyboardEvent("keydown", { code: "Space", isComposing: true, bubbles: true });
+    window.dispatchEvent(e);
+
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  test("ignores the legacy IME sentinel keyCode 229", () => {
+    const handler = vi.fn();
+    r.register({ id: "play", description: "Play", keys: ["Space"], handler });
+
+    detach = attachToWindow(r);
+    // Some browsers emit keyCode 229 for IME composition without setting isComposing.
+    const e = new KeyboardEvent("keydown", { code: "Space", keyCode: 229, bubbles: true });
+    window.dispatchEvent(e);
+
+    expect(handler).not.toHaveBeenCalled();
+  });
 });
