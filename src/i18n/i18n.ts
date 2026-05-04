@@ -1,4 +1,4 @@
-import { type Flatten, flatten, translator } from "@solid-primitives/i18n";
+import { type Flatten, flatten, resolveTemplate, translator } from "@solid-primitives/i18n";
 import { type Messages, en } from "~/i18n/messages/en";
 
 /** All locales currently shipped. Add new entries as their catalogs land. */
@@ -16,7 +16,7 @@ let activeFlat: FlatMessages = initialFlat;
  * Translate a message key. The factory closure means subsequent {@link setLocale}
  * calls are picked up by future invocations without re-importing.
  */
-export const t = translator<FlatMessages>(() => activeFlat);
+export const t = translator<FlatMessages>(() => activeFlat, resolveTemplate);
 
 /** Returns the currently active locale tag. */
 export function getLocale(): Locale {

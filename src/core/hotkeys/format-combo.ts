@@ -1,8 +1,10 @@
 import { type Platform, detectPlatform, parseCombo } from "~/core/hotkeys/platform";
+import { t } from "~/i18n";
 
 /**
  * Renders a combo string like `"ctrl+KeyS"` into a human-readable label like
- * `"Ctrl+S"` suitable for help tables and tooltips.
+ * `"Ctrl+S"` suitable for help tables and tooltips. Modifier and named-key
+ * labels come from the active locale via the i18n catalog.
  *
  * `"mod"` resolves to the platform's primary modifier: Cmd on mac/iOS, Ctrl
  * elsewhere. `"meta"` renders as Cmd on mac/iOS, Win on Windows, Super on
@@ -31,11 +33,11 @@ const MODIFIER_ORDER = ["ctrl", "alt", "shift", "meta"] as const;
 function formatModifier(mod: string, platform: Platform): string {
   switch (mod) {
     case "ctrl":
-      return "Ctrl";
+      return t("hotkey.modifier.ctrl");
     case "alt":
-      return "Alt";
+      return t("hotkey.modifier.alt");
     case "shift":
-      return "Shift";
+      return t("hotkey.modifier.shift");
     case "meta":
       return formatMeta(platform);
     default:
@@ -43,38 +45,45 @@ function formatModifier(mod: string, platform: Platform): string {
   }
 }
 
-/** Per-OS display label for the meta key (Cmd / Win / Super / Meta). */
+/** Per-OS display label for the meta key. */
 function formatMeta(platform: Platform): string {
   switch (platform) {
     case "mac":
     case "ios":
-      return "Cmd";
+      return t("hotkey.modifier.meta.mac");
     case "windows":
-      return "Win";
+      return t("hotkey.modifier.meta.windows");
     case "linux":
-      return "Super";
+      return t("hotkey.modifier.meta.linux");
     default:
-      return "Meta";
+      return t("hotkey.modifier.meta.other");
   }
 }
 
-/** `event.code` → display label for keys that don't follow the `KeyX` / `DigitX` / `FN` patterns. */
-const NAMED_KEYS: Readonly<Record<string, string>> = {
-  Space: "Space",
-  Enter: "Enter",
-  Escape: "Esc",
-  Backspace: "Backspace",
-  Tab: "Tab",
-  Delete: "Delete",
-  Home: "Home",
-  End: "End",
-  PageUp: "Page Up",
-  PageDown: "Page Down",
-  Insert: "Insert",
-  ArrowLeft: "Left",
-  ArrowRight: "Right",
-  ArrowUp: "Up",
-  ArrowDown: "Down",
+/**
+ * `event.code` → catalog key for keys that don't follow the `KeyX` / `DigitX`
+ * / `FN` patterns and aren't punctuation glyphs.
+ */
+const NAMED_KEY_CATALOG: Readonly<Record<string, Parameters<typeof t>[0]>> = {
+  Space: "hotkey.key.space",
+  Enter: "hotkey.key.enter",
+  Escape: "hotkey.key.escape",
+  Backspace: "hotkey.key.backspace",
+  Tab: "hotkey.key.tab",
+  Delete: "hotkey.key.delete",
+  Home: "hotkey.key.home",
+  End: "hotkey.key.end",
+  PageUp: "hotkey.key.pageUp",
+  PageDown: "hotkey.key.pageDown",
+  Insert: "hotkey.key.insert",
+  ArrowLeft: "hotkey.key.arrowLeft",
+  ArrowRight: "hotkey.key.arrowRight",
+  ArrowUp: "hotkey.key.arrowUp",
+  ArrowDown: "hotkey.key.arrowDown",
+};
+
+/** Punctuation glyphs are the same in every locale, so they bypass the catalog. */
+const PUNCTUATION_GLYPHS: Readonly<Record<string, string>> = {
   Minus: "-",
   Equal: "=",
   Slash: "/",
@@ -99,12 +108,17 @@ function formatKey(code: string): string {
   }
 
   if (code.startsWith("Numpad")) {
-    return `Numpad ${code.slice(6)}`;
+    return t("hotkey.key.numpad", { suffix: code.slice(6) });
   }
 
   if (/^F\d{1,2}$/.test(code)) {
     return code;
   }
 
-  return NAMED_KEYS[code] ?? code;
+  const catalogKey = NAMED_KEY_CATALOG[code];
+  if (catalogKey) {
+    return t(catalogKey) as string;
+  }
+
+  return PUNCTUATION_GLYPHS[code] ?? code;
 }
