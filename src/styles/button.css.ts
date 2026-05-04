@@ -9,7 +9,10 @@ globalStyle("button", {
   border: `1px solid ${tokens.theme.accent}`,
   paddingBlock: "0.4em",
   paddingInline: "1em",
+  // both axes ≥ WCAG 2.5.8 AA target size; inline-size guards single-character
+  // labels (icon buttons) where padding alone wouldn't reach 24px.
   minBlockSize: "24px",
+  minInlineSize: "24px",
   cursor: "pointer",
 });
 
