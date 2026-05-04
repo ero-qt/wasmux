@@ -7,7 +7,8 @@ globalStyle("button", {
   color: tokens.theme.accent,
   background: "transparent",
   border: `1px solid ${tokens.theme.accent}`,
-  padding: "0.4em 1em",
+  paddingBlock: "0.4em",
+  paddingInline: "1em",
   minBlockSize: "24px",
   cursor: "pointer",
 });
