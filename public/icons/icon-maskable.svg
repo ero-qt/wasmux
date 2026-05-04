@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+  <!-- Maskable variant: the original 8x8 logo lives inside a 10x10 canvas
+       (1-unit padding on every side) so the icon's safe zone is the central
+       80%, matching the W3C maskable spec. Adaptive launchers can crop the
+       outer ring to a circle, squircle, or rounded square without clipping
+       the brand mark. The solid background prevents transparent-background
+       launchers from showing wallpaper through the corners. -->
+  <defs>
+    <path
+      id="wasm-logo"
+      d="M 1 2 A 1 1 0 0 1 2 1 L 4 1 A 1 1 0 0 0 6 1 L 8 1 A 1 1 0 0 1 9 2 L 9 8 A 1 1 0 0 1 8 9 L 2 9 A 1 1 0 0 1 1 8 Z"
+    />
+    <clipPath id="clip"><use href="#wasm-logo" /></clipPath>
+  </defs>
+
+  <rect width="10" height="10" fill="#000000" />
+  <use href="#wasm-logo" fill="none" stroke="#80a0d0" stroke-width="2" clip-path="url(#clip)" />
+  <path
+    d="M 3.8 3.8 L 3.8 6.8 L 6.2 5.3 Z"
+    fill="#80a0d0"
+    stroke="#80a0d0"
+    stroke-linejoin="round"
+  />
+</svg>

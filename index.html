@@ -26,7 +26,10 @@
   />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <!-- iOS doesn't officially support SVG for apple-touch-icon, but it works
+       on iOS 12+; the worst-case fallback (page screenshot) is no worse
+       than omitting the link, and we avoid shipping a redundant raster. -->
+  <link rel="apple-touch-icon" href="/favicon.svg" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="theme-color" content="#000000" />
   <title>wasmux</title>

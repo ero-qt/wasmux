@@ -165,11 +165,10 @@ describe("PWA: manifest.webmanifest", () => {
     expect(manifest.display).toBe("standalone");
   });
 
-  test("ships 192 and 512 PNG icons plus a 512 maskable", () => {
+  test("ships an SVG icon and a maskable variant", () => {
     const icons = manifest.icons ?? [];
-    expect(icons.some((i) => i.sizes === "192x192" && i.type === "image/png")).toBe(true);
-    expect(icons.some((i) => i.sizes === "512x512" && i.type === "image/png")).toBe(true);
-    expect(icons.some((i) => i.sizes === "512x512" && i.purpose === "maskable")).toBe(true);
+    expect(icons.some((i) => i.type === "image/svg+xml" && i.purpose !== "maskable")).toBe(true);
+    expect(icons.some((i) => i.type === "image/svg+xml" && i.purpose === "maskable")).toBe(true);
   });
 });
 
