@@ -10,20 +10,27 @@ export const center = style({
 
 /**
  * Named-area grid that is the top-level chrome. Regions: header / bin / program /
- * inspector / timeline / status. Floating panels (perf, jobs) overlay this grid;
- * when they're built they live in a sibling overlay layer rather than a region.
+ * inspector / timeline / status. Only the program column and the editing row
+ * scale; everything else hugs its content. Floating panels (perf, jobs) live
+ * in a sibling overlay layer rather than a region.
  */
 export const appShell = style({
   minBlockSize: "100dvb",
   display: "grid",
-  gridTemplateColumns: "minmax(180px, 1fr) minmax(360px, 3fr) minmax(220px, 1fr)",
-  gridTemplateRows: "auto minmax(0, 2fr) minmax(0, 3fr) auto",
+  gridTemplateColumns: "auto 1fr auto",
+  gridTemplateRows: "auto 1fr auto auto",
   gridTemplateAreas: `
     "header   header    header"
     "bin      program   inspector"
     "timeline timeline  timeline"
     "status   status    status"
   `,
+});
+
+/** Header brand mark; matches the body font size rather than browser-default `<h1>`. */
+export const brandMark = style({
+  margin: 0,
+  fontSize: "1rem",
 });
 
 const region = style({

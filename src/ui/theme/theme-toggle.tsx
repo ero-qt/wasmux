@@ -20,7 +20,7 @@ export const ThemeToggle: Component<ThemeToggleProps> = (props) => {
       registry={props.registry}
       id="theme.toggle"
       description={t("theme.toggle.description")}
-      keys={["mod+shift+KeyT"]}
+      keys={["KeyT"]}
       toggled={theme() === "dark"}
       onClick={toggleTheme}
     >

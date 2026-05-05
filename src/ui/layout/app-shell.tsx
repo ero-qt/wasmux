@@ -4,6 +4,7 @@ import { t } from "~/i18n";
 import {
   appShell,
   binRegion,
+  brandMark,
   headerRegion,
   inspectorRegion,
   placeholderText,
@@ -27,7 +28,7 @@ export const AppShell: Component<AppShellProps> = (props) => {
   return (
     <div class={appShell}>
       <header class={headerRegion}>
-        <h1 style={{ margin: 0, "font-size": "1rem" }}>{t("brand")}</h1>
+        <h1 class={brandMark}>{t("brand")}</h1>
         <ThemeToggle registry={props.registry} />
       </header>
 
