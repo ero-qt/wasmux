@@ -23,6 +23,21 @@ export const en = {
       description: "Toggle theme",
     },
   },
+  panel: {
+    close: "Close",
+    jobs: {
+      title: "Jobs",
+      toggle: "Toggle jobs panel",
+    },
+  },
+  jobs: {
+    empty: "No jobs this session",
+    expand: "Expand",
+    collapse: "Collapse",
+  },
+  dev: {
+    demoJob: "Run demo job (dev only)",
+  },
   hotkey: {
     modifier: {
       ctrl: "Ctrl",
