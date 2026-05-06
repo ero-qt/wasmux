@@ -1,3 +1,4 @@
+import { createDraggable } from "@neodrag/solid";
 import { type Component, type JSX, Show } from "solid-js";
 import { t } from "~/i18n";
 import {
@@ -10,11 +11,11 @@ import {
   panelTitle,
   panelTopRight,
 } from "~/styles/panel.css";
-import { closePanel, isPanelOpen } from "~/ui/panels/panel-store";
+import { closePanel, isPanelOpen, panelPosition, setPanelPosition } from "~/ui/panels/panel-store";
 
-export type PanelPosition = "top-right" | "bottom-right" | "bottom-left";
+export type PanelCorner = "top-right" | "bottom-right" | "bottom-left";
 
-const positionClass: Record<PanelPosition, string> = {
+const cornerClass: Record<PanelCorner, string> = {
   "top-right": panelTopRight,
   "bottom-right": panelBottomRight,
   "bottom-left": panelBottomLeft,
@@ -27,22 +28,41 @@ export interface FloatingPanelProps {
   /** Title rendered in the panel header. */
   title: string;
 
-  /** Default screen position when open. */
-  position: PanelPosition;
+  /** Default screen corner when first opened, before any drag. */
+  position: PanelCorner;
 
   children: JSX.Element;
 }
 
 /**
- * Non-modal overlay window. Renders nothing while the panel is closed; on
- * open, mounts at the configured corner with a header (title + close button)
- * and a scrollable body. Drag/resize are deliberately absent for v0.
+ * Non-modal overlay window. Mounts at the configured corner; the user can
+ * drag it by the header to reposition. Drag offset persists per panel id in
+ * the panel store, so closing and reopening returns the panel to wherever the
+ * user last left it. Resize and snap are deferred to follow-up commits.
  */
 export const FloatingPanel: Component<FloatingPanelProps> = (props) => {
+  const { draggable } = createDraggable();
+  // referenced by the use:draggable directive below; the void keeps biome
+  // from flagging it as unused since it can't see the directive consumption.
+  void draggable;
+
+  // header is the drag handle, identified by its vanilla-extract class.
+  // neodrag treats `handle` as a CSS selector when given a string, which
+  // sidesteps the late-mount ref problem.
+  const headerSelector = `.${panelHeader}`;
+
   return (
     <Show when={isPanelOpen(props.id)}>
       <section
-        class={`${panel} ${positionClass[props.position]}`}
+        use:draggable={{
+          handle: headerSelector,
+          position: panelPosition(props.id),
+          bounds: "body",
+          onDrag: ({ offsetX, offsetY }) => {
+            setPanelPosition(props.id, { x: offsetX, y: offsetY });
+          },
+        }}
+        class={`${panel} ${cornerClass[props.position]}`}
         role="dialog"
         aria-label={props.title}
       >

@@ -5,11 +5,16 @@ import {
   isPanelOpen,
   openPanel,
   openPanels,
+  panelPosition,
+  resetAllPanelPositions,
+  resetPanelPosition,
+  setPanelPosition,
   togglePanel,
 } from "~/ui/panels/panel-store";
 
 afterEach(() => {
   closeAllPanels();
+  resetAllPanelPositions();
 });
 
 describe("panel store", () => {
@@ -59,5 +64,48 @@ describe("panel store", () => {
     openPanel("perf");
     closeAllPanels();
     expect(openPanels()).toEqual([]);
+  });
+
+  test("panelPosition defaults to the origin when never set", () => {
+    expect(panelPosition("jobs")).toEqual({ x: 0, y: 0 });
+  });
+
+  test("setPanelPosition stores the offset", () => {
+    setPanelPosition("jobs", { x: 42, y: -10 });
+    expect(panelPosition("jobs")).toEqual({ x: 42, y: -10 });
+  });
+
+  test("position survives close and reopen", () => {
+    openPanel("jobs");
+    setPanelPosition("jobs", { x: 50, y: 50 });
+    closePanel("jobs");
+    openPanel("jobs");
+    expect(panelPosition("jobs")).toEqual({ x: 50, y: 50 });
+  });
+
+  test("resetPanelPosition returns the panel to the origin", () => {
+    setPanelPosition("jobs", { x: 50, y: 50 });
+    resetPanelPosition("jobs");
+    expect(panelPosition("jobs")).toEqual({ x: 0, y: 0 });
+  });
+
+  test("resetting a never-set panel is a no-op", () => {
+    resetPanelPosition("jobs");
+    expect(panelPosition("jobs")).toEqual({ x: 0, y: 0 });
+  });
+
+  test("positions are independent across panel ids", () => {
+    setPanelPosition("jobs", { x: 10, y: 10 });
+    setPanelPosition("perf", { x: 20, y: 20 });
+    expect(panelPosition("jobs")).toEqual({ x: 10, y: 10 });
+    expect(panelPosition("perf")).toEqual({ x: 20, y: 20 });
+  });
+
+  test("resetAllPanelPositions drops every stored offset", () => {
+    setPanelPosition("jobs", { x: 10, y: 10 });
+    setPanelPosition("perf", { x: 20, y: 20 });
+    resetAllPanelPositions();
+    expect(panelPosition("jobs")).toEqual({ x: 0, y: 0 });
+    expect(panelPosition("perf")).toEqual({ x: 0, y: 0 });
   });
 });

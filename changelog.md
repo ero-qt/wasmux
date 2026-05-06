@@ -32,3 +32,5 @@ it follows [keep a changelog](https://keepachangelog.com) principles and wasmux 
 - jobs UI: singleton `jobTracker` plus reactive `reactiveRoots` / `reactiveChildren` / `reactiveChain` accessors backed by a single bump signal; `<JobsPanel>` collapsible tree (oldest at top, expand/collapse on nodes with children); `<JobChainWidget>` in the status bar showing the deepest running leaf as `Render › Encode › Frame 42%`
 - `j` toggles the jobs panel; `mod+shift+G` fires a synthetic two-child demo job (dev only)
 - behavioral component tests added via `@solidjs/testing-library`
+- status-bar `PanelToggle` button: clicks the panel open/closed, `aria-pressed` reflects current state. The status bar gains a flex spacer that pushes toggles to the right of the chain widget
+- floating panels are draggable by their header (powered by `@neodrag/solid`). drag offset persists per panel id in the store, so close + reopen returns the panel to where the user last left it. resize, snap, keyboard-arrow drag are deferred to follow-up commits
