@@ -71,6 +71,18 @@ export const statusRegion = style([
   },
 ]);
 
+/** Status-bar slot that consumes the leftover space, pushing siblings apart. */
+export const statusSpacer = style({
+  flex: 1,
+});
+
+/** Status-bar group of action buttons / toggles, sized to content. */
+export const statusActions = style({
+  display: "flex",
+  alignItems: "center",
+  gap: "0.4rem",
+});
+
 /** Visually de-emphasised text used in placeholder regions. */
 export const placeholderText = style({
   opacity: 0.5,
