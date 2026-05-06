@@ -19,7 +19,7 @@ if (import.meta.env.DEV) {
   hotkeys.register({
     id: "dev.demoJob",
     description: t("dev.demoJob"),
-    keys: ["mod+shift+KeyG"],
+    keys: ["KeyG"],
     handler: () => {
       fireDemoJob().catch((err) => console.error("demo job failed:", err));
     },
