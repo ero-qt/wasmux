@@ -16,6 +16,10 @@ export const en = {
     timeline: "timeline",
     status: "status",
   },
+  header: {
+    views: "views",
+    viewsToggle: "open views menu",
+  },
   theme: {
     dark: "dark",
     light: "light",

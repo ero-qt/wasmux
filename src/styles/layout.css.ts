@@ -33,6 +33,13 @@ export const brandMark = style({
   fontSize: "1rem",
 });
 
+/** Cluster of header actions (views menu, theme toggle, etc.) on the inline-end side. */
+export const headerActions = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "0.5rem",
+});
+
 /**
  * Region base. No borders between regions; visual separation comes from
  * spacing and the eventual content density. Drop a subtle background tint

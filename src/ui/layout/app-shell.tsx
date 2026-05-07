@@ -5,20 +5,19 @@ import {
   appShell,
   binRegion,
   brandMark,
+  headerActions,
   headerRegion,
   inspectorRegion,
   placeholderText,
   programRegion,
-  statusActions,
   statusRegion,
-  statusSpacer,
   timelineRegion,
 } from "~/styles/layout.css";
+import { ViewsMenu } from "~/ui/header/views-menu";
 import { JobChainWidget } from "~/ui/jobs/job-chain-widget";
 import { JobsPanel } from "~/ui/jobs/jobs-panel";
 import { FloatingPanel } from "~/ui/panels/floating-panel";
 import { PanelOverlay } from "~/ui/panels/panel-overlay";
-import { PanelToggle } from "~/ui/panels/panel-toggle";
 import { ThemeToggle } from "~/ui/theme/theme-toggle";
 
 export interface AppShellProps {
@@ -37,7 +36,10 @@ export const AppShell: Component<AppShellProps> = (props) => {
       <div class={appShell}>
         <header class={headerRegion}>
           <h1 class={brandMark}>{t("brand")}</h1>
-          <ThemeToggle registry={props.registry} />
+          <span class={headerActions}>
+            <ViewsMenu />
+            <ThemeToggle registry={props.registry} />
+          </span>
         </header>
 
         <aside class={binRegion} aria-label={t("region.bin")}>
@@ -58,10 +60,6 @@ export const AppShell: Component<AppShellProps> = (props) => {
 
         <section class={statusRegion} aria-label={t("region.status")}>
           <JobChainWidget />
-          <span class={statusSpacer} />
-          <span class={statusActions}>
-            <PanelToggle id="jobs" label={t("panel.jobs.title")} />
-          </span>
         </section>
       </div>
 
