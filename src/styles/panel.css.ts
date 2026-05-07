@@ -60,25 +60,28 @@ export const panelBody = style({
 });
 
 /**
- * Stacking position presets. Every preset anchors by `inset-block-start` (top)
- * so panels grow downward as their content expands. The "bottom" presets just
- * compute a top offset that lands the panel near the viewport bottom on first
- * open; they don't pin the bottom edge.
+ * Stacking position presets. Every preset anchors by `inset-block-start` and
+ * `inset-inline-start` so panels grow toward the bottom-right as their content
+ * expands. "bottom" / "right" presets compute the start offset from viewport
+ * dimensions to place the panel near that edge on first open without pinning
+ * it there.
  *
- * `max(1rem, …)` keeps the top inside the viewport on very short screens.
- * `30rem` is the assumed default panel height for placement; the actual
- * panel still respects `max-block-size: min(70vh, 100dvb)` from `panel`.
+ * `max(1rem, …)` keeps the start edge inside the viewport on small screens.
+ * 30rem and 28rem mirror the assumed default block / max inline sizes; actual
+ * panels still respect `max-block-size: min(70vh, 100dvb)` and
+ * `max-inline-size: min(28rem, 100vw)` from `panel`.
  */
 const BOTTOM_TOP = "max(1rem, calc(100dvh - 30rem - 3rem))";
+const RIGHT_LEFT = "max(1rem, calc(100vw - 28rem - 1rem))";
 
 export const panelTopRight = style({
   insetBlockStart: "1rem",
-  insetInlineEnd: "1rem",
+  insetInlineStart: RIGHT_LEFT,
 });
 
 export const panelBottomRight = style({
   insetBlockStart: BOTTOM_TOP,
-  insetInlineEnd: "1rem",
+  insetInlineStart: RIGHT_LEFT,
 });
 
 export const panelBottomLeft = style({
