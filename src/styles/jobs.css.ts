@@ -20,15 +20,17 @@ export const jobNode = style({});
 
 export const jobNodeHeader = style({
   display: "flex",
-  alignItems: "baseline",
+  alignItems: "center",
   gap: "0.4rem",
 });
 
-/** Triangle that toggles a node. Reserves layout space even on leaf nodes. */
+/** Disclosure button. Borderless, padded to keep the icon centered. */
 export const jobToggle = style({
-  display: "inline-block",
-  inlineSize: "1em",
-  textAlign: "center",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  inlineSize: "1.4em",
+  blockSize: "1.4em",
   background: "transparent",
   border: "none",
   cursor: "pointer",
@@ -37,12 +39,23 @@ export const jobToggle = style({
   padding: 0,
   minBlockSize: "auto",
   minInlineSize: "auto",
+  borderRadius: "0.3rem",
+  flexShrink: 0,
+});
+
+/** Triangle SVG inside {@link jobToggle}. Rotates 90° when the parent is expanded. */
+export const jobToggleIcon = style({
+  transition: "transform 120ms ease",
+  selectors: {
+    'button[aria-expanded="true"] &': {
+      transform: "rotate(90deg)",
+    },
+  },
 });
 
 export const jobStatusBadge = style({
   fontSize: "0.8em",
-  opacity: 0.7,
-  textTransform: "uppercase",
+  opacity: 0.6,
 });
 
 export const jobReportLine = style({

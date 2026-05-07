@@ -33,9 +33,12 @@ export const brandMark = style({
   fontSize: "1rem",
 });
 
+/**
+ * Region base. No borders between regions; visual separation comes from
+ * spacing and the eventual content density. Drop a subtle background tint
+ * here later if regions feel too uniform.
+ */
 const region = style({
-  borderInlineStart: `1px solid ${tokens.theme.accent}`,
-  borderBlockStart: `1px solid ${tokens.theme.accent}`,
   padding: "0.75rem 1rem",
   overflow: "auto",
 });
@@ -44,8 +47,6 @@ export const headerRegion = style([
   region,
   {
     gridArea: "header",
-    borderInlineStart: "none",
-    borderBlockStart: "none",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
@@ -53,21 +54,21 @@ export const headerRegion = style([
   },
 ]);
 
-export const binRegion = style([region, { gridArea: "bin", borderInlineStart: "none" }]);
+export const binRegion = style([region, { gridArea: "bin" }]);
 export const programRegion = style([region, { gridArea: "program" }]);
 export const inspectorRegion = style([region, { gridArea: "inspector" }]);
-export const timelineRegion = style([region, { gridArea: "timeline", borderInlineStart: "none" }]);
+export const timelineRegion = style([region, { gridArea: "timeline" }]);
 
 export const statusRegion = style([
   region,
   {
     gridArea: "status",
-    borderInlineStart: "none",
     paddingBlock: "0.4rem",
     fontSize: "0.85em",
     display: "flex",
     alignItems: "center",
     gap: "1rem",
+    borderBlockStart: `1px solid color-mix(in oklab, ${tokens.theme.accent} 15%, transparent)`,
   },
 ]);
 

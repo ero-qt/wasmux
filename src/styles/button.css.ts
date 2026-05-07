@@ -6,7 +6,8 @@ globalStyle("button", {
   fontSize: "inherit",
   color: tokens.theme.accent,
   background: "transparent",
-  border: `1px solid ${tokens.theme.accent}`,
+  border: `1px solid color-mix(in oklab, ${tokens.theme.accent} 40%, transparent)`,
+  borderRadius: "0.4rem",
   paddingBlock: "0.4em",
   paddingInline: "1em",
   // both axes ≥ WCAG 2.5.8 AA target size; inline-size guards single-character
@@ -14,10 +15,11 @@ globalStyle("button", {
   minBlockSize: "24px",
   minInlineSize: "24px",
   cursor: "pointer",
+  transition: "background-color 120ms ease, border-color 120ms ease",
 });
 
 globalStyle("button:focus-visible", {
-  outline: "2px solid",
+  outline: `2px solid ${tokens.theme.accent}`,
   outlineOffset: "2px",
 });
 

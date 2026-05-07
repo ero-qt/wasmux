@@ -14,17 +14,25 @@ export const panelOverlay = style({
   zIndex: 1000,
 });
 
-/** Common chrome for a floating panel: border, background, drop shadow. */
+/**
+ * Common chrome for a floating panel. Soft outline + drop shadow rather than a
+ * solid border so the panel reads as a card without a hard edge. Inline-size
+ * cap subtracts 2rem from viewport width to keep a margin on either side on
+ * narrow screens.
+ */
 export const panel = style({
   position: "absolute",
   pointerEvents: "auto",
   background: tokens.theme.bg,
-  border: `1px solid ${tokens.theme.accent}`,
+  borderRadius: "0.6rem",
+  border: `1px solid color-mix(in oklab, ${tokens.theme.accent} 30%, transparent)`,
+  boxShadow: `0 0.5rem 1.5rem color-mix(in oklab, ${tokens.theme.accent} 15%, transparent)`,
   minInlineSize: "16rem",
-  maxInlineSize: "min(28rem, 100vw)",
-  maxBlockSize: "min(70vh, 100dvb)",
+  maxInlineSize: "min(28rem, calc(100vw - 2rem))",
+  maxBlockSize: "min(70vh, calc(100dvb - 2rem))",
   display: "flex",
   flexDirection: "column",
+  overflow: "hidden",
 });
 
 export const panelHeader = style({
@@ -32,9 +40,10 @@ export const panelHeader = style({
   alignItems: "center",
   justifyContent: "space-between",
   gap: "0.5rem",
-  paddingBlock: "0.4rem",
-  paddingInline: "0.75rem",
-  borderBlockEnd: `1px solid ${tokens.theme.accent}`,
+  paddingBlock: "0.5rem",
+  paddingInline: "0.85rem",
+  cursor: "move",
+  userSelect: "none",
 });
 
 export const panelTitle = style({
@@ -43,14 +52,16 @@ export const panelTitle = style({
   fontWeight: "normal",
 });
 
-/** Close button is small and unobtrusive; overrides the global button rule. */
+/** Close button: small, borderless, picks up the soft hover wash from button.css. */
 export const panelClose = style({
   paddingBlock: "0.1em",
-  paddingInline: "0.5em",
+  paddingInline: "0.45em",
   minBlockSize: "auto",
   minInlineSize: "auto",
-  fontSize: "1em",
+  fontSize: "1.1em",
   lineHeight: 1,
+  border: "none",
+  borderRadius: "0.4rem",
 });
 
 export const panelBody = style({
