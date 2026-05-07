@@ -4,11 +4,11 @@ import { t } from "~/i18n";
 import {
   jobChildren,
   jobNode,
-  jobNodeHeader,
   jobReportLine,
+  jobRow,
   jobStatusBadge,
-  jobToggle,
   jobToggleIcon,
+  jobToggleSlot,
   jobsEmpty,
   jobsTreeRoot,
 } from "~/styles/jobs.css";
@@ -36,15 +36,23 @@ const JobNode: Component<JobNodeProps> = (props) => {
 
   return (
     <li class={jobNode}>
-      <div class={jobNodeHeader}>
-        <Show when={hasChildren()} fallback={<span class={jobToggle} aria-hidden="true" />}>
-          <button
-            type="button"
-            class={jobToggle}
-            onClick={() => setExpanded((v) => !v)}
-            aria-expanded={expanded()}
-            aria-label={expanded() ? t("jobs.collapse") : t("jobs.expand")}
-          >
+      <Show
+        when={hasChildren()}
+        fallback={
+          <div class={jobRow}>
+            <span class={jobToggleSlot} aria-hidden="true" />
+            <NodeContent job={props.job} />
+          </div>
+        }
+      >
+        <button
+          type="button"
+          class={jobRow}
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded()}
+          aria-label={expanded() ? t("jobs.collapse") : t("jobs.expand")}
+        >
+          <span class={jobToggleSlot}>
             <svg
               class={jobToggleIcon}
               viewBox="0 0 12 12"
@@ -55,26 +63,33 @@ const JobNode: Component<JobNodeProps> = (props) => {
             >
               <path d="M4 2.5 L9 6 L4 9.5 Z" />
             </svg>
-          </button>
-        </Show>
-        <span>{props.job.name}</span>
-        <span class={jobStatusBadge}>{props.job.status}</span>
-        <Show when={props.job.latestReport}>
-          {(r) => (
-            <span class={jobReportLine}>
-              <Show when={r().progress !== undefined}>
-                {Math.round((r().progress ?? 0) * 100)}%
-              </Show>
-              <Show when={r().message}>{` ${r().message}`}</Show>
-            </span>
-          )}
-        </Show>
-      </div>
+          </span>
+          <NodeContent job={props.job} />
+        </button>
+      </Show>
       <Show when={hasChildren() && expanded()}>
         <ol class={jobChildren}>
           <For each={children()}>{(child) => <JobNode job={child} />}</For>
         </ol>
       </Show>
     </li>
+  );
+};
+
+/** The text columns of a row: name, status badge, latest report progress/message. */
+const NodeContent: Component<{ job: TrackedJob }> = (props) => {
+  return (
+    <>
+      <span>{props.job.name}</span>
+      <span class={jobStatusBadge}>{props.job.status}</span>
+      <Show when={props.job.latestReport}>
+        {(r) => (
+          <span class={jobReportLine}>
+            <Show when={r().progress !== undefined}>{Math.round((r().progress ?? 0) * 100)}%</Show>
+            <Show when={r().message}>{` ${r().message}`}</Show>
+          </span>
+        )}
+      </Show>
+    </>
   );
 };

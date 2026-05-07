@@ -18,32 +18,54 @@ export const jobsTreeRoot = style({
 
 export const jobNode = style({});
 
-export const jobNodeHeader = style({
+/**
+ * One row in the tree. Used as a `<button>` for nodes with children (whole
+ * row toggles) and as a `<div>` for leaves. Resets the global button rule so
+ * the row reads as a flat highlight strip rather than a bordered button.
+ *
+ * Hover behaviour: hovering a row highlights itself plus every descendant
+ * row in its sibling `<ol>`. Hovering a child does not bubble up because
+ * `:hover` here is scoped to the row element, not the surrounding `<li>`.
+ */
+export const jobRow = style({
   display: "flex",
   alignItems: "center",
   gap: "0.4rem",
+  inlineSize: "100%",
+  background: "transparent",
+  border: "none",
+  borderRadius: "0.3rem",
+  paddingBlock: "0.2rem",
+  paddingInline: "0.3rem",
+  minBlockSize: "auto",
+  minInlineSize: "auto",
+  textAlign: "start",
+  color: "inherit",
+  font: "inherit",
+  selectors: {
+    "button&": {
+      cursor: "pointer",
+    },
+    "&:hover, &:hover + ol &": {
+      background: `color-mix(in oklab, ${tokens.theme.accent} 10%, transparent)`,
+    },
+  },
 });
 
-/** Disclosure button. Borderless, padded to keep the icon centered. */
-export const jobToggle = style({
+/**
+ * Reserved space at the start of every row so the disclosure icon (or its
+ * absence on leaves) keeps text columns aligned.
+ */
+export const jobToggleSlot = style({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  inlineSize: "1.4em",
-  blockSize: "1.4em",
-  background: "transparent",
-  border: "none",
-  cursor: "pointer",
-  color: "inherit",
-  font: "inherit",
-  padding: 0,
-  minBlockSize: "auto",
-  minInlineSize: "auto",
-  borderRadius: "0.3rem",
+  inlineSize: "1.1em",
+  blockSize: "1.1em",
   flexShrink: 0,
 });
 
-/** Triangle SVG inside {@link jobToggle}. Rotates 90° when the parent is expanded. */
+/** Triangle SVG inside an expandable row. Rotates 90° when the row is expanded. */
 export const jobToggleIcon = style({
   transition: "transform 120ms ease",
   selectors: {
