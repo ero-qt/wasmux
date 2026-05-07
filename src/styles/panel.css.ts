@@ -59,18 +59,29 @@ export const panelBody = style({
   flex: 1,
 });
 
-/** Stacking position presets so callers don't reinvent inset values. */
+/**
+ * Stacking position presets. Every preset anchors by `inset-block-start` (top)
+ * so panels grow downward as their content expands. The "bottom" presets just
+ * compute a top offset that lands the panel near the viewport bottom on first
+ * open; they don't pin the bottom edge.
+ *
+ * `max(1rem, …)` keeps the top inside the viewport on very short screens.
+ * `30rem` is the assumed default panel height for placement; the actual
+ * panel still respects `max-block-size: min(70vh, 100dvb)` from `panel`.
+ */
+const BOTTOM_TOP = "max(1rem, calc(100dvh - 30rem - 3rem))";
+
 export const panelTopRight = style({
   insetBlockStart: "1rem",
   insetInlineEnd: "1rem",
 });
 
 export const panelBottomRight = style({
-  insetBlockEnd: "3rem",
+  insetBlockStart: BOTTOM_TOP,
   insetInlineEnd: "1rem",
 });
 
 export const panelBottomLeft = style({
-  insetBlockEnd: "3rem",
+  insetBlockStart: BOTTOM_TOP,
   insetInlineStart: "1rem",
 });
