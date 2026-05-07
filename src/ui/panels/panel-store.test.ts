@@ -6,15 +6,20 @@ import {
   openPanel,
   openPanels,
   panelPosition,
+  panelSize,
   resetAllPanelPositions,
+  resetAllPanelSizes,
   resetPanelPosition,
+  resetPanelSize,
   setPanelPosition,
+  setPanelSize,
   togglePanel,
 } from "~/ui/panels/panel-store";
 
 afterEach(() => {
   closeAllPanels();
   resetAllPanelPositions();
+  resetAllPanelSizes();
 });
 
 describe("panel store", () => {
@@ -107,5 +112,43 @@ describe("panel store", () => {
     resetAllPanelPositions();
     expect(panelPosition("jobs")).toEqual({ x: 0, y: 0 });
     expect(panelPosition("perf")).toEqual({ x: 0, y: 0 });
+  });
+
+  test("panelSize is undefined until first set", () => {
+    expect(panelSize("jobs")).toBeUndefined();
+  });
+
+  test("setPanelSize stores the dimensions", () => {
+    setPanelSize("jobs", { inlineSize: 320, blockSize: 480 });
+    expect(panelSize("jobs")).toEqual({ inlineSize: 320, blockSize: 480 });
+  });
+
+  test("resetPanelSize falls back to CSS default (undefined)", () => {
+    setPanelSize("jobs", { inlineSize: 320, blockSize: 480 });
+    resetPanelSize("jobs");
+    expect(panelSize("jobs")).toBeUndefined();
+  });
+
+  test("sizes are independent across panel ids", () => {
+    setPanelSize("jobs", { inlineSize: 200, blockSize: 300 });
+    setPanelSize("perf", { inlineSize: 400, blockSize: 500 });
+    expect(panelSize("jobs")).toEqual({ inlineSize: 200, blockSize: 300 });
+    expect(panelSize("perf")).toEqual({ inlineSize: 400, blockSize: 500 });
+  });
+
+  test("size survives close and reopen", () => {
+    openPanel("jobs");
+    setPanelSize("jobs", { inlineSize: 400, blockSize: 500 });
+    closePanel("jobs");
+    openPanel("jobs");
+    expect(panelSize("jobs")).toEqual({ inlineSize: 400, blockSize: 500 });
+  });
+
+  test("resetAllPanelSizes drops every stored size", () => {
+    setPanelSize("jobs", { inlineSize: 200, blockSize: 300 });
+    setPanelSize("perf", { inlineSize: 400, blockSize: 500 });
+    resetAllPanelSizes();
+    expect(panelSize("jobs")).toBeUndefined();
+    expect(panelSize("perf")).toBeUndefined();
   });
 });

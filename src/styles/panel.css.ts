@@ -19,6 +19,10 @@ export const panelOverlay = style({
  * solid border so the panel reads as a card without a hard edge. Inline-size
  * cap subtracts 2rem from viewport width to keep a margin on either side on
  * narrow screens.
+ *
+ * `resize: both` plus `overflow: hidden` gives the native bottom-right resize
+ * handle for mouse-driven resize. A `ResizeObserver` in `<FloatingPanel>`
+ * persists the resulting size to the panel store.
  */
 export const panel = style({
   position: "absolute",
@@ -33,6 +37,7 @@ export const panel = style({
   display: "flex",
   flexDirection: "column",
   overflow: "hidden",
+  resize: "both",
 });
 
 /**

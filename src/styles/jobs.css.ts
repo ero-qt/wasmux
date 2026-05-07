@@ -1,4 +1,4 @@
-import { keyframes, style } from "@vanilla-extract/css";
+import { globalStyle, keyframes, style } from "@vanilla-extract/css";
 import { tokens } from "~/styles/tokens.css";
 
 /**
@@ -114,22 +114,22 @@ export const jobStatusIcon = style({
 export const jobStatusRunning = style({ color: tokens.theme.accent });
 
 /**
- * Three-dot pulse for the running indicator. Each dot inside the SVG inherits
- * the animation from this class via a child selector and is offset so they
- * cascade from left to right.
+ * Three-dot pulse for the running indicator. Per-dot delays live in
+ * `globalStyle` because vanilla-extract's `selectors` block must always have
+ * `&` at the end of the selector chain, which prevents descendant rules.
  */
-export const jobLoadingDots = style({
-  selectors: {
-    "& circle": {
-      animation: `${dotPulse} 1.4s ease-in-out infinite`,
-    },
-    "& circle:nth-of-type(2)": {
-      animationDelay: "0.16s",
-    },
-    "& circle:nth-of-type(3)": {
-      animationDelay: "0.32s",
-    },
-  },
+export const jobLoadingDots = style({});
+
+globalStyle(`.${jobLoadingDots} circle`, {
+  animation: `${dotPulse} 1.4s ease-in-out infinite`,
+});
+
+globalStyle(`.${jobLoadingDots} circle:nth-of-type(2)`, {
+  animationDelay: "0.16s",
+});
+
+globalStyle(`.${jobLoadingDots} circle:nth-of-type(3)`, {
+  animationDelay: "0.32s",
 });
 export const jobStatusCompleted = style({ color: "#4caf50" });
 export const jobStatusFailed = style({ color: "#e57373" });

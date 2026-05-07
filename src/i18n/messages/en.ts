@@ -25,6 +25,7 @@ export const en = {
   },
   panel: {
     close: "Close",
+    dragHandle: template<{ title: string }>("Drag handle for {{ title }} panel"),
     jobs: {
       title: "Jobs",
       toggle: "Toggle jobs panel",

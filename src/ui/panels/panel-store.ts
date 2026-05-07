@@ -6,6 +6,12 @@ export interface PanelPosition {
   readonly y: number;
 }
 
+/** Pixel size of a panel. `undefined` for an axis means "use CSS default". */
+export interface PanelSize {
+  readonly inlineSize: number;
+  readonly blockSize: number;
+}
+
 const ORIGIN: PanelPosition = { x: 0, y: 0 };
 
 /**
@@ -21,6 +27,14 @@ const [openIds, setOpenIds] = createSignal<ReadonlySet<string>>(new Set());
  * survives close/reopen, since users expect a panel to stay where they put it.
  */
 const [positions, setPositions] = createSignal<ReadonlyMap<string, PanelPosition>>(new Map());
+
+/**
+ * User-resized size per panel. Same persistence rationale as positions: a
+ * panel keeps the size its user gave it across close/reopen. `undefined`
+ * means "no override; use CSS defaults", which is what newly-opened panels
+ * see until the user resizes them for the first time.
+ */
+const [sizes, setSizes] = createSignal<ReadonlyMap<string, PanelSize>>(new Map());
 
 /** Reactive accessor: `true` while the panel with `id` is open. */
 export function isPanelOpen(id: string): boolean {
@@ -99,4 +113,35 @@ export function resetPanelPosition(id: string): void {
 /** Drops every stored drag offset. Useful for test cleanup. */
 export function resetAllPanelPositions(): void {
   setPositions(new Map<string, PanelPosition>());
+}
+
+/** Reactive accessor: the panel's stored size, or `undefined` when never resized. */
+export function panelSize(id: string): PanelSize | undefined {
+  return sizes().get(id);
+}
+
+/** Stores `size` as the panel's user-resized dimensions. */
+export function setPanelSize(id: string, size: PanelSize): void {
+  setSizes((prev) => {
+    const next = new Map(prev);
+    next.set(id, size);
+    return next;
+  });
+}
+
+/** Drops the panel's stored size so it falls back to CSS defaults. */
+export function resetPanelSize(id: string): void {
+  setSizes((prev) => {
+    if (!prev.has(id)) {
+      return prev;
+    }
+    const next = new Map(prev);
+    next.delete(id);
+    return next;
+  });
+}
+
+/** Drops every stored size. Useful for test cleanup. */
+export function resetAllPanelSizes(): void {
+  setSizes(new Map<string, PanelSize>());
 }

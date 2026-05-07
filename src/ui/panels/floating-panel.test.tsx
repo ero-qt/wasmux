@@ -1,10 +1,20 @@
 import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
 import { afterEach, describe, expect, test } from "vitest";
 import { FloatingPanel } from "~/ui/panels/floating-panel";
-import { closeAllPanels, isPanelOpen, openPanel } from "~/ui/panels/panel-store";
+import {
+  closeAllPanels,
+  isPanelOpen,
+  openPanel,
+  panelPosition,
+  resetAllPanelPositions,
+  resetAllPanelSizes,
+  setPanelPosition,
+} from "~/ui/panels/panel-store";
 
 afterEach(() => {
   closeAllPanels();
+  resetAllPanelPositions();
+  resetAllPanelSizes();
   cleanup();
 });
 
@@ -41,5 +51,89 @@ describe("FloatingPanel", () => {
 
     fireEvent.click(screen.getByRole("button"));
     expect(isPanelOpen("jobs")).toBe(false);
+  });
+
+  describe("keyboard drag", () => {
+    test("ArrowRight nudges position by 10px on the inline axis", () => {
+      openPanel("jobs");
+      render(() => (
+        <FloatingPanel id="jobs" title="Jobs" position="bottom-right">
+          <p>body</p>
+        </FloatingPanel>
+      ));
+      const handle = screen.getByRole("toolbar");
+
+      fireEvent.keyDown(handle, { key: "ArrowRight" });
+      expect(panelPosition("jobs")).toEqual({ x: 10, y: 0 });
+    });
+
+    test("ArrowDown nudges position by 10px on the block axis", () => {
+      openPanel("jobs");
+      render(() => (
+        <FloatingPanel id="jobs" title="Jobs" position="bottom-right">
+          <p>body</p>
+        </FloatingPanel>
+      ));
+      const handle = screen.getByRole("toolbar");
+
+      fireEvent.keyDown(handle, { key: "ArrowDown" });
+      expect(panelPosition("jobs")).toEqual({ x: 0, y: 10 });
+    });
+
+    test("Shift+Arrow uses the larger 50px step", () => {
+      openPanel("jobs");
+      render(() => (
+        <FloatingPanel id="jobs" title="Jobs" position="bottom-right">
+          <p>body</p>
+        </FloatingPanel>
+      ));
+      const handle = screen.getByRole("toolbar");
+
+      fireEvent.keyDown(handle, { key: "ArrowLeft", shiftKey: true });
+      expect(panelPosition("jobs")).toEqual({ x: -50, y: 0 });
+    });
+
+    test("Escape resets the panel position to the origin", () => {
+      openPanel("jobs");
+      setPanelPosition("jobs", { x: 100, y: 100 });
+      render(() => (
+        <FloatingPanel id="jobs" title="Jobs" position="bottom-right">
+          <p>body</p>
+        </FloatingPanel>
+      ));
+      const handle = screen.getByRole("toolbar");
+
+      fireEvent.keyDown(handle, { key: "Escape" });
+      expect(panelPosition("jobs")).toEqual({ x: 0, y: 0 });
+    });
+
+    test("non-arrow keys are ignored", () => {
+      openPanel("jobs");
+      render(() => (
+        <FloatingPanel id="jobs" title="Jobs" position="bottom-right">
+          <p>body</p>
+        </FloatingPanel>
+      ));
+      const handle = screen.getByRole("toolbar");
+
+      fireEvent.keyDown(handle, { key: "Enter" });
+      fireEvent.keyDown(handle, { key: "a" });
+      expect(panelPosition("jobs")).toEqual({ x: 0, y: 0 });
+    });
+
+    test("successive arrow presses accumulate", () => {
+      openPanel("jobs");
+      render(() => (
+        <FloatingPanel id="jobs" title="Jobs" position="bottom-right">
+          <p>body</p>
+        </FloatingPanel>
+      ));
+      const handle = screen.getByRole("toolbar");
+
+      fireEvent.keyDown(handle, { key: "ArrowRight" });
+      fireEvent.keyDown(handle, { key: "ArrowRight" });
+      fireEvent.keyDown(handle, { key: "ArrowDown" });
+      expect(panelPosition("jobs")).toEqual({ x: 20, y: 10 });
+    });
   });
 });
