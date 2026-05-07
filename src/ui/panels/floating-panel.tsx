@@ -6,6 +6,7 @@ import {
   panelBody,
   panelBottomLeft,
   panelBottomRight,
+  panelChrome,
   panelClose,
   panelHeader,
   panelTitle,
@@ -151,30 +152,32 @@ export const FloatingPanel: Component<FloatingPanelProps> = (props) => {
             />
           )}
         </For>
-        <div
-          ref={(el) => {
-            // tabIndex set via ref so biome's static-JSX a11y rule doesn't
-            // flag it. role=toolbar is interactive per WAI-ARIA APG, but
-            // biome's interactive-roles list doesn't include it. The handle
-            // takes keyboard focus so arrow keys can move the panel.
-            el.tabIndex = 0;
-          }}
-          role="toolbar"
-          class={panelHeader}
-          onKeyDown={onHeaderKeyDown}
-          aria-label={t("panel.dragHandle", { title: props.title })}
-        >
-          <h2 class={panelTitle}>{props.title}</h2>
-          <button
-            type="button"
-            class={panelClose}
-            onClick={() => closePanel(props.id)}
-            aria-label={t("panel.close")}
+        <div class={panelChrome}>
+          <div
+            ref={(el) => {
+              // tabIndex set via ref so biome's static-JSX a11y rule doesn't
+              // flag it. role=toolbar is interactive per WAI-ARIA APG, but
+              // biome's interactive-roles list doesn't include it. The handle
+              // takes keyboard focus so arrow keys can move the panel.
+              el.tabIndex = 0;
+            }}
+            role="toolbar"
+            class={panelHeader}
+            onKeyDown={onHeaderKeyDown}
+            aria-label={t("panel.dragHandle", { title: props.title })}
           >
-            ×
-          </button>
+            <h2 class={panelTitle}>{props.title}</h2>
+            <button
+              type="button"
+              class={panelClose}
+              onClick={() => closePanel(props.id)}
+              aria-label={t("panel.close")}
+            >
+              ×
+            </button>
+          </div>
+          <div class={panelBody}>{props.children}</div>
         </div>
-        <div class={panelBody}>{props.children}</div>
       </section>
     </Show>
   );

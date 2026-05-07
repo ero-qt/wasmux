@@ -15,27 +15,33 @@ export const panelOverlay = style({
 });
 
 /**
- * Common chrome for a floating panel. Soft outline + drop shadow rather than a
- * solid border so the panel reads as a card without a hard edge. Inline-size
- * cap subtracts 2rem from viewport width to keep a margin on either side on
- * narrow screens. Min-block-size is roughly the title-bar height so the panel
- * can collapse to header-only when the user drags it tiny.
+ * Outer positioning box for a floating panel. Holds the size and the resize
+ * handles but has no visual chrome of its own; `panelChrome` (filled inside)
+ * owns the border, radius, background, and content clipping. Splitting them
+ * lets the resize handles use negative insets to straddle the visible
+ * border, since `overflow: hidden` on the chrome would otherwise clip them.
  *
- * Resize is driven by `<ResizeHandle>` siblings (8 directions: 4 edges,
- * 4 corners) rather than CSS `resize`, since the latter only offers
- * bottom-right.
+ * Inline-size cap subtracts 2rem from viewport width to keep a margin on
+ * either side on narrow screens. Min-block-size is roughly the title-bar
+ * height so the panel can collapse to header-only.
  */
 export const panel = style({
   position: "absolute",
   pointerEvents: "auto",
-  background: tokens.theme.bg,
-  borderRadius: "0.6rem",
-  border: `1px solid color-mix(in oklab, ${tokens.theme.accent} 30%, transparent)`,
-  boxShadow: `0 0.5rem 1.5rem color-mix(in oklab, ${tokens.theme.accent} 15%, transparent)`,
   minInlineSize: "16rem",
   minBlockSize: "1.4rem",
   maxInlineSize: "min(44rem, calc(100vw - 2rem))",
   maxBlockSize: "min(70vh, calc(100dvb - 2rem))",
+});
+
+/** Visible card inside `panel`. Owns the border, radius, drop shadow, and content clip. */
+export const panelChrome = style({
+  position: "absolute",
+  inset: 0,
+  background: tokens.theme.bg,
+  borderRadius: "0.6rem",
+  border: `1px solid color-mix(in oklab, ${tokens.theme.accent} 30%, transparent)`,
+  boxShadow: `0 0.5rem 1.5rem color-mix(in oklab, ${tokens.theme.accent} 15%, transparent)`,
   display: "flex",
   flexDirection: "column",
   overflow: "hidden",
@@ -115,12 +121,16 @@ export const panelBottomLeft = style({
 });
 
 /**
- * Resize handles. Edge handles are thin strips (6px). Corner handles are
- * 12×12 squares overlapping the edge handles so the corners take precedence.
- * Logical insets keep the layout right under RTL once we localise.
+ * Resize handles. Edge strips are 10px thick, positioned with a -4px offset
+ * so they straddle the visible chrome border (4px outside, 1px on the border
+ * itself, 5px inside). Corner squares are 14×14 with the same offset so the
+ * corner cursor wins where it overlaps an edge.
+ *
+ * Logical insets keep the layout correct under RTL once we localise.
  */
-const HANDLE_EDGE = "6px";
-const HANDLE_CORNER = "12px";
+const HANDLE_EDGE = "10px";
+const HANDLE_CORNER = "14px";
+const HANDLE_OFFSET = "-4px";
 
 const handleBase = style({
   position: "absolute",
@@ -131,7 +141,7 @@ const handleBase = style({
 export const handleTop = style([
   handleBase,
   {
-    insetBlockStart: 0,
+    insetBlockStart: HANDLE_OFFSET,
     insetInlineStart: HANDLE_CORNER,
     insetInlineEnd: HANDLE_CORNER,
     blockSize: HANDLE_EDGE,
@@ -142,7 +152,7 @@ export const handleTop = style([
 export const handleBottom = style([
   handleBase,
   {
-    insetBlockEnd: 0,
+    insetBlockEnd: HANDLE_OFFSET,
     insetInlineStart: HANDLE_CORNER,
     insetInlineEnd: HANDLE_CORNER,
     blockSize: HANDLE_EDGE,
@@ -153,7 +163,7 @@ export const handleBottom = style([
 export const handleLeft = style([
   handleBase,
   {
-    insetInlineStart: 0,
+    insetInlineStart: HANDLE_OFFSET,
     insetBlockStart: HANDLE_CORNER,
     insetBlockEnd: HANDLE_CORNER,
     inlineSize: HANDLE_EDGE,
@@ -164,7 +174,7 @@ export const handleLeft = style([
 export const handleRight = style([
   handleBase,
   {
-    insetInlineEnd: 0,
+    insetInlineEnd: HANDLE_OFFSET,
     insetBlockStart: HANDLE_CORNER,
     insetBlockEnd: HANDLE_CORNER,
     inlineSize: HANDLE_EDGE,
@@ -175,8 +185,8 @@ export const handleRight = style([
 export const handleTopLeft = style([
   handleBase,
   {
-    insetBlockStart: 0,
-    insetInlineStart: 0,
+    insetBlockStart: HANDLE_OFFSET,
+    insetInlineStart: HANDLE_OFFSET,
     inlineSize: HANDLE_CORNER,
     blockSize: HANDLE_CORNER,
     cursor: "nwse-resize",
@@ -186,8 +196,8 @@ export const handleTopLeft = style([
 export const handleTopRight = style([
   handleBase,
   {
-    insetBlockStart: 0,
-    insetInlineEnd: 0,
+    insetBlockStart: HANDLE_OFFSET,
+    insetInlineEnd: HANDLE_OFFSET,
     inlineSize: HANDLE_CORNER,
     blockSize: HANDLE_CORNER,
     cursor: "nesw-resize",
@@ -197,8 +207,8 @@ export const handleTopRight = style([
 export const handleBottomLeft = style([
   handleBase,
   {
-    insetBlockEnd: 0,
-    insetInlineStart: 0,
+    insetBlockEnd: HANDLE_OFFSET,
+    insetInlineStart: HANDLE_OFFSET,
     inlineSize: HANDLE_CORNER,
     blockSize: HANDLE_CORNER,
     cursor: "nesw-resize",
@@ -208,8 +218,8 @@ export const handleBottomLeft = style([
 export const handleBottomRight = style([
   handleBase,
   {
-    insetBlockEnd: 0,
-    insetInlineEnd: 0,
+    insetBlockEnd: HANDLE_OFFSET,
+    insetInlineEnd: HANDLE_OFFSET,
     inlineSize: HANDLE_CORNER,
     blockSize: HANDLE_CORNER,
     cursor: "nwse-resize",
