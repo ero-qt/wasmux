@@ -7,6 +7,7 @@ import {
   jobReportLine,
   jobRow,
   jobStatusBadge,
+  jobToggleButton,
   jobToggleIcon,
   jobToggleSlot,
   jobsEmpty,
@@ -36,37 +37,29 @@ const JobNode: Component<JobNodeProps> = (props) => {
 
   return (
     <li class={jobNode}>
-      <Show
-        when={hasChildren()}
-        fallback={
-          <div class={jobRow}>
-            <span class={jobToggleSlot} aria-hidden="true" />
-            <NodeContent job={props.job} />
-          </div>
-        }
-      >
-        <button
-          type="button"
-          class={jobRow}
-          onClick={() => setExpanded((v) => !v)}
-          aria-expanded={expanded()}
-          aria-label={expanded() ? t("jobs.collapse") : t("jobs.expand")}
-        >
-          <span class={jobToggleSlot}>
+      <div class={jobRow}>
+        <Show when={hasChildren()} fallback={<span class={jobToggleSlot} aria-hidden="true" />}>
+          <button
+            type="button"
+            class={jobToggleButton}
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded()}
+            aria-label={expanded() ? t("jobs.collapse") : t("jobs.expand")}
+          >
             <svg
               class={jobToggleIcon}
               viewBox="0 0 12 12"
-              width="0.7em"
-              height="0.7em"
+              width="0.95em"
+              height="0.95em"
               fill="currentColor"
               aria-hidden="true"
             >
-              <path d="M4 2.5 L9 6 L4 9.5 Z" />
+              <path d="M3.5 2 L9.5 6 L3.5 10 Z" />
             </svg>
-          </span>
-          <NodeContent job={props.job} />
-        </button>
-      </Show>
+          </button>
+        </Show>
+        <NodeContent job={props.job} />
+      </div>
       <Show when={hasChildren() && expanded()}>
         <ol class={jobChildren}>
           <For each={children()}>{(child) => <JobNode job={child} />}</For>

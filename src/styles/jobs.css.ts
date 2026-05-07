@@ -13,64 +13,68 @@ export const jobsTreeRoot = style({
   padding: 0,
   display: "flex",
   flexDirection: "column",
-  gap: "0.25rem",
+  gap: "0.15rem",
 });
 
-export const jobNode = style({});
-
-/**
- * One row in the tree. Used as a `<button>` for nodes with children (whole
- * row toggles) and as a `<div>` for leaves. Resets the global button rule so
- * the row reads as a flat highlight strip rather than a bordered button.
- *
- * Hover behaviour: hovering a row highlights itself plus every descendant
- * row in its sibling `<ol>`. Hovering a child does not bubble up because
- * `:hover` here is scoped to the row element, not the surrounding `<li>`.
- */
+/** One row in the tree. Plain text strip; the disclosure button is the only click target. */
 export const jobRow = style({
   display: "flex",
   alignItems: "center",
   gap: "0.4rem",
-  inlineSize: "100%",
-  background: "transparent",
-  border: "none",
-  borderRadius: "0.3rem",
-  paddingBlock: "0.2rem",
-  paddingInline: "0.3rem",
-  minBlockSize: "auto",
-  minInlineSize: "auto",
-  textAlign: "start",
-  color: "inherit",
-  font: "inherit",
-  selectors: {
-    "button&": {
-      cursor: "pointer",
-    },
-    "&:hover, &:hover + ol &": {
-      background: `color-mix(in oklab, ${tokens.theme.accent} 10%, transparent)`,
-    },
-  },
+  paddingBlock: "0.15rem",
+  paddingInline: "0.25rem",
 });
 
 /**
- * Reserved space at the start of every row so the disclosure icon (or its
- * absence on leaves) keeps text columns aligned.
+ * Reserved space at the start of every row so leaves and expandable nodes
+ * line up. The disclosure button (when present) lives inside this slot.
  */
 export const jobToggleSlot = style({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  inlineSize: "1.1em",
-  blockSize: "1.1em",
+  inlineSize: "1.4em",
+  blockSize: "1.4em",
   flexShrink: 0,
 });
 
-/** Triangle SVG inside an expandable row. Rotates 90° when the row is expanded. */
+/** Disclosure button. Sized to match the slot; resets the global button chrome. */
+export const jobToggleButton = style([
+  jobToggleSlot,
+  {
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    color: "inherit",
+    font: "inherit",
+    padding: 0,
+    minBlockSize: "auto",
+    minInlineSize: "auto",
+    borderRadius: "0.25rem",
+  },
+]);
+
+/** Triangle SVG. Rotates 90° via the row button's aria-expanded state. */
 export const jobToggleIcon = style({
   transition: "transform 120ms ease",
   selectors: {
     'button[aria-expanded="true"] &': {
       transform: "rotate(90deg)",
+    },
+  },
+});
+
+/**
+ * Tree node. Hover highlight lives here (not on the row) so the parent's
+ * background extends across its row AND its children's `<ol>` as one big
+ * box. `:has(> .jobRow:hover)` matches only the *direct* row inside this
+ * node, so hovering a child does not bubble up to its ancestor.
+ */
+export const jobNode = style({
+  borderRadius: "0.3rem",
+  selectors: {
+    [`&:has(> .${jobRow}:hover)`]: {
+      background: `color-mix(in oklab, ${tokens.theme.accent} 8%, transparent)`,
     },
   },
 });
@@ -99,9 +103,9 @@ export const jobChildren = style({
   listStyle: "none",
   margin: 0,
   paddingInlineStart: "1.2rem",
-  borderInlineStart: `1px solid ${tokens.theme.accent}`,
-  marginInlineStart: "0.4em",
+  borderInlineStart: `1px solid color-mix(in oklab, ${tokens.theme.accent} 25%, transparent)`,
+  marginInlineStart: "0.7em",
   display: "flex",
   flexDirection: "column",
-  gap: "0.25rem",
+  gap: "0.15rem",
 });

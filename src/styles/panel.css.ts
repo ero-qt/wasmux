@@ -35,33 +35,41 @@ export const panel = style({
   overflow: "hidden",
 });
 
+/**
+ * Thin accent-tinted strip that doubles as the drag handle. The accent wash
+ * makes the affordance obvious without adding extra chrome; height is set by
+ * the title font size + minimal padding.
+ */
 export const panelHeader = style({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   gap: "0.5rem",
-  paddingBlock: "0.5rem",
-  paddingInline: "0.85rem",
+  paddingBlock: "0.15rem",
+  paddingInline: "0.5rem",
   cursor: "move",
   userSelect: "none",
+  background: `color-mix(in oklab, ${tokens.theme.accent} 16%, transparent)`,
 });
 
 export const panelTitle = style({
   margin: 0,
-  fontSize: "0.95em",
+  fontSize: "0.78em",
   fontWeight: "normal",
+  letterSpacing: "0.02em",
+  opacity: 0.85,
 });
 
-/** Close button: small, borderless, picks up the soft hover wash from button.css. */
+/** Close button: tiny, borderless, picks up the soft hover wash from button.css. */
 export const panelClose = style({
-  paddingBlock: "0.1em",
-  paddingInline: "0.45em",
+  paddingBlock: "0",
+  paddingInline: "0.35em",
   minBlockSize: "auto",
   minInlineSize: "auto",
-  fontSize: "1.1em",
+  fontSize: "0.95em",
   lineHeight: 1,
   border: "none",
-  borderRadius: "0.4rem",
+  borderRadius: "0.3rem",
 });
 
 export const panelBody = style({
