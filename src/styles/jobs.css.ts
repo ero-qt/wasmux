@@ -1,5 +1,15 @@
-import { style } from "@vanilla-extract/css";
+import { keyframes, style } from "@vanilla-extract/css";
 import { tokens } from "~/styles/tokens.css";
+
+/**
+ * Soft pulse used by the running-status indicator. The global
+ * `prefers-reduced-motion` reset in `global.css.ts` already clamps
+ * `animation-duration` to 0.01ms, so motion-averse users see static dots.
+ */
+const dotPulse = keyframes({
+  "0%, 80%, 100%": { opacity: 0.3 },
+  "40%": { opacity: 1 },
+});
 
 export const jobsEmpty = style({
   margin: 0,
@@ -102,6 +112,25 @@ export const jobStatusIcon = style({
 });
 
 export const jobStatusRunning = style({ color: tokens.theme.accent });
+
+/**
+ * Three-dot pulse for the running indicator. Each dot inside the SVG inherits
+ * the animation from this class via a child selector and is offset so they
+ * cascade from left to right.
+ */
+export const jobLoadingDots = style({
+  selectors: {
+    "& circle": {
+      animation: `${dotPulse} 1.4s ease-in-out infinite`,
+    },
+    "& circle:nth-of-type(2)": {
+      animationDelay: "0.16s",
+    },
+    "& circle:nth-of-type(3)": {
+      animationDelay: "0.32s",
+    },
+  },
+});
 export const jobStatusCompleted = style({ color: "#4caf50" });
 export const jobStatusFailed = style({ color: "#e57373" });
 export const jobStatusCancelled = style({ opacity: 0.4 });

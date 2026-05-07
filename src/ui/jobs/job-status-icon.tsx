@@ -2,6 +2,7 @@ import { type Component, Match, Switch } from "solid-js";
 import type { JobStatus } from "~/core/jobs";
 import { t } from "~/i18n";
 import {
+  jobLoadingDots,
   jobStatusCancelled,
   jobStatusCompleted,
   jobStatusFailed,
@@ -44,8 +45,16 @@ export const JobStatusIcon: Component<{ status: JobStatus }> = (props) => {
     >
       <Switch>
         <Match when={props.status === "running"}>
-          <svg viewBox="0 0 12 12" width="0.85em" height="0.85em" aria-hidden="true">
-            <circle cx="6" cy="6" r="3" fill="currentColor" />
+          <svg
+            class={jobLoadingDots}
+            viewBox="0 0 12 12"
+            width="0.95em"
+            height="0.95em"
+            aria-hidden="true"
+          >
+            <circle cx="2.5" cy="6" r="1.4" fill="currentColor" />
+            <circle cx="6" cy="6" r="1.4" fill="currentColor" />
+            <circle cx="9.5" cy="6" r="1.4" fill="currentColor" />
           </svg>
         </Match>
         <Match when={props.status === "completed"}>
