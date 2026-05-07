@@ -3,16 +3,17 @@ import type { TrackedJob } from "~/core/jobs";
 import { t } from "~/i18n";
 import {
   jobChildren,
+  jobName,
   jobNode,
   jobReportLine,
   jobRow,
-  jobStatusBadge,
   jobToggleButton,
   jobToggleIcon,
   jobToggleSlot,
   jobsEmpty,
   jobsTreeRoot,
 } from "~/styles/jobs.css";
+import { JobStatusIcon } from "~/ui/jobs/job-status-icon";
 import { reactiveChildren, reactiveRoots } from "~/ui/jobs/job-tracker";
 
 /** Tree of every job tracked this session. Oldest at the top, collapsible on children. */
@@ -69,12 +70,12 @@ const JobNode: Component<JobNodeProps> = (props) => {
   );
 };
 
-/** The text columns of a row: name, status badge, latest report progress/message. */
+/** Status icon, name, and the latest progress/message on a single line. */
 const NodeContent: Component<{ job: TrackedJob }> = (props) => {
   return (
     <>
-      <span>{props.job.name}</span>
-      <span class={jobStatusBadge}>{props.job.status}</span>
+      <JobStatusIcon status={props.job.status} />
+      <span class={jobName}>{props.job.name}</span>
       <Show when={props.job.latestReport}>
         {(r) => (
           <span class={jobReportLine}>

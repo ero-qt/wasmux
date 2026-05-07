@@ -34,6 +34,12 @@ export const en = {
     empty: "No jobs this session",
     expand: "Expand",
     collapse: "Collapse",
+    status: {
+      running: "Running",
+      completed: "Completed",
+      failed: "Failed",
+      cancelled: "Cancelled",
+    },
   },
   dev: {
     demoJob: "Run demo job (dev only)",

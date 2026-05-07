@@ -28,7 +28,7 @@ export const panel = style({
   border: `1px solid color-mix(in oklab, ${tokens.theme.accent} 30%, transparent)`,
   boxShadow: `0 0.5rem 1.5rem color-mix(in oklab, ${tokens.theme.accent} 15%, transparent)`,
   minInlineSize: "16rem",
-  maxInlineSize: "min(28rem, calc(100vw - 2rem))",
+  maxInlineSize: "min(44rem, calc(100vw - 2rem))",
   maxBlockSize: "min(70vh, calc(100dvb - 2rem))",
   display: "flex",
   flexDirection: "column",
@@ -91,7 +91,7 @@ export const panelBody = style({
  * `max-inline-size: min(28rem, 100vw)` from `panel`.
  */
 const BOTTOM_TOP = "max(1rem, calc(100dvh - 30rem - 3rem))";
-const RIGHT_LEFT = "max(1rem, calc(100vw - 28rem - 1rem))";
+const RIGHT_LEFT = "max(1rem, calc(100vw - 44rem - 1rem))";
 
 export const panelTopRight = style({
   insetBlockStart: "1rem",

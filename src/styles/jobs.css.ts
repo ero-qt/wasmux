@@ -23,6 +23,13 @@ export const jobRow = style({
   gap: "0.4rem",
   paddingBlock: "0.15rem",
   paddingInline: "0.25rem",
+  whiteSpace: "nowrap",
+  minInlineSize: 0,
+});
+
+/** Job name. Doesn't shrink so the icon + name pair is always legible. */
+export const jobName = style({
+  flexShrink: 0,
 });
 
 /**
@@ -70,23 +77,43 @@ export const jobToggleIcon = style({
  * box. `:has(> .jobRow:hover)` matches only the *direct* row inside this
  * node, so hovering a child does not bubble up to its ancestor.
  */
+/**
+ * Tree node. Hover highlight uses fg-mix (not accent) so it reads cleanly on
+ * both dark and light themes; accent at low alpha was nearly invisible
+ * against the dark theme's black background.
+ */
 export const jobNode = style({
   borderRadius: "0.3rem",
   selectors: {
     [`&:has(> .${jobRow}:hover)`]: {
-      background: `color-mix(in oklab, ${tokens.theme.accent} 8%, transparent)`,
+      background: `color-mix(in oklab, ${tokens.theme.fg} 10%, transparent)`,
     },
   },
 });
 
-export const jobStatusBadge = style({
-  fontSize: "0.8em",
-  opacity: 0.6,
+/** Status indicator slot. Sized identically to the disclosure slot for vertical alignment. */
+export const jobStatusIcon = style({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  inlineSize: "1.1em",
+  blockSize: "1.1em",
+  flexShrink: 0,
 });
 
+export const jobStatusRunning = style({ color: tokens.theme.accent });
+export const jobStatusCompleted = style({ color: "#4caf50" });
+export const jobStatusFailed = style({ color: "#e57373" });
+export const jobStatusCancelled = style({ opacity: 0.4 });
+
+/** Latest-report text. Truncates with an ellipsis when wider than the available space. */
 export const jobReportLine = style({
   fontSize: "0.85em",
   opacity: 0.7,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  minInlineSize: 0,
+  flex: 1,
 });
 
 export const jobChainWidget = style({
