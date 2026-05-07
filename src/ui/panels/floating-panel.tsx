@@ -1,5 +1,5 @@
 import { createDraggable } from "@neodrag/solid";
-import { type Component, type JSX, Show, onCleanup } from "solid-js";
+import { type Component, For, type JSX, Show } from "solid-js";
 import { t } from "~/i18n";
 import {
   panel,
@@ -17,9 +17,10 @@ import {
   panelPosition,
   panelSize,
   resetPanelPosition,
+  resetPanelSize,
   setPanelPosition,
-  setPanelSize,
 } from "~/ui/panels/panel-store";
+import { type ResizeEdge, ResizeHandle } from "~/ui/panels/resize-handle";
 
 export type PanelCorner = "top-right" | "bottom-right" | "bottom-left";
 
@@ -29,12 +30,24 @@ const cornerClass: Record<PanelCorner, string> = {
   "bottom-left": panelBottomLeft,
 };
 
-/** Threshold (px from the bottom-right corner) for treating a pointerdown as a resize start. */
-const RESIZE_HANDLE_PX = 24;
-
 /** Keyboard step in pixels for arrow-driven panel movement. Shift bumps it 5x. */
 const KEYBOARD_STEP_PX = 10;
 const KEYBOARD_BIG_STEP_PX = 50;
+
+/** Lower bounds the resize handles enforce. Block min ≈ title-bar height. */
+const MIN_INLINE_SIZE_PX = 16 * 16; // 16rem at 16px root
+const MIN_BLOCK_SIZE_PX = 16 * 1.8; // 1.8rem ≈ title-bar height
+
+const ALL_EDGES: readonly ResizeEdge[] = [
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "top-left",
+  "top-right",
+  "bottom-left",
+  "bottom-right",
+];
 
 export interface FloatingPanelProps {
   /** Stable id used by the panel store. */
@@ -50,11 +63,10 @@ export interface FloatingPanelProps {
 }
 
 /**
- * Non-modal overlay window. Mouse drag lives on the header (neodrag);
- * keyboard drag on the focused header (arrow keys move, shift+arrow steps
- * larger, Escape resets to the default corner). Mouse resize is the native
- * `resize: both` handle; a `ResizeObserver` writes user-driven changes back
- * to the panel store so size survives close/reopen.
+ * Non-modal overlay window. Mouse drag lives on the header (neodrag); mouse
+ * resize on `<ResizeHandle>` siblings (4 edges + 4 corners). Keyboard:
+ * focusing the header lets arrow keys move (Shift = larger step), Escape
+ * resets both position and size to defaults.
  */
 export const FloatingPanel: Component<FloatingPanelProps> = (props) => {
   const { draggable } = createDraggable();
@@ -68,59 +80,10 @@ export const FloatingPanel: Component<FloatingPanelProps> = (props) => {
   const headerSelector = `.${panelHeader}`;
 
   let panelEl: HTMLElement | undefined;
-  // CSS `resize: both` doesn't expose drag-start events, so we treat any
-  // pointerdown landing in the bottom-right ~24px square as the start of a
-  // user resize. The ResizeObserver below then only persists size while this
-  // flag is set, so layout-driven size changes (content growth) don't pin
-  // the panel at an accidental size.
-  let userResizing = false;
-
-  const onPanelPointerDown = (e: PointerEvent): void => {
-    if (!panelEl) {
-      return;
-    }
-    const rect = panelEl.getBoundingClientRect();
-    if (rect.right - e.clientX < RESIZE_HANDLE_PX && rect.bottom - e.clientY < RESIZE_HANDLE_PX) {
-      userResizing = true;
-    }
-  };
-
-  const onWindowPointerUp = (): void => {
-    userResizing = false;
-  };
-
-  const setupResize = (el: HTMLElement): void => {
+  const setPanelRef = (el: HTMLElement): void => {
     panelEl = el;
-    el.addEventListener("pointerdown", onPanelPointerDown);
-    window.addEventListener("pointerup", onWindowPointerUp);
-
-    // ResizeObserver is missing in jsdom. Skipping the persistence wiring
-    // there is harmless: the test environment never user-resizes anything.
-    const observer =
-      typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver((entries) => {
-            if (!userResizing) {
-              return;
-            }
-            const entry = entries[0];
-            if (!entry) {
-              return;
-            }
-            const box = entry.borderBoxSize[0];
-            if (!box) {
-              return;
-            }
-            setPanelSize(props.id, { inlineSize: box.inlineSize, blockSize: box.blockSize });
-          })
-        : undefined;
-    observer?.observe(el);
-
-    onCleanup(() => {
-      observer?.disconnect();
-      el.removeEventListener("pointerdown", onPanelPointerDown);
-      window.removeEventListener("pointerup", onWindowPointerUp);
-    });
   };
+  const getPanelEl = (): HTMLElement | undefined => panelEl;
 
   const onHeaderKeyDown = (e: KeyboardEvent): void => {
     const step = e.shiftKey ? KEYBOARD_BIG_STEP_PX : KEYBOARD_STEP_PX;
@@ -142,6 +105,7 @@ export const FloatingPanel: Component<FloatingPanelProps> = (props) => {
       case "Escape":
         e.preventDefault();
         resetPanelPosition(props.id);
+        resetPanelSize(props.id);
         return;
       default:
         return;
@@ -165,7 +129,7 @@ export const FloatingPanel: Component<FloatingPanelProps> = (props) => {
   return (
     <Show when={isPanelOpen(props.id)}>
       <section
-        ref={setupResize}
+        ref={setPanelRef}
         use:draggable={{
           handle: headerSelector,
           position: panelPosition(props.id),
@@ -179,6 +143,17 @@ export const FloatingPanel: Component<FloatingPanelProps> = (props) => {
         role="dialog"
         aria-label={props.title}
       >
+        <For each={ALL_EDGES}>
+          {(edge) => (
+            <ResizeHandle
+              edge={edge}
+              panelId={props.id}
+              panelEl={getPanelEl}
+              minInlineSize={MIN_INLINE_SIZE_PX}
+              minBlockSize={MIN_BLOCK_SIZE_PX}
+            />
+          )}
+        </For>
         <div
           ref={(el) => {
             // tabIndex set via ref so biome's static-JSX a11y rule doesn't

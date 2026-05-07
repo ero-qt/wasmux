@@ -6,9 +6,11 @@ import {
   isPanelOpen,
   openPanel,
   panelPosition,
+  panelSize,
   resetAllPanelPositions,
   resetAllPanelSizes,
   setPanelPosition,
+  setPanelSize,
 } from "~/ui/panels/panel-store";
 
 afterEach(() => {
@@ -93,9 +95,10 @@ describe("FloatingPanel", () => {
       expect(panelPosition("jobs")).toEqual({ x: -50, y: 0 });
     });
 
-    test("Escape resets the panel position to the origin", () => {
+    test("Escape resets both position and size to defaults", () => {
       openPanel("jobs");
       setPanelPosition("jobs", { x: 100, y: 100 });
+      setPanelSize("jobs", { inlineSize: 400, blockSize: 500 });
       render(() => (
         <FloatingPanel id="jobs" title="Jobs" position="bottom-right">
           <p>body</p>
@@ -105,6 +108,7 @@ describe("FloatingPanel", () => {
 
       fireEvent.keyDown(handle, { key: "Escape" });
       expect(panelPosition("jobs")).toEqual({ x: 0, y: 0 });
+      expect(panelSize("jobs")).toBeUndefined();
     });
 
     test("non-arrow keys are ignored", () => {

@@ -18,11 +18,12 @@ export const panelOverlay = style({
  * Common chrome for a floating panel. Soft outline + drop shadow rather than a
  * solid border so the panel reads as a card without a hard edge. Inline-size
  * cap subtracts 2rem from viewport width to keep a margin on either side on
- * narrow screens.
+ * narrow screens. Min-block-size is roughly the title-bar height so the panel
+ * can collapse to header-only when the user drags it tiny.
  *
- * `resize: both` plus `overflow: hidden` gives the native bottom-right resize
- * handle for mouse-driven resize. A `ResizeObserver` in `<FloatingPanel>`
- * persists the resulting size to the panel store.
+ * Resize is driven by `<ResizeHandle>` siblings (8 directions: 4 edges,
+ * 4 corners) rather than CSS `resize`, since the latter only offers
+ * bottom-right.
  */
 export const panel = style({
   position: "absolute",
@@ -32,12 +33,12 @@ export const panel = style({
   border: `1px solid color-mix(in oklab, ${tokens.theme.accent} 30%, transparent)`,
   boxShadow: `0 0.5rem 1.5rem color-mix(in oklab, ${tokens.theme.accent} 15%, transparent)`,
   minInlineSize: "16rem",
+  minBlockSize: "1.8rem",
   maxInlineSize: "min(44rem, calc(100vw - 2rem))",
   maxBlockSize: "min(70vh, calc(100dvb - 2rem))",
   display: "flex",
   flexDirection: "column",
   overflow: "hidden",
-  resize: "both",
 });
 
 /**
@@ -112,3 +113,105 @@ export const panelBottomLeft = style({
   insetBlockStart: BOTTOM_TOP,
   insetInlineStart: "1rem",
 });
+
+/**
+ * Resize handles. Edge handles are thin strips (6px). Corner handles are
+ * 12×12 squares overlapping the edge handles so the corners take precedence.
+ * Logical insets keep the layout right under RTL once we localise.
+ */
+const HANDLE_EDGE = "6px";
+const HANDLE_CORNER = "12px";
+
+const handleBase = style({
+  position: "absolute",
+  background: "transparent",
+  zIndex: 1,
+});
+
+export const handleTop = style([
+  handleBase,
+  {
+    insetBlockStart: 0,
+    insetInlineStart: HANDLE_CORNER,
+    insetInlineEnd: HANDLE_CORNER,
+    blockSize: HANDLE_EDGE,
+    cursor: "ns-resize",
+  },
+]);
+
+export const handleBottom = style([
+  handleBase,
+  {
+    insetBlockEnd: 0,
+    insetInlineStart: HANDLE_CORNER,
+    insetInlineEnd: HANDLE_CORNER,
+    blockSize: HANDLE_EDGE,
+    cursor: "ns-resize",
+  },
+]);
+
+export const handleLeft = style([
+  handleBase,
+  {
+    insetInlineStart: 0,
+    insetBlockStart: HANDLE_CORNER,
+    insetBlockEnd: HANDLE_CORNER,
+    inlineSize: HANDLE_EDGE,
+    cursor: "ew-resize",
+  },
+]);
+
+export const handleRight = style([
+  handleBase,
+  {
+    insetInlineEnd: 0,
+    insetBlockStart: HANDLE_CORNER,
+    insetBlockEnd: HANDLE_CORNER,
+    inlineSize: HANDLE_EDGE,
+    cursor: "ew-resize",
+  },
+]);
+
+export const handleTopLeft = style([
+  handleBase,
+  {
+    insetBlockStart: 0,
+    insetInlineStart: 0,
+    inlineSize: HANDLE_CORNER,
+    blockSize: HANDLE_CORNER,
+    cursor: "nwse-resize",
+  },
+]);
+
+export const handleTopRight = style([
+  handleBase,
+  {
+    insetBlockStart: 0,
+    insetInlineEnd: 0,
+    inlineSize: HANDLE_CORNER,
+    blockSize: HANDLE_CORNER,
+    cursor: "nesw-resize",
+  },
+]);
+
+export const handleBottomLeft = style([
+  handleBase,
+  {
+    insetBlockEnd: 0,
+    insetInlineStart: 0,
+    inlineSize: HANDLE_CORNER,
+    blockSize: HANDLE_CORNER,
+    cursor: "nesw-resize",
+  },
+]);
+
+export const handleBottomRight = style([
+  handleBase,
+  {
+    insetBlockEnd: 0,
+    insetInlineEnd: 0,
+    inlineSize: HANDLE_CORNER,
+    blockSize: HANDLE_CORNER,
+    cursor: "nwse-resize",
+  },
+]);
