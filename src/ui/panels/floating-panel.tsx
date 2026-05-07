@@ -16,8 +16,6 @@ import {
   isPanelOpen,
   panelPosition,
   panelSize,
-  resetPanelPosition,
-  resetPanelSize,
   setPanelPosition,
 } from "~/ui/panels/panel-store";
 import { type ResizeEdge, ResizeHandle } from "~/ui/panels/resize-handle";
@@ -104,8 +102,7 @@ export const FloatingPanel: Component<FloatingPanelProps> = (props) => {
         break;
       case "Escape":
         e.preventDefault();
-        resetPanelPosition(props.id);
-        resetPanelSize(props.id);
+        closePanel(props.id);
         return;
       default:
         return;

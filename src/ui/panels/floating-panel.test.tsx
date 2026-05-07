@@ -95,7 +95,7 @@ describe("FloatingPanel", () => {
       expect(panelPosition("jobs")).toEqual({ x: -50, y: 0 });
     });
 
-    test("Escape resets both position and size to defaults", () => {
+    test("Escape closes the panel and leaves stored position/size intact", () => {
       openPanel("jobs");
       setPanelPosition("jobs", { x: 100, y: 100 });
       setPanelSize("jobs", { inlineSize: 400, blockSize: 500 });
@@ -107,8 +107,9 @@ describe("FloatingPanel", () => {
       const handle = screen.getByRole("toolbar");
 
       fireEvent.keyDown(handle, { key: "Escape" });
-      expect(panelPosition("jobs")).toEqual({ x: 0, y: 0 });
-      expect(panelSize("jobs")).toBeUndefined();
+      expect(isPanelOpen("jobs")).toBe(false);
+      expect(panelPosition("jobs")).toEqual({ x: 100, y: 100 });
+      expect(panelSize("jobs")).toEqual({ inlineSize: 400, blockSize: 500 });
     });
 
     test("non-arrow keys are ignored", () => {

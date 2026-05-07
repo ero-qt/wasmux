@@ -12,6 +12,7 @@ import {
 import {
   type PanelPosition,
   panelPosition,
+  resetPanelSize,
   setPanelPosition,
   setPanelSize,
 } from "~/ui/panels/panel-store";
@@ -137,5 +138,21 @@ export const ResizeHandle: Component<ResizeHandleProps> = (props) => {
     handle.addEventListener("pointercancel", onUp);
   };
 
-  return <div class={edgeClass[props.edge]} onPointerDown={onPointerDown} aria-hidden="true" />;
+  // double-clicking the right or bottom edge resets the panel to auto sizing.
+  // top/left/corners would be ambiguous (which edge stays put?), so they don't
+  // get this affordance.
+  const onDblClick = (): void => {
+    if (props.edge === "right" || props.edge === "bottom") {
+      resetPanelSize(props.panelId);
+    }
+  };
+
+  return (
+    <div
+      class={edgeClass[props.edge]}
+      onPointerDown={onPointerDown}
+      onDblClick={onDblClick}
+      aria-hidden="true"
+    />
+  );
 };

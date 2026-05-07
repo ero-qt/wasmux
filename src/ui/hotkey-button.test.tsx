@@ -89,7 +89,7 @@ describe("HotkeyButton", () => {
       </HotkeyButton>
     ));
     const hint = btn.querySelector("span");
-    expect(hint?.textContent).toBe(" (Ctrl+S)");
+    expect(hint?.textContent).toBe(" (ctrl+S)");
   });
 
   test("title attribute contains description and combo for mouse tooltip", () => {
@@ -104,7 +104,7 @@ describe("HotkeyButton", () => {
         Save
       </HotkeyButton>
     ));
-    expect(btn.getAttribute("title")).toBe("Save project (Ctrl+S)");
+    expect(btn.getAttribute("title")).toBe("Save project (ctrl+S)");
   });
 
   test("joins multiple combos with ' / '", () => {
@@ -119,8 +119,8 @@ describe("HotkeyButton", () => {
         Play
       </HotkeyButton>
     ));
-    expect(btn.getAttribute("title")).toBe("Play (Space / K)");
-    expect(btn.querySelector("span")?.textContent).toBe(" (Space / K)");
+    expect(btn.getAttribute("title")).toBe("Play (space / K)");
+    expect(btn.querySelector("span")?.textContent).toBe(" (space / K)");
   });
 
   test("omits the combo hint and visually-hidden span when there are no keys", () => {

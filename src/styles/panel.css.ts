@@ -33,7 +33,7 @@ export const panel = style({
   border: `1px solid color-mix(in oklab, ${tokens.theme.accent} 30%, transparent)`,
   boxShadow: `0 0.5rem 1.5rem color-mix(in oklab, ${tokens.theme.accent} 15%, transparent)`,
   minInlineSize: "16rem",
-  minBlockSize: "1.8rem",
+  minBlockSize: "1.4rem",
   maxInlineSize: "min(44rem, calc(100vw - 2rem))",
   maxBlockSize: "min(70vh, calc(100dvb - 2rem))",
   display: "flex",

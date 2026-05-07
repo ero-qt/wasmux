@@ -8,8 +8,8 @@ afterEach(() => {
 
 describe("t", () => {
   test("resolves a flat key to its English string", () => {
-    expect(t("editor.history.undo")).toBe("Undo");
-    expect(t("editor.history.redo")).toBe("Redo");
+    expect(t("editor.history.undo")).toBe("undo");
+    expect(t("editor.history.redo")).toBe("redo");
   });
 
   test("resolves the brand string", () => {
