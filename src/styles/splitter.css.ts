@@ -15,6 +15,10 @@ const splitterBase = style({
   position: "relative",
   background: "transparent",
   outline: "none",
+  // reset user-agent <hr> defaults so the styled pseudo-element is the only visible line
+  margin: 0,
+  border: 0,
+  blockSize: "auto",
   selectors: {
     "&:hover::before, &:focus-visible::before, &[data-dragging='true']::before": {
       background: `color-mix(in oklab, ${tokens.theme.fg} ${LINE_OPACITY_HOVER * 100}%, transparent)`,
