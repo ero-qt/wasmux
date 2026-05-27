@@ -11,8 +11,9 @@ export const center = style({
 /**
  * Named-area grid that is the top-level chrome. Regions: header / bin / program /
  * inspector / timeline / status. Only the program column and the editing row
- * scale; everything else hugs its content. Floating panels (perf, jobs) live
- * in a sibling overlay layer rather than a region.
+ * scale; everything else hugs its content. Empty grid cells (zones the user
+ * hid via the views menu) auto-collapse because the row/column track is
+ * `auto`-sized and contains no rendered element.
  */
 export const appShell = style({
   minBlockSize: "100dvb",
@@ -25,6 +26,16 @@ export const appShell = style({
     "timeline timeline  timeline"
     "status   status    status"
   `,
+});
+
+/** Title row inside a docked panel zone (one panel today, eventual tab strip). */
+export const zoneTitle = style({
+  margin: 0,
+  marginBlockEnd: "0.5rem",
+  fontSize: "0.85em",
+  fontWeight: "normal",
+  letterSpacing: "0.02em",
+  opacity: 0.7,
 });
 
 /** Header brand mark; matches the body font size rather than browser-default `<h1>`. */

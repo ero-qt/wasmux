@@ -8,23 +8,26 @@ import {
   viewsMenuTrigger,
   viewsMenuTriggerIcon,
 } from "~/styles/views-menu.css";
-import { isPanelOpen, togglePanel } from "~/ui/panels/panel-store";
+import { ALL_ZONES, type ZoneId, isZoneVisible, toggleZone } from "~/ui/layout/zone-store";
 
-interface ViewItem {
-  readonly id: string;
-  readonly label: () => string;
-}
+const zoneLabel = (id: ZoneId): string => {
+  switch (id) {
+    case "bin":
+      return t("region.bin");
+    case "program":
+      return t("region.program");
+    case "inspector":
+      return t("region.inspector");
+    case "timeline":
+      return t("region.timeline");
+  }
+};
 
 /**
- * The list of toggleable views. Hand-maintained for now; once a second panel
- * lands we'll lift this into a registry that panels register themselves with.
- */
-const VIEWS: readonly ViewItem[] = [{ id: "jobs", label: () => t("panel.jobs.title") }];
-
-/**
- * Header dropdown that lists every floating panel as a checkable menu item.
- * Wraps Kobalte's accessible `DropdownMenu` primitive: keyboard nav, focus
- * trap, Escape to close, and ARIA attributes are handled for us.
+ * Header dropdown listing each toggleable workspace zone. Matches the Premiere
+ * "Window" / Resolve "Workspace" menu pattern: each zone is a checkbox-item
+ * whose state reflects whether the zone is shown. Wraps Kobalte's accessible
+ * `DropdownMenu`; keyboard nav, focus trap, Escape, and ARIA come from there.
  */
 export const ViewsMenu: Component = () => {
   return (
@@ -45,12 +48,12 @@ export const ViewsMenu: Component = () => {
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content class={viewsMenuContent}>
-          <For each={VIEWS}>
-            {(view) => (
+          <For each={ALL_ZONES}>
+            {(zone) => (
               <DropdownMenu.CheckboxItem
                 class={viewsMenuItem}
-                checked={isPanelOpen(view.id)}
-                onChange={() => togglePanel(view.id)}
+                checked={isZoneVisible(zone)}
+                onChange={() => toggleZone(zone)}
               >
                 <span class={viewsMenuItemIndicatorSlot}>
                   <DropdownMenu.ItemIndicator>
@@ -69,7 +72,7 @@ export const ViewsMenu: Component = () => {
                     </svg>
                   </DropdownMenu.ItemIndicator>
                 </span>
-                {view.label()}
+                {zoneLabel(zone)}
               </DropdownMenu.CheckboxItem>
             )}
           </For>

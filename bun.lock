@@ -6,7 +6,6 @@
       "name": "wasmux",
       "dependencies": {
         "@kobalte/core": "^0.13.11",
-        "@neodrag/solid": "^2.3.1",
         "@solid-primitives/i18n": "^2.2.1",
         "immer": "^11.1.4",
         "solid-js": "^1.9.0",
@@ -198,8 +197,6 @@
     "@kobalte/utils": ["@kobalte/utils@0.9.1", "", { "dependencies": { "@solid-primitives/event-listener": "^2.2.14", "@solid-primitives/keyed": "^1.2.0", "@solid-primitives/map": "^0.4.7", "@solid-primitives/media": "^2.2.4", "@solid-primitives/props": "^3.1.8", "@solid-primitives/refs": "^1.0.5", "@solid-primitives/utils": "^6.2.1" }, "peerDependencies": { "solid-js": "^1.8.8" } }, "sha512-eeU60A3kprIiBDAfv9gUJX1tXGLuZiKMajUfSQURAF2pk4ZoMYiqIzmrMBvzcxP39xnYttgTyQEVLwiTZnrV4w=="],
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.1.4", "", { "dependencies": { "@tybys/wasm-util": "^0.10.1" }, "peerDependencies": { "@emnapi/core": "^1.7.1", "@emnapi/runtime": "^1.7.1" } }, "sha512-3NQNNgA1YSlJb/kMH1ildASP9HW7/7kYnRI2szWJaofaS1hWmbGI4H+d3+22aGzXXN9IJ+n+GiFVcGipJP18ow=="],
-
-    "@neodrag/solid": ["@neodrag/solid@2.3.1", "", { "peerDependencies": { "solid-js": "^1.0.0" } }, "sha512-oLuB+0yrB27RR7R41dKjdmNbPGgAIeyCHokH5bj1LXcTJKnlKAa0/V9ijfVLo+MQuP8XlX5T62TVhmKnUVoJWA=="],
 
     "@oxc-project/types": ["@oxc-project/types@0.124.0", "", {}, "sha512-VBFWMTBvHxS11Z5Lvlr3IWgrwhMTXV+Md+EQF0Xf60+wAdsGFTBx7X7K/hP4pi8N7dcm1RvcHwDxZ16Qx8keUg=="],
 

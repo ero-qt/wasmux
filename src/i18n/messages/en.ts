@@ -28,11 +28,8 @@ export const en = {
     },
   },
   panel: {
-    close: "close",
-    dragHandle: template<{ title: string }>("drag handle for {{ title }} panel"),
     jobs: {
       title: "jobs",
-      toggle: "toggle jobs panel",
     },
   },
   jobs: {

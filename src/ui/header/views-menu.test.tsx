@@ -1,10 +1,10 @@
 import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
 import { afterEach, describe, expect, test } from "vitest";
 import { ViewsMenu } from "~/ui/header/views-menu";
-import { closeAllPanels, isPanelOpen, openPanel } from "~/ui/panels/panel-store";
+import { ALL_ZONES, hideZone, isZoneVisible, showAllZones } from "~/ui/layout/zone-store";
 
 afterEach(() => {
-  closeAllPanels();
+  showAllZones();
   cleanup();
   // Kobalte's Portal mounts content into document.body; clean up stragglers.
   document.body.innerHTML = "";
@@ -44,41 +44,48 @@ describe("ViewsMenu", () => {
     expect(screen.getByRole("menu")).toBeTruthy();
   });
 
-  test("menu surfaces one menuitemcheckbox per registered view", () => {
+  test("menu surfaces one menuitemcheckbox per zone", () => {
     render(() => <ViewsMenu />);
     press(screen.getByRole("button", { name: /views/i }));
 
     const items = screen.getAllByRole("menuitemcheckbox");
-    expect(items.length).toBe(1);
-    expect(items[0]?.textContent).toMatch(/jobs/i);
+    expect(items.length).toBe(ALL_ZONES.length);
   });
 
-  test("aria-checked mirrors the panel's open state when the menu opens", () => {
-    openPanel("jobs");
+  test("all zones start checked because all are visible", () => {
     render(() => <ViewsMenu />);
     press(screen.getByRole("button", { name: /views/i }));
 
-    expect(
-      screen.getByRole("menuitemcheckbox", { name: /jobs/i }).getAttribute("aria-checked"),
-    ).toBe("true");
+    for (const item of screen.getAllByRole("menuitemcheckbox")) {
+      expect(item.getAttribute("aria-checked")).toBe("true");
+    }
   });
 
-  test("activating a closed item opens the panel", () => {
+  test("aria-checked mirrors the zone's hidden state", () => {
+    hideZone("bin");
     render(() => <ViewsMenu />);
     press(screen.getByRole("button", { name: /views/i }));
 
-    press(screen.getByRole("menuitemcheckbox", { name: /jobs/i }));
-
-    expect(isPanelOpen("jobs")).toBe(true);
+    const bin = screen.getByRole("menuitemcheckbox", { name: /project bin/i });
+    expect(bin.getAttribute("aria-checked")).toBe("false");
   });
 
-  test("activating an open item closes the panel", () => {
-    openPanel("jobs");
+  test("activating a checked item hides the zone", () => {
     render(() => <ViewsMenu />);
     press(screen.getByRole("button", { name: /views/i }));
 
-    press(screen.getByRole("menuitemcheckbox", { name: /jobs/i }));
+    press(screen.getByRole("menuitemcheckbox", { name: /inspector/i }));
 
-    expect(isPanelOpen("jobs")).toBe(false);
+    expect(isZoneVisible("inspector")).toBe(false);
+  });
+
+  test("activating an unchecked item shows the zone again", () => {
+    hideZone("timeline");
+    render(() => <ViewsMenu />);
+    press(screen.getByRole("button", { name: /views/i }));
+
+    press(screen.getByRole("menuitemcheckbox", { name: /timeline/i }));
+
+    expect(isZoneVisible("timeline")).toBe(true);
   });
 });
