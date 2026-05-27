@@ -19,6 +19,8 @@ export const en = {
   header: {
     views: "views",
     viewsToggle: "open views menu",
+    panels: "panels",
+    panelsToggle: "open panels menu",
   },
   theme: {
     dark: "dark",
@@ -28,8 +30,18 @@ export const en = {
     },
   },
   panel: {
-    jobs: {
-      title: "jobs",
+    jobs: { title: "jobs" },
+    bin: { title: "project bin" },
+    program: { title: "program" },
+    timeline: { title: "timeline" },
+    asset: { title: "asset" },
+    tabsList: "open panels",
+    close: template<{ name: string }>("close {{ name }}"),
+    empty: "no panels open — open one from the panels menu",
+  },
+  layout: {
+    splitter: {
+      resize: "resize split",
     },
   },
   jobs: {
