@@ -112,6 +112,24 @@ describe("serialize/deserialize round-trip", () => {
   test("rejects malformed JSON", () => {
     expect(deserialize("not json")).toBeNull();
   });
+
+  test("rejects splits whose sizes are outside (0, 1)", () => {
+    const snap: LayoutSnapshot = {
+      version: 1,
+      root: {
+        kind: "split",
+        id: "s1",
+        orientation: "row",
+        sizes: [0, 1],
+        children: [
+          { kind: "leaf", id: "a", panelIds: ["bin"], activePanelId: "bin" },
+          { kind: "leaf", id: "b", panelIds: ["program"], activePanelId: "program" },
+        ],
+      },
+      homeMemory: {},
+    };
+    expect(deserialize(JSON.stringify(snap))).toBeNull();
+  });
 });
 
 describe("layout store mutators", () => {
@@ -142,11 +160,27 @@ describe("layout store mutators", () => {
     expect(JSON.stringify(store.state().root)).toContain("asset");
   });
 
-  test("activatePanel sets the active tab for that leaf", () => {
+  test("activatePanel sets the active tab on a leaf that already hosts the panel", () => {
+    // The default tree has inspector → ["jobs"]; we add asset to that same leaf
+    // so the leaf has two panels with jobs active. Then we call activatePanel
+    // directly to switch.
     const store = createLayoutStore({ storage: createMemoryStorage() });
-    store.openPanel("asset");
-    const json = JSON.stringify(store.state().root);
-    expect(json).toContain('"activePanelId":"asset"');
+    store.openPanel("asset"); // adds asset to the inspector leaf
+    // The inspector leaf is the one that currently hosts jobs + asset.
+    // Confirm activatePanel switches the active tab without rearranging panels.
+    store.activatePanel("inspector", "jobs"); // back to jobs
+    expect(JSON.stringify(store.state().root)).toContain('"activePanelId":"jobs"');
+    store.activatePanel("inspector", "asset"); // and now asset
+    expect(JSON.stringify(store.state().root)).toContain('"activePanelId":"asset"');
+  });
+
+  test("activatePanel is a no-op when the panel is not in the named leaf", () => {
+    // Try to activate a panel in a leaf that doesn't host it. State must not
+    // change.
+    const store = createLayoutStore({ storage: createMemoryStorage() });
+    const before = JSON.stringify(store.state().root);
+    store.activatePanel("inspector", "program"); // program lives in its own leaf, not inspector
+    expect(JSON.stringify(store.state().root)).toBe(before);
   });
 
   test("resizeSplit updates a split's weights", () => {
