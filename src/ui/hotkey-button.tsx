@@ -39,6 +39,9 @@ export interface HotkeyButtonProps {
   /** Fired both on real mouse clicks and on hotkey activation. */
   onClick: () => void;
 
+  /** Optional CSS class applied to the underlying `<button>`. */
+  class?: string;
+
   /** Visible button label. */
   children: JSX.Element;
 }
@@ -83,6 +86,7 @@ export const HotkeyButton: Component<HotkeyButtonProps> = (props) => {
     <button
       ref={buttonRef}
       type="button"
+      class={props.class}
       onClick={props.onClick}
       title={title()}
       aria-pressed={props.toggled}

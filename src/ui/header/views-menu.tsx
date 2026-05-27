@@ -1,12 +1,11 @@
 import { DropdownMenu } from "@kobalte/core/dropdown-menu";
 import { type Component, For } from "solid-js";
 import { t } from "~/i18n";
+import { headerIcon, headerIconButton } from "~/styles/header.css";
 import {
   viewsMenuContent,
   viewsMenuItem,
   viewsMenuItemIndicatorSlot,
-  viewsMenuTrigger,
-  viewsMenuTriggerIcon,
 } from "~/styles/views-menu.css";
 import { ALL_ZONES, type ZoneId, isZoneVisible, toggleZone } from "~/ui/layout/zone-store";
 
@@ -32,19 +31,17 @@ const zoneLabel = (id: ZoneId): string => {
 export const ViewsMenu: Component = () => {
   return (
     <DropdownMenu placement="bottom-end" gutter={4}>
-      <DropdownMenu.Trigger class={viewsMenuTrigger} aria-label={t("header.viewsToggle")}>
-        <svg
-          class={viewsMenuTriggerIcon}
-          viewBox="0 0 12 12"
-          fill="currentColor"
-          aria-hidden="true"
-        >
+      <DropdownMenu.Trigger
+        class={headerIconButton}
+        aria-label={t("header.viewsToggle")}
+        title={t("header.views")}
+      >
+        <svg class={headerIcon} viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
           <rect x="1" y="1" width="4" height="4" rx="0.6" />
           <rect x="7" y="1" width="4" height="4" rx="0.6" />
           <rect x="1" y="7" width="4" height="4" rx="0.6" />
           <rect x="7" y="7" width="4" height="4" rx="0.6" />
         </svg>
-        <span>{t("header.views")}</span>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content class={viewsMenuContent}>

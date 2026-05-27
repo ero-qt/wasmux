@@ -1,27 +1,9 @@
 import { style } from "@vanilla-extract/css";
 import { tokens } from "~/styles/tokens.css";
 
-/** Header trigger button. Slimmer than the global button rule. */
-export const viewsMenuTrigger = style({
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "0.4rem",
-  paddingBlock: "0.2em",
-  paddingInline: "0.6em",
-  fontSize: "0.85em",
-  minBlockSize: "auto",
-  minInlineSize: "auto",
-});
-
-/** 2×2 grid icon inside the trigger. */
-export const viewsMenuTriggerIcon = style({
-  inlineSize: "0.9em",
-  blockSize: "0.9em",
-});
-
 /**
- * Dropdown content surface. Mirrors the panelChrome card styling so menus
- * and panels feel like one visual family.
+ * Dropdown content surface. Mirrors the zone card styling so menus and zones
+ * feel like one visual family.
  */
 export const viewsMenuContent = style({
   background: tokens.theme.bg,

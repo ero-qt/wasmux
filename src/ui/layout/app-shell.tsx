@@ -1,18 +1,19 @@
 import { type Component, Show } from "solid-js";
 import type { HotkeyRegistry } from "~/core/hotkeys";
 import { t } from "~/i18n";
+import { headerStrip } from "~/styles/header.css";
 import {
   appShell,
-  binRegion,
-  brandMark,
-  headerActions,
-  headerRegion,
-  inspectorRegion,
+  binFrame,
+  headerArea,
+  inspectorFrame,
   placeholderText,
-  programRegion,
-  statusRegion,
-  timelineRegion,
-  zoneTitle,
+  programFrame,
+  statusArea,
+  timelineFrame,
+  visuallyHidden,
+  zoneBody,
+  zoneHeader,
 } from "~/styles/layout.css";
 import { ViewsMenu } from "~/ui/header/views-menu";
 import { JobChainWidget } from "~/ui/jobs/job-chain-widget";
@@ -26,50 +27,60 @@ export interface AppShellProps {
 
 /**
  * Top-level chrome. Six grid regions: header / bin / program / inspector /
- * timeline / status. Header and status are always shown; the four content
- * zones (bin / program / inspector / timeline) are toggleable from the
- * `<ViewsMenu>` and collapse out of the grid when hidden.
+ * timeline / status. Header hosts icon buttons (top-left, desktop-app
+ * convention) and stays compact. The four content zones render as bordered
+ * cards (each its own region) and collapse out of the grid when hidden via
+ * the views menu.
  *
- * The jobs panel currently docks into the inspector zone. When a second
- * panel arrives, the inspector grows a tab strip to switch between them.
+ * The brand mark is in a visually-hidden h1 so screen readers and the
+ * landmark tree still anchor on it without occupying header space.
  */
 export const AppShell: Component<AppShellProps> = (props) => {
   return (
     <div class={appShell}>
-      <header class={headerRegion}>
-        <h1 class={brandMark}>{t("brand")}</h1>
-        <span class={headerActions}>
-          <ViewsMenu />
-          <ThemeToggle registry={props.registry} />
-        </span>
+      <header class={`${headerArea} ${headerStrip}`}>
+        <h1 class={visuallyHidden}>{t("brand")}</h1>
+        <ViewsMenu />
+        <ThemeToggle registry={props.registry} />
       </header>
 
       <Show when={isZoneVisible("bin")}>
-        <aside class={binRegion} aria-label={t("region.bin")}>
-          <span class={placeholderText}>{t("region.bin")}</span>
+        <aside class={binFrame} aria-label={t("region.bin")}>
+          <header class={zoneHeader}>{t("region.bin")}</header>
+          <div class={zoneBody}>
+            <span class={placeholderText}>{t("region.bin")}</span>
+          </div>
         </aside>
       </Show>
 
       <Show when={isZoneVisible("program")}>
-        <section class={programRegion} aria-label={t("region.program")}>
-          <span class={placeholderText}>{t("region.program")}</span>
+        <section class={programFrame} aria-label={t("region.program")}>
+          <header class={zoneHeader}>{t("region.program")}</header>
+          <div class={zoneBody}>
+            <span class={placeholderText}>{t("region.program")}</span>
+          </div>
         </section>
       </Show>
 
       <Show when={isZoneVisible("inspector")}>
-        <aside class={inspectorRegion} aria-label={t("region.inspector")}>
-          <h2 class={zoneTitle}>{t("panel.jobs.title")}</h2>
-          <JobsPanel />
+        <aside class={inspectorFrame} aria-label={t("region.inspector")}>
+          <header class={zoneHeader}>{t("panel.jobs.title")}</header>
+          <div class={zoneBody}>
+            <JobsPanel />
+          </div>
         </aside>
       </Show>
 
       <Show when={isZoneVisible("timeline")}>
-        <section class={timelineRegion} aria-label={t("region.timeline")}>
-          <span class={placeholderText}>{t("region.timeline")}</span>
+        <section class={timelineFrame} aria-label={t("region.timeline")}>
+          <header class={zoneHeader}>{t("region.timeline")}</header>
+          <div class={zoneBody}>
+            <span class={placeholderText}>{t("region.timeline")}</span>
+          </div>
         </section>
       </Show>
 
-      <section class={statusRegion} aria-label={t("region.status")}>
+      <section class={statusArea} aria-label={t("region.status")}>
         <JobChainWidget />
       </section>
     </div>
