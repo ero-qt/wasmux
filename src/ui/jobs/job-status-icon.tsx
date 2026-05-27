@@ -2,13 +2,13 @@ import { type Component, Match, Switch } from "solid-js";
 import type { JobStatus } from "~/core/jobs";
 import { t } from "~/i18n";
 import {
-  jobLoadingDots,
   jobStatusCancelled,
   jobStatusCompleted,
   jobStatusFailed,
   jobStatusIcon,
   jobStatusRunning,
 } from "~/styles/jobs.css";
+import { loadingFrame } from "~/ui/jobs/loading-frame";
 
 const statusClass: Record<JobStatus, string> = {
   running: jobStatusRunning,
@@ -32,9 +32,9 @@ const statusLabel = (status: JobStatus): string => {
 
 /**
  * Compact glyph that conveys job status without taking up a text column.
- * Filled circle for running, check for completed, ✕ for failed, dash for
- * cancelled. The accessible name comes from the catalog, so screen readers
- * announce "Running" / "Completed" etc. instead of the SVG.
+ * Plain unicode — braille spinner while running, `✓` completed, `✕` failed,
+ * `−` cancelled. The accessible name comes from the catalog so screen
+ * readers announce "running" / "completed" etc. instead of the glyph.
  */
 export const JobStatusIcon: Component<{ status: JobStatus }> = (props) => {
   return (
@@ -44,62 +44,10 @@ export const JobStatusIcon: Component<{ status: JobStatus }> = (props) => {
       aria-label={statusLabel(props.status)}
     >
       <Switch>
-        <Match when={props.status === "running"}>
-          <svg
-            class={jobLoadingDots}
-            viewBox="0 0 12 12"
-            width="0.95em"
-            height="0.95em"
-            aria-hidden="true"
-          >
-            <circle cx="2.5" cy="6" r="1.4" fill="currentColor" />
-            <circle cx="6" cy="6" r="1.4" fill="currentColor" />
-            <circle cx="9.5" cy="6" r="1.4" fill="currentColor" />
-          </svg>
-        </Match>
-        <Match when={props.status === "completed"}>
-          <svg
-            viewBox="0 0 12 12"
-            width="0.85em"
-            height="0.85em"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M2.5 6.2 L5 8.5 L9.5 3.7" />
-          </svg>
-        </Match>
-        <Match when={props.status === "failed"}>
-          <svg
-            viewBox="0 0 12 12"
-            width="0.85em"
-            height="0.85em"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            aria-hidden="true"
-          >
-            <path d="M3 3 L9 9 M9 3 L3 9" />
-          </svg>
-        </Match>
-        <Match when={props.status === "cancelled"}>
-          <svg
-            viewBox="0 0 12 12"
-            width="0.85em"
-            height="0.85em"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            aria-hidden="true"
-          >
-            <path d="M3 6 L9 6" />
-          </svg>
-        </Match>
+        <Match when={props.status === "running"}>{loadingFrame()}</Match>
+        <Match when={props.status === "completed"}>✓</Match>
+        <Match when={props.status === "failed"}>✕</Match>
+        <Match when={props.status === "cancelled"}>−</Match>
       </Switch>
     </span>
   );

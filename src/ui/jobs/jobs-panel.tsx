@@ -8,7 +8,6 @@ import {
   jobReportLine,
   jobRow,
   jobToggleButton,
-  jobToggleIcon,
   jobToggleSlot,
   jobsEmpty,
   jobsTreeRoot,
@@ -47,16 +46,7 @@ const JobNode: Component<JobNodeProps> = (props) => {
             aria-expanded={expanded()}
             aria-label={expanded() ? t("jobs.collapse") : t("jobs.expand")}
           >
-            <svg
-              class={jobToggleIcon}
-              viewBox="0 0 12 12"
-              width="0.95em"
-              height="0.95em"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M3.5 2 L9.5 6 L3.5 10 Z" />
-            </svg>
+            <span aria-hidden="true">{expanded() ? "v" : ">"}</span>
           </button>
         </Show>
         <NodeContent job={props.job} />

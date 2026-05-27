@@ -1,15 +1,5 @@
-import { globalStyle, keyframes, style } from "@vanilla-extract/css";
+import { style } from "@vanilla-extract/css";
 import { tokens } from "~/styles/tokens.css";
-
-/**
- * Soft pulse used by the running-status indicator. The global
- * `prefers-reduced-motion` reset in `global.css.ts` already clamps
- * `animation-duration` to 0.01ms, so motion-averse users see static dots.
- */
-const dotPulse = keyframes({
-  "0%, 80%, 100%": { opacity: 0.3 },
-  "40%": { opacity: 1 },
-});
 
 export const jobsEmpty = style({
   margin: 0,
@@ -23,18 +13,19 @@ export const jobsTreeRoot = style({
   padding: 0,
   display: "flex",
   flexDirection: "column",
-  gap: "0.15rem",
+  gap: "0.1rem",
 });
 
 /** One row in the tree. Plain text strip; the disclosure button is the only click target. */
 export const jobRow = style({
   display: "flex",
   alignItems: "center",
-  gap: "0.4rem",
-  paddingBlock: "0.15rem",
-  paddingInline: "0.25rem",
+  gap: "0.35rem",
+  paddingBlock: "0.1rem",
+  paddingInline: "0.2rem",
   whiteSpace: "nowrap",
   minInlineSize: 0,
+  lineHeight: 1.3,
 });
 
 /** Job name. Doesn't shrink so the icon + name pair is always legible. */
@@ -45,14 +36,17 @@ export const jobName = style({
 /**
  * Reserved space at the start of every row so leaves and expandable nodes
  * line up. The disclosure button (when present) lives inside this slot.
+ * Width is locked so the `>` and `v` glyphs occupy the same column.
  */
 export const jobToggleSlot = style({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  inlineSize: "1.4em",
-  blockSize: "1.4em",
+  inlineSize: "1em",
+  blockSize: "1em",
   flexShrink: 0,
+  textAlign: "center",
+  fontVariantNumeric: "tabular-nums",
 });
 
 /** Disclosure button. Sized to match the slot; resets the global button chrome. */
@@ -67,70 +61,45 @@ export const jobToggleButton = style([
     padding: 0,
     minBlockSize: "auto",
     minInlineSize: "auto",
-    borderRadius: "0.25rem",
+    borderRadius: "0.2rem",
+    opacity: 0.75,
+    selectors: {
+      "&:hover": {
+        opacity: 1,
+      },
+    },
   },
 ]);
 
-/** Triangle SVG. Rotates 90° via the row button's aria-expanded state. */
-export const jobToggleIcon = style({
-  transition: "transform 120ms ease",
-  selectors: {
-    'button[aria-expanded="true"] &': {
-      transform: "rotate(90deg)",
-    },
-  },
-});
-
-/**
- * Tree node. Hover highlight lives here (not on the row) so the parent's
- * background extends across its row AND its children's `<ol>` as one big
- * box. `:has(> .jobRow:hover)` matches only the *direct* row inside this
- * node, so hovering a child does not bubble up to its ancestor.
- */
 /**
  * Tree node. Hover highlight uses fg-mix (not accent) so it reads cleanly on
  * both dark and light themes; accent at low alpha was nearly invisible
- * against the dark theme's black background.
+ * against the dark theme's near-black background.
  */
 export const jobNode = style({
-  borderRadius: "0.3rem",
+  borderRadius: "0.25rem",
   selectors: {
     [`&:has(> .${jobRow}:hover)`]: {
-      background: `color-mix(in oklab, ${tokens.theme.fg} 10%, transparent)`,
+      background: `color-mix(in oklab, ${tokens.theme.fg} 8%, transparent)`,
     },
   },
 });
 
-/** Status indicator slot. Sized identically to the disclosure slot for vertical alignment. */
+/**
+ * Status indicator slot. Sized identically to the disclosure slot for vertical
+ * alignment; the glyph itself (braille / ✓ / ✕ / −) renders inside.
+ */
 export const jobStatusIcon = style({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  inlineSize: "1.1em",
-  blockSize: "1.1em",
+  inlineSize: "1em",
+  blockSize: "1em",
   flexShrink: 0,
+  fontVariantNumeric: "tabular-nums",
 });
 
 export const jobStatusRunning = style({ color: tokens.theme.accent });
-
-/**
- * Three-dot pulse for the running indicator. Per-dot delays live in
- * `globalStyle` because vanilla-extract's `selectors` block must always have
- * `&` at the end of the selector chain, which prevents descendant rules.
- */
-export const jobLoadingDots = style({});
-
-globalStyle(`.${jobLoadingDots} circle`, {
-  animation: `${dotPulse} 1.4s ease-in-out infinite`,
-});
-
-globalStyle(`.${jobLoadingDots} circle:nth-of-type(2)`, {
-  animationDelay: "0.16s",
-});
-
-globalStyle(`.${jobLoadingDots} circle:nth-of-type(3)`, {
-  animationDelay: "0.32s",
-});
 export const jobStatusCompleted = style({ color: "#4caf50" });
 export const jobStatusFailed = style({ color: "#e57373" });
 export const jobStatusCancelled = style({ opacity: 0.4 });
@@ -138,7 +107,7 @@ export const jobStatusCancelled = style({ opacity: 0.4 });
 /** Latest-report text. Truncates with an ellipsis when wider than the available space. */
 export const jobReportLine = style({
   fontSize: "0.85em",
-  opacity: 0.7,
+  opacity: 0.65,
   overflow: "hidden",
   textOverflow: "ellipsis",
   minInlineSize: 0,
@@ -158,10 +127,10 @@ export const jobChainSeparator = style({
 export const jobChildren = style({
   listStyle: "none",
   margin: 0,
-  paddingInlineStart: "1.2rem",
+  paddingInlineStart: "1rem",
   borderInlineStart: `1px solid color-mix(in oklab, ${tokens.theme.accent} 25%, transparent)`,
-  marginInlineStart: "0.7em",
+  marginInlineStart: "0.6em",
   display: "flex",
   flexDirection: "column",
-  gap: "0.15rem",
+  gap: "0.1rem",
 });

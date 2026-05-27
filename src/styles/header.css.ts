@@ -46,8 +46,12 @@ export const headerIconButton = style({
   },
 });
 
-/** SVG inside a {@link headerIconButton}. Sized once so every icon matches. */
+/**
+ * Glyph inside a {@link headerIconButton}. Bumps the font-size so unicode
+ * icons (▦, ☀, ☾, …) read at the same visual weight as the surrounding text
+ * while staying centred in the 1.75rem square.
+ */
 export const headerIcon = style({
-  inlineSize: "1rem",
-  blockSize: "1rem",
+  fontSize: "1.1rem",
+  lineHeight: 1,
 });

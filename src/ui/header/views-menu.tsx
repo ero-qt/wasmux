@@ -36,12 +36,9 @@ export const ViewsMenu: Component = () => {
         aria-label={t("header.viewsToggle")}
         title={t("header.views")}
       >
-        <svg class={headerIcon} viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
-          <rect x="1" y="1" width="4" height="4" rx="0.6" />
-          <rect x="7" y="1" width="4" height="4" rx="0.6" />
-          <rect x="1" y="7" width="4" height="4" rx="0.6" />
-          <rect x="7" y="7" width="4" height="4" rx="0.6" />
-        </svg>
+        <span class={headerIcon} aria-hidden="true">
+          ▦
+        </span>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content class={viewsMenuContent}>
@@ -54,19 +51,7 @@ export const ViewsMenu: Component = () => {
               >
                 <span class={viewsMenuItemIndicatorSlot}>
                   <DropdownMenu.ItemIndicator>
-                    <svg
-                      viewBox="0 0 12 12"
-                      width="0.85em"
-                      height="0.85em"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.6"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M2.5 6.2 L5 8.5 L9.5 3.7" />
-                    </svg>
+                    <span aria-hidden="true">✓</span>
                   </DropdownMenu.ItemIndicator>
                 </span>
                 {zoneLabel(zone)}
