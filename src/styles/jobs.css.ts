@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css";
+import { globalStyle, style } from "@vanilla-extract/css";
 import { tokens } from "~/styles/tokens.css";
 
 export const jobsEmpty = style({
@@ -16,7 +16,13 @@ export const jobsTreeRoot = style({
   gap: "0.1rem",
 });
 
-/** One row in the tree. Plain text strip; the disclosure button is the only click target. */
+/**
+ * One row in the tree. When the node has children the row itself becomes the
+ * clickable toggle (cursor + focus ring + `role="button"` on the element);
+ * otherwise it stays a plain text strip. Text inside remains selectable —
+ * the browser swallows the synthetic click after a drag-select, so dragging
+ * to copy a job name doesn't toggle the row.
+ */
 export const jobRow = style({
   display: "flex",
   alignItems: "center",
@@ -26,6 +32,16 @@ export const jobRow = style({
   whiteSpace: "nowrap",
   minInlineSize: 0,
   lineHeight: 1.3,
+  selectors: {
+    '&[role="button"]': {
+      cursor: "pointer",
+    },
+    '&[role="button"]:focus-visible': {
+      outline: `2px solid ${tokens.theme.accent}`,
+      outlineOffset: "-2px",
+      borderRadius: "0.25rem",
+    },
+  },
 });
 
 /** Job name. Doesn't shrink so the icon + name pair is always legible. */
@@ -35,8 +51,7 @@ export const jobName = style({
 
 /**
  * Reserved space at the start of every row so leaves and expandable nodes
- * line up. The disclosure button (when present) lives inside this slot.
- * Width is locked so the `>` and `v` glyphs occupy the same column.
+ * line up. The chevron (or empty slot, for leaves) renders inside.
  */
 export const jobToggleSlot = style({
   display: "inline-flex",
@@ -45,44 +60,40 @@ export const jobToggleSlot = style({
   inlineSize: "1em",
   blockSize: "1em",
   flexShrink: 0,
-  textAlign: "center",
   fontVariantNumeric: "tabular-nums",
 });
 
-/** Disclosure button. Sized to match the slot; resets the global button chrome. */
-export const jobToggleButton = style([
-  jobToggleSlot,
-  {
-    background: "transparent",
-    border: "none",
-    cursor: "pointer",
-    color: "inherit",
-    font: "inherit",
-    padding: 0,
-    minBlockSize: "auto",
-    minInlineSize: "auto",
-    borderRadius: "0.2rem",
-    opacity: 0.75,
-    selectors: {
-      "&:hover": {
-        opacity: 1,
-      },
+/**
+ * Chevron glyph (`›`). Rotates 90° when the row reports `aria-expanded="true"`
+ * so the same character does double duty for collapsed / expanded states.
+ * `transform-origin: center` keeps the rotation tidy inside the 1em slot.
+ */
+export const jobToggleIcon = style({
+  display: "inline-block",
+  transition: "transform 120ms ease",
+  opacity: 0.75,
+  transformOrigin: "center",
+  selectors: {
+    '[aria-expanded="true"] &': {
+      transform: "rotate(90deg)",
     },
   },
-]);
+});
 
 /**
- * Tree node. Hover highlight uses fg-mix (not accent) so it reads cleanly on
+ * Tree node. Hover wash uses fg-mix (not accent) so it reads cleanly on
  * both dark and light themes; accent at low alpha was nearly invisible
- * against the dark theme's near-black background.
+ * against the dark theme's near-black background. The `:has(... :hover)`
+ * exclusion is what makes hovering the *parent's negative space* (between
+ * children, around the row) highlight the parent — without it, only direct
+ * row hover lit up, leaving the body of the node dead to the cursor.
  */
 export const jobNode = style({
   borderRadius: "0.25rem",
-  selectors: {
-    [`&:has(> .${jobRow}:hover)`]: {
-      background: `color-mix(in oklab, ${tokens.theme.fg} 8%, transparent)`,
-    },
-  },
+});
+
+globalStyle(`.${jobNode}:hover:not(:has(.${jobNode}:hover))`, {
+  background: `color-mix(in oklab, ${tokens.theme.fg} 8%, transparent)`,
 });
 
 /**

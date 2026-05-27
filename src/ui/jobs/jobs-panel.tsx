@@ -7,7 +7,7 @@ import {
   jobNode,
   jobReportLine,
   jobRow,
-  jobToggleButton,
+  jobToggleIcon,
   jobToggleSlot,
   jobsEmpty,
   jobsTreeRoot,
@@ -35,22 +35,53 @@ const JobNode: Component<JobNodeProps> = (props) => {
   const children = (): readonly TrackedJob[] => reactiveChildren(props.job.id);
   const hasChildren = (): boolean => children().length > 0;
 
+  const toggle = (): void => {
+    setExpanded((v) => !v);
+  };
+
+  // Skip toggle when the user is mid-text-selection — clicking inside an
+  // active selection should not collapse the row out from under them.
+  const onRowClick = (): void => {
+    const sel = typeof window !== "undefined" ? window.getSelection() : null;
+    if (sel && !sel.isCollapsed && sel.toString().length > 0) {
+      return;
+    }
+    toggle();
+  };
+
+  const onRowKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggle();
+    }
+  };
+
   return (
     <li class={jobNode}>
-      <div class={jobRow}>
-        <Show when={hasChildren()} fallback={<span class={jobToggleSlot} aria-hidden="true" />}>
-          <button
-            type="button"
-            class={jobToggleButton}
-            onClick={() => setExpanded((v) => !v)}
-            aria-expanded={expanded()}
-            aria-label={expanded() ? t("jobs.collapse") : t("jobs.expand")}
-          >
-            <span aria-hidden="true">{expanded() ? "v" : ">"}</span>
-          </button>
-        </Show>
-        <NodeContent job={props.job} />
-      </div>
+      <Show
+        when={hasChildren()}
+        fallback={
+          <div class={jobRow}>
+            <span class={jobToggleSlot} aria-hidden="true" />
+            <NodeContent job={props.job} />
+          </div>
+        }
+      >
+        {/* biome-ignore lint/a11y/useSemanticElements: a native <button> blocks drag-select in Chrome/Safari, and the user-facing requirement is that the job name stays selectable. role="button" + tabindex + keydown gives the same a11y semantics without that side effect. */}
+        <div
+          class={jobRow}
+          role="button"
+          tabIndex={0}
+          aria-expanded={expanded()}
+          onClick={onRowClick}
+          onKeyDown={onRowKeyDown}
+        >
+          <span class={jobToggleSlot} aria-hidden="true">
+            <span class={jobToggleIcon}>›</span>
+          </span>
+          <NodeContent job={props.job} />
+        </div>
+      </Show>
       <Show when={hasChildren() && expanded()}>
         <ol class={jobChildren}>
           <For each={children()}>{(child) => <JobNode job={child} />}</For>
