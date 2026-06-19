@@ -2,7 +2,7 @@ import type { JSX } from "solid-js";
 
 /** A single primitive's catalogue entry — renders in the main panel when selected. */
 export interface CatalogueEntry {
-  /** Stable id used in the URL hash for direct linking. */
+  /** Stable id; deduplicates entries (last write wins). */
   id: string;
 
   /** Human-readable label shown in the sidebar. */

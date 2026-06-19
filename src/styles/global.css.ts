@@ -52,19 +52,6 @@ globalStyle("*, ::before, ::after", {
   },
 });
 
-// forced-colors mode (Windows High Contrast et al.) — use system keywords;
-// strokes inherit currentColor automatically.
-globalStyle(":root", {
-  "@media": {
-    "(forced-colors: active)": {
-      vars: {
-        // these vars map our tokens onto system colors; component styles
-        // that read tokens.theme.* automatically pick them up.
-      },
-    },
-  },
-});
-
 // :focus-visible default. components may override but the baseline is
 // 2px solid accent at 1px offset, per the design spec.
 globalStyle(":focus-visible", {

@@ -1,10 +1,11 @@
-import { type Component, Show } from "solid-js";
+import { type Component, Show, lazy } from "solid-js";
 import { createHotkeyRegistry } from "~/core/hotkeys";
 import { t } from "~/i18n";
-import { Catalogue } from "~/ui/catalogue";
 import { fireDemoJob } from "~/ui/jobs/demo-job";
 import { AppShell } from "~/ui/layout/app-shell";
 import { mountHotkeys } from "~/ui/mount-hotkeys";
+
+const Catalogue = lazy(() => import("~/ui/catalogue"));
 
 const hotkeys = createHotkeyRegistry();
 

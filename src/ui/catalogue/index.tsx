@@ -51,3 +51,5 @@ export const Catalogue: Component = () => {
     </div>
   );
 };
+
+export default Catalogue;
