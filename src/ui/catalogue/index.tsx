@@ -18,6 +18,7 @@ import "~/ui/catalogue/entries/number-input";
 import "~/ui/catalogue/entries/select";
 import "~/ui/catalogue/entries/chip";
 import "~/ui/catalogue/entries/segmented-control";
+import "~/ui/catalogue/entries/swatch";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
