@@ -2,7 +2,10 @@
   "editor.defaultFormatter": "biomejs.biome",
 
   "files.exclude": {
+    ".claude/": true,
+    ".superpowers/": true,
     "artifacts/": true,
+    "docs/": true,
     "node_modules/": true,
 
     "bun.lock": true
