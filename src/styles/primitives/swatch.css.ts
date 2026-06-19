@@ -16,9 +16,12 @@ export const swatch = style({
   cursor: "pointer",
   padding: 0,
   selectors: {
+    // double-ring selection: inner 1px gap in surface color, outer 2px hard
+    // outline in text0. invariant to swatch fill and accent — works on any
+    // colour including when the swatch IS the accent.
     '&[aria-pressed="true"]': {
-      borderColor: tokens.theme.accent,
-      boxShadow: `0 0 0 2px ${tokens.theme.accentLine}`,
+      borderColor: tokens.theme.bg1,
+      boxShadow: `0 0 0 2px ${tokens.theme.text0}`,
     },
     "&:disabled": {
       opacity: 0.4,
