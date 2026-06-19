@@ -1,18 +1,16 @@
-import { type Draft, type Patch, applyPatches, enablePatches, produceWithPatches } from "immer";
+import { type Draft, type Patches, apply, create } from "mutative";
 
-enablePatches();
-
-/** Immer patch pair representing a single mutation step. */
+/** Mutative patch pair representing a single mutation step. */
 interface HistoryEntry {
-  readonly patches: Patch[];
-  readonly inversePatches: Patch[];
+  readonly patches: Patches;
+  readonly inversePatches: Patches;
 }
 
 /** A mutation operating on a draft of the state. */
 export type Recipe<T> = (draft: Draft<T>) => void;
 
 /**
- * Undo/redo history over an immutable state tree. Stores Immer
+ * Undo/redo history over an immutable state tree. Stores Mutative
  * patches (diffs), not full snapshots. State is frozen between mutations.
  */
 export interface History<T> {
@@ -38,13 +36,16 @@ export interface History<T> {
   canRedo(): boolean;
 }
 
+// shared options: patches enabled, output frozen.
+const CREATE_OPTS = { enablePatches: true, enableAutoFreeze: true } as const;
+
 /** Creates a new history starting from `initial`. */
 export function createHistory<T extends object>(initial: T): History<T> {
   const undoStack: HistoryEntry[] = [];
   const redoStack: HistoryEntry[] = [];
 
-  // no-op produce freezes the initial state so current() is always frozen.
-  let state = produceWithPatches(initial, () => {})[0];
+  // no-op create freezes the initial state so current() is always frozen.
+  let state = create(initial, () => {}, CREATE_OPTS)[0] as T;
 
   function pushEntry(entry: HistoryEntry): void {
     undoStack.push(entry);
@@ -53,8 +54,8 @@ export function createHistory<T extends object>(initial: T): History<T> {
   }
 
   function applySingle(recipe: Recipe<T>): void {
-    const [next, patches, inversePatches] = produceWithPatches(state, recipe);
-    state = next;
+    const [next, patches, inversePatches] = create(state, recipe, CREATE_OPTS);
+    state = next as T;
     pushEntry({ patches, inversePatches });
   }
 
@@ -68,12 +69,12 @@ export function createHistory<T extends object>(initial: T): History<T> {
     },
 
     transaction(fn) {
-      const allPatches: Patch[] = [];
-      const allInversePatches: Patch[] = [];
+      const allPatches: Patches = [];
+      const allInversePatches: Patches = [];
 
       fn((recipe) => {
-        const [next, patches, inversePatches] = produceWithPatches(state, recipe);
-        state = next;
+        const [next, patches, inversePatches] = create(state, recipe, CREATE_OPTS);
+        state = next as T;
         allPatches.push(...patches);
         allInversePatches.push(...inversePatches);
       });
@@ -91,7 +92,7 @@ export function createHistory<T extends object>(initial: T): History<T> {
         return;
       }
 
-      state = applyPatches(state as Record<string, unknown>, entry.inversePatches) as T;
+      state = apply(state, entry.inversePatches) as T;
       redoStack.push(entry);
     },
 
@@ -101,7 +102,7 @@ export function createHistory<T extends object>(initial: T): History<T> {
         return;
       }
 
-      state = applyPatches(state as Record<string, unknown>, entry.patches) as T;
+      state = apply(state, entry.patches) as T;
       undoStack.push(entry);
     },
 
