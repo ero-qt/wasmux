@@ -9,6 +9,7 @@ import {
 import "~/ui/catalogue/entries/placeholder";
 import "~/ui/catalogue/entries/button";
 import "~/ui/catalogue/entries/icon-button";
+import "~/ui/catalogue/entries/toggle";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
