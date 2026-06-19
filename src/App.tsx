@@ -1,6 +1,7 @@
-import type { Component } from "solid-js";
+import { type Component, Show } from "solid-js";
 import { createHotkeyRegistry } from "~/core/hotkeys";
 import { t } from "~/i18n";
+import { Catalogue } from "~/ui/catalogue";
 import { fireDemoJob } from "~/ui/jobs/demo-job";
 import { AppShell } from "~/ui/layout/app-shell";
 import { mountHotkeys } from "~/ui/mount-hotkeys";
@@ -21,5 +22,12 @@ if (import.meta.env.DEV) {
 export const App: Component = () => {
   mountHotkeys(hotkeys);
 
-  return <AppShell registry={hotkeys} />;
+  const catalogueMode =
+    import.meta.env.DEV || new URLSearchParams(window.location.search).get("catalogue") === "1";
+
+  return (
+    <Show when={catalogueMode} fallback={<AppShell registry={hotkeys} />}>
+      <Catalogue />
+    </Show>
+  );
 };
