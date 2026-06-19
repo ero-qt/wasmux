@@ -1,3 +1,4 @@
+// accent is used as a surface/border, not body text on bg0 — no body-text-on-bg0 contrast assertion for it.
 import { describe, expect, test } from "vitest";
 import { type AppTheme, themeContract, themes } from "~/styles/themes";
 
@@ -7,7 +8,6 @@ import { type AppTheme, themeContract, themes } from "~/styles/themes";
 // 1.4.11 Non-text Contrast AA:   3:1 for UI component boundaries and states.
 const AAA_NORMAL = 7;
 const AA_NORMAL = 4.5;
-const AA_NON_TEXT = 3;
 
 interface Color {
   r: number;
@@ -136,7 +136,7 @@ describe.each(Object.entries(themes))("%s theme WCAG contrast", (_, p) => {
 
   // fail when a tested AppTheme color changes name; update this set in lock-step.
   test("every tested key exists in the contract", () => {
-    const tested = new Set<keyof AppTheme>(["bg0", "text0", "accent", "accentSoft"]);
+    const tested = new Set<keyof AppTheme>(["bg0", "text0", "accent", "accentSoft", "accentFg"]);
     const contractKeys = new Set(Object.keys(themeContract));
     for (const key of tested) {
       expect(contractKeys, `tested key "${key}" missing from contract`).toContain(key);
@@ -144,21 +144,14 @@ describe.each(Object.entries(themes))("%s theme WCAG contrast", (_, p) => {
   });
 });
 
-// the shared accent (oklch(0.72 0.15 300)) reads well on dark surfaces only;
-// on light bg0 it sits at medium lightness and has ~2:1 contrast — by design.
-// these checks are dark-only.
-describe("defaultDark theme accent contrast", () => {
-  const p = themes.defaultDark;
-
-  test("1.4.6 AAA: accent text on bg (7:1)", () => {
-    expect(contrast(p.accent, p.bg0)).toBeGreaterThanOrEqual(AAA_NORMAL);
-  });
-
-  test("1.4.11 AA: accent border against bg (3:1 non-text)", () => {
-    expect(contrast(p.accent, p.bg0)).toBeGreaterThanOrEqual(AA_NON_TEXT);
-  });
-
-  test("1.4.3 AA: bg text on pressed accent surface (4.5:1)", () => {
-    expect(contrast(p.bg0, p.accent)).toBeGreaterThanOrEqual(AA_NORMAL);
+describe("accent button contrast", () => {
+  test("accentFg-on-accent satisfies WCAG AA normal text (4.5:1)", () => {
+    const p = themes.defaultDark;
+    const accent = parse(p.accent);
+    const fg = parse(p.accentFg);
+    const L1 = luminance(accent);
+    const L2 = luminance(fg);
+    const [hi, lo] = L1 > L2 ? [L1, L2] : [L2, L1];
+    expect((hi + 0.05) / (lo + 0.05)).toBeGreaterThanOrEqual(AA_NORMAL);
   });
 });

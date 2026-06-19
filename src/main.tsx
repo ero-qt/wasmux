@@ -1,7 +1,6 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
 import "~/styles/global.css";
-import "~/styles/button.css";
 import { App } from "~/App";
 import { negotiateLocale, setLocale } from "~/i18n";
 // importing the theme store kicks off the createRoot effect that syncs the
