@@ -15,6 +15,7 @@ import "~/ui/catalogue/entries/status-dot";
 import "~/ui/catalogue/entries/keycap";
 import "~/ui/catalogue/entries/slider";
 import "~/ui/catalogue/entries/number-input";
+import "~/ui/catalogue/entries/select";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
