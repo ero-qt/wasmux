@@ -17,6 +17,7 @@ import "~/ui/catalogue/entries/slider";
 import "~/ui/catalogue/entries/number-input";
 import "~/ui/catalogue/entries/select";
 import "~/ui/catalogue/entries/chip";
+import "~/ui/catalogue/entries/segmented-control";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
