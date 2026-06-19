@@ -7,10 +7,10 @@ review. Every commit is human-authored or human-reviewed before it lands.
 
 ## What's verified
 
-- Unit + property tests run on every push (CI: `.github/workflows/ci.yml`).
+- Unit + property tests run on every push (CI: [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)).
 - Type checks via `tsc --noEmit`, lint via Biome — strict error policy.
 - Coverage available via `bun run check:test:coverage`; the CI run uploads the
-  report as a build artefact.
+  report as a build artifact.
 
 ## Privacy posture
 
