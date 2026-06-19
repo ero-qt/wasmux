@@ -3,9 +3,9 @@ import { tokens } from "~/styles/tokens.css";
 
 /** Leaf shell. Border + radius matches the previous zone cards. */
 export const panelCell = style({
-  border: `1px solid color-mix(in oklab, ${tokens.theme.fg} 18%, transparent)`,
+  border: `1px solid color-mix(in oklab, ${tokens.theme.text0} 18%, transparent)`,
   borderRadius: "0.4rem",
-  background: tokens.theme.bg,
+  background: tokens.theme.bg0,
   display: "flex",
   flexDirection: "column",
   minInlineSize: "min-content",
@@ -17,7 +17,7 @@ export const panelCell = style({
 export const panelTabBar = style({
   display: "flex",
   alignItems: "stretch",
-  background: `color-mix(in oklab, ${tokens.theme.fg} 6%, transparent)`,
+  background: `color-mix(in oklab, ${tokens.theme.text0} 6%, transparent)`,
   flexShrink: 0,
   overflowX: "auto",
 });
@@ -29,10 +29,10 @@ export const panelTab = style({
   gap: "0.2rem",
   paddingBlock: "0.15rem",
   paddingInline: "0.4rem 0.25rem",
-  borderInlineEnd: `1px solid color-mix(in oklab, ${tokens.theme.fg} 10%, transparent)`,
+  borderInlineEnd: `1px solid color-mix(in oklab, ${tokens.theme.text0} 10%, transparent)`,
   selectors: {
     "&:has([data-selected]):hover, &:has([data-selected])": {
-      background: tokens.theme.bg,
+      background: tokens.theme.bg0,
     },
   },
 });
@@ -79,7 +79,7 @@ export const panelTabClose = style({
   selectors: {
     "&:hover": {
       opacity: 1,
-      background: `color-mix(in oklab, ${tokens.theme.fg} 15%, transparent)`,
+      background: `color-mix(in oklab, ${tokens.theme.text0} 15%, transparent)`,
     },
     "&:focus-visible": {
       outline: `2px solid ${tokens.theme.accent}`,

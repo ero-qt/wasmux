@@ -6,7 +6,7 @@ import { tokens } from "~/styles/tokens.css";
  * feel like one visual family.
  */
 export const viewsMenuContent = style({
-  background: tokens.theme.bg,
+  background: tokens.theme.bg0,
   border: `1px solid color-mix(in oklab, ${tokens.theme.accent} 30%, transparent)`,
   borderRadius: "0.5rem",
   boxShadow: `0 0.5rem 1.5rem color-mix(in oklab, ${tokens.theme.accent} 15%, transparent)`,
@@ -29,7 +29,7 @@ export const viewsMenuItem = style({
   fontSize: "0.9em",
   selectors: {
     "&[data-highlighted]": {
-      background: `color-mix(in oklab, ${tokens.theme.fg} 10%, transparent)`,
+      background: `color-mix(in oklab, ${tokens.theme.text0} 10%, transparent)`,
     },
   },
 });

@@ -46,7 +46,7 @@ export const statusArea = style({
   display: "flex",
   alignItems: "center",
   gap: "0.8rem",
-  borderBlockStart: `1px solid color-mix(in oklab, ${tokens.theme.fg} 10%, transparent)`,
+  borderBlockStart: `1px solid color-mix(in oklab, ${tokens.theme.text0} 10%, transparent)`,
   marginBlockStart: "0.1rem",
 });
 
@@ -56,9 +56,9 @@ export const statusArea = style({
  * floating, just docked now.
  */
 const zoneFrame = style({
-  border: `1px solid color-mix(in oklab, ${tokens.theme.fg} 18%, transparent)`,
+  border: `1px solid color-mix(in oklab, ${tokens.theme.text0} 18%, transparent)`,
   borderRadius: "0.4rem",
-  background: tokens.theme.bg,
+  background: tokens.theme.bg0,
   display: "flex",
   flexDirection: "column",
   // grid items need explicit min sizes to honor parent track height/width
@@ -80,7 +80,7 @@ export const zoneHeader = style({
   fontSize: "0.72em",
   letterSpacing: "0.04em",
   opacity: 0.75,
-  background: `color-mix(in oklab, ${tokens.theme.fg} 6%, transparent)`,
+  background: `color-mix(in oklab, ${tokens.theme.text0} 6%, transparent)`,
   flexShrink: 0,
 });
 

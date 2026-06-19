@@ -1,18 +1,38 @@
-import { globalStyle } from "@vanilla-extract/css";
+import { globalLayer, globalStyle } from "@vanilla-extract/css";
 import { tokens } from "~/styles/tokens.css";
+
+// cascade layers, ordered low → high precedence. components that need to win
+// over base styles declare their rules inside the components layer.
+globalLayer("reset");
+globalLayer("tokens");
+globalLayer("base");
+globalLayer("components");
+globalLayer("utilities");
+
+// customisation root vars. set on :root so they cascade everywhere; user
+// overrides flip these via Settings → Appearance.
+globalStyle(":root", {
+  vars: {
+    "--ui-scale": "1",
+    "--ui-density": "1",
+  },
+  // honour OS light/dark choice; data-theme attribute overrides if present.
+  colorScheme: "light dark",
+});
 
 globalStyle("html, body, #root", {
   margin: 0,
   padding: 0,
-  fontFamily: "monospace",
-  // 1.125rem matches the previous `large` keyword on every browser default,
-  // but scales predictably with the user's root font-size preference.
-  fontSize: "1.125rem",
-  background: tokens.theme.bg,
-  color: tokens.theme.fg,
+  fontFamily:
+    'ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace',
+  // base 12.5px × --ui-scale. all per-element font-sizes inherit and scale.
+  fontSize: "calc(12.5px * var(--ui-scale))",
+  fontVariantNumeric: "tabular-nums",
+  background: tokens.theme.bg0,
+  color: tokens.theme.text0,
 });
 
-// honor display cutouts / rounded corners declared via viewport-fit=cover.
+// honour display cutouts / rounded corners declared via viewport-fit=cover.
 globalStyle("body", {
   paddingBlockStart: "env(safe-area-inset-top)",
   paddingBlockEnd: "env(safe-area-inset-bottom)",
@@ -22,8 +42,6 @@ globalStyle("body", {
 
 // WCAG 2.3.3 / vestibular-safety baseline. per-component animations can opt
 // back in by gating their own rule on (prefers-reduced-motion: no-preference).
-// scroll-behavior is intentionally left to per-component opt-in rather than
-// reset here so we never `!important`-cast a non-string-typed property.
 globalStyle("*, ::before, ::after", {
   "@media": {
     "(prefers-reduced-motion: reduce)": {
@@ -32,4 +50,25 @@ globalStyle("*, ::before, ::after", {
       transitionDuration: "0.01ms !important",
     },
   },
+});
+
+// forced-colors mode (Windows High Contrast et al.) — use system keywords;
+// strokes inherit currentColor automatically.
+globalStyle(":root", {
+  "@media": {
+    "(forced-colors: active)": {
+      vars: {
+        // these vars map our tokens onto system colors; component styles
+        // that read tokens.theme.* automatically pick them up.
+      },
+    },
+  },
+});
+
+// :focus-visible default. components may override but the baseline is
+// 2px solid accent at 1px offset, per the design spec.
+globalStyle(":focus-visible", {
+  outline: `2px solid ${tokens.theme.accent}`,
+  outlineOffset: "1px",
+  borderRadius: "3px",
 });

@@ -21,7 +21,7 @@ const splitterBase = style({
   blockSize: "auto",
   selectors: {
     "&:hover::before, &:focus-visible::before, &[data-dragging='true']::before": {
-      background: `color-mix(in oklab, ${tokens.theme.fg} ${LINE_OPACITY_HOVER * 100}%, transparent)`,
+      background: `color-mix(in oklab, ${tokens.theme.text0} ${LINE_OPACITY_HOVER * 100}%, transparent)`,
     },
     "&:focus-visible": {
       outline: `2px solid ${tokens.theme.accent}`,
@@ -31,7 +31,7 @@ const splitterBase = style({
     "&::before": {
       content: "''",
       position: "absolute",
-      background: `color-mix(in oklab, ${tokens.theme.fg} ${LINE_OPACITY * 100}%, transparent)`,
+      background: `color-mix(in oklab, ${tokens.theme.text0} ${LINE_OPACITY * 100}%, transparent)`,
       transition: "background 120ms ease",
     },
   },

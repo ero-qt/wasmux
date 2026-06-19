@@ -31,5 +31,5 @@ globalStyle("button:hover", {
 // the synthetic .click() never triggers the native pseudo-class.
 globalStyle('button:active, button[data-pressed="true"]', {
   background: tokens.theme.accent,
-  color: tokens.theme.bg,
+  color: tokens.theme.bg0,
 });

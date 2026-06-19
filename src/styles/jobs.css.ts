@@ -93,7 +93,7 @@ export const jobNode = style({
 });
 
 globalStyle(`.${jobNode}:hover:not(:has(.${jobNode}:hover))`, {
-  background: `color-mix(in oklab, ${tokens.theme.fg} 8%, transparent)`,
+  background: `color-mix(in oklab, ${tokens.theme.text0} 8%, transparent)`,
 });
 
 /**

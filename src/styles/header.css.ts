@@ -38,7 +38,7 @@ export const headerIconButton = style({
   minBlockSize: "1.75rem",
   selectors: {
     "&:hover": {
-      background: `color-mix(in oklab, ${tokens.theme.fg} 10%, transparent)`,
+      background: `color-mix(in oklab, ${tokens.theme.text0} 10%, transparent)`,
     },
     '&[aria-pressed="true"]': {
       background: `color-mix(in oklab, ${tokens.theme.accent} 25%, transparent)`,
