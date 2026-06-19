@@ -84,7 +84,10 @@ export function NumberInput(props: NumberInputProps): JSX.Element {
           }
         }}
         onBlur={() => {
-          local.onChange(clamp(local.value, local.min, local.max));
+          const clamped = clamp(local.value, local.min, local.max);
+          if (clamped !== local.value) {
+            local.onChange(clamped);
+          }
         }}
       />
     </div>

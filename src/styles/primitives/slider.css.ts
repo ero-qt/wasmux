@@ -53,6 +53,12 @@ export const sliderFill = style({
   borderRadius: "2px",
 });
 
+/**
+ * Marker class for bipolar mode. The style is intentionally empty — its
+ * purpose is to produce a class-name token whose presence on the track
+ * lets tests assert "bipolar mode is active" via a class-substring match.
+ * The actual bipolar fill is computed inline by the Slider component.
+ */
 export const sliderBipolar = style({});
 
 export const sliderThumb = style({

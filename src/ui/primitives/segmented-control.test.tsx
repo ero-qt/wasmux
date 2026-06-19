@@ -66,4 +66,19 @@ describe("<SegmentedControl />", () => {
     fireEvent.keyDown(screen.getByRole("tab", { name: "Dark" }), { key: "ArrowRight" });
     expect(onChange).toHaveBeenCalledWith("auto");
   });
+
+  it("ignores keyboard when disabled", () => {
+    const onChange = vi.fn();
+    render(() => (
+      <SegmentedControl
+        value="light"
+        options={OPTIONS}
+        aria-label="theme"
+        disabled
+        onChange={onChange}
+      />
+    ));
+    fireEvent.keyDown(screen.getByRole("tab", { name: "Light" }), { key: "ArrowRight" });
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });
