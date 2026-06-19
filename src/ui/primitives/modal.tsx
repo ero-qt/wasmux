@@ -62,6 +62,7 @@ export function Modal(props: ModalProps): JSX.Element {
 
   let dialogEl: HTMLDialogElement | undefined;
   let prevOverflow = "";
+  let inertedSiblings: Element[] = [];
 
   createEffect(() => {
     if (!dialogEl) {
@@ -70,10 +71,20 @@ export function Modal(props: ModalProps): JSX.Element {
     if (local.open && !dialogEl.open) {
       prevOverflow = document.documentElement.style.overflow;
       document.documentElement.style.overflow = "hidden";
+      inertedSiblings = Array.from(document.body.children).filter(
+        (child) => !child.contains(dialogEl),
+      );
+      for (const el of inertedSiblings) {
+        el.setAttribute("inert", "");
+      }
       dialogEl.showModal();
     } else if (!local.open && dialogEl.open) {
       dialogEl.close();
       document.documentElement.style.overflow = prevOverflow;
+      for (const el of inertedSiblings) {
+        el.removeAttribute("inert");
+      }
+      inertedSiblings = [];
     }
   });
 
@@ -82,6 +93,10 @@ export function Modal(props: ModalProps): JSX.Element {
       dialogEl.close();
     }
     document.documentElement.style.overflow = prevOverflow;
+    for (const el of inertedSiblings) {
+      el.removeAttribute("inert");
+    }
+    inertedSiblings = [];
   });
 
   const dismissBackdrop = (): boolean => local.dismissOnBackdrop !== false;
@@ -109,6 +124,7 @@ export function Modal(props: ModalProps): JSX.Element {
       ref={dialogEl}
       class={cls()}
       data-size={local.size ?? "md"}
+      aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={local.description ? descId : undefined}
       onCancel={onCancel}

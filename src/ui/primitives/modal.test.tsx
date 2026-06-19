@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
+import { createSignal } from "solid-js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Modal } from "~/ui/primitives/modal";
 
@@ -150,5 +151,29 @@ describe("<Modal />", () => {
       </Modal>
     ));
     expect(screen.getByTestId("leaf").closest("dialog")).toBeTruthy();
+  });
+
+  it("sets inert on body siblings while open and removes it on close", () => {
+    const sibling = document.createElement("div");
+    sibling.id = "sibling";
+    document.body.appendChild(sibling);
+
+    const [isOpen, setIsOpen] = createSignal(false);
+
+    render(() => (
+      <Modal open={isOpen()} title="m" onChange={() => {}}>
+        <div>content</div>
+      </Modal>
+    ));
+
+    expect(sibling.hasAttribute("inert")).toBe(false);
+
+    setIsOpen(true);
+    expect(sibling.hasAttribute("inert")).toBe(true);
+
+    setIsOpen(false);
+    expect(sibling.hasAttribute("inert")).toBe(false);
+
+    sibling.remove();
   });
 });
