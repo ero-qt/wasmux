@@ -1,0 +1,85 @@
+import { style, styleVariants } from "@vanilla-extract/css";
+import { tokens } from "~/styles/tokens.css";
+
+const base = style({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "calc(0.4rem * var(--ui-density))",
+
+  fontFamily: "inherit",
+  fontSize: "inherit",
+  fontWeight: 600,
+
+  border: "1px solid transparent",
+  borderRadius: "0.35rem",
+  paddingBlock: "calc(0.35rem * var(--ui-density))",
+  paddingInline: "calc(0.9rem * var(--ui-density))",
+
+  cursor: "pointer",
+  transition: "background-color 120ms ease, color 120ms ease, border-color 120ms ease",
+
+  // WCAG 2.5.8 AA target size baseline.
+  minBlockSize: "24px",
+  minInlineSize: "24px",
+
+  selectors: {
+    "&:disabled": {
+      opacity: 0.4,
+      cursor: "not-allowed",
+    },
+  },
+});
+
+export const buttonVariant = styleVariants({
+  accent: [
+    base,
+    {
+      background: tokens.theme.accent,
+      color: tokens.theme.accentFg,
+      selectors: {
+        "&:hover:not(:disabled)": {
+          // mix toward fg by ~12% for a perceptible but quiet hover.
+          background: `color-mix(in oklab, ${tokens.theme.accent} 88%, ${tokens.theme.text0})`,
+        },
+      },
+    },
+  ],
+  ghost: [
+    base,
+    {
+      background: "transparent",
+      color: tokens.theme.text0,
+      borderColor: tokens.theme.border,
+      selectors: {
+        "&:hover:not(:disabled)": {
+          background: tokens.theme.bgHover,
+        },
+      },
+    },
+  ],
+  icon: [
+    base,
+    {
+      background: "transparent",
+      color: tokens.theme.text1,
+      inlineSize: "calc(1.75rem * var(--ui-density))",
+      blockSize: "calc(1.75rem * var(--ui-density))",
+      minInlineSize: "calc(1.75rem * var(--ui-density))",
+      minBlockSize: "calc(1.75rem * var(--ui-density))",
+      paddingBlock: 0,
+      paddingInline: 0,
+      borderRadius: "0.3rem",
+      selectors: {
+        "&:hover:not(:disabled)": {
+          background: `color-mix(in oklab, ${tokens.theme.text0} 10%, transparent)`,
+          color: tokens.theme.text0,
+        },
+        '&[aria-pressed="true"]': {
+          background: tokens.theme.accentSoft,
+          color: tokens.theme.text0,
+        },
+      },
+    },
+  ],
+});

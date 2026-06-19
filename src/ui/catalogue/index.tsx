@@ -7,6 +7,7 @@ import {
   catalogueSidebar,
 } from "~/styles/catalogue.css";
 import "~/ui/catalogue/entries/placeholder";
+import "~/ui/catalogue/entries/button";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
