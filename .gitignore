@@ -16,5 +16,7 @@ artifacts/
 .claude/
 audits/
 claude.md
+docs/research/
+docs/superpowers/
 
 # User-specific files
