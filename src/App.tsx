@@ -1,4 +1,4 @@
-import { type Component, Show, lazy } from "solid-js";
+import { type Component, Show, Suspense, lazy } from "solid-js";
 import { createHotkeyRegistry } from "~/core/hotkeys";
 import { t } from "~/i18n";
 import { fireDemoJob } from "~/ui/jobs/demo-job";
@@ -23,12 +23,15 @@ if (import.meta.env.DEV) {
 export const App: Component = () => {
   mountHotkeys(hotkeys);
 
-  const catalogueMode =
-    import.meta.env.DEV || new URLSearchParams(window.location.search).get("catalogue") === "1";
+  // ?catalogue=1 forces catalogue, ?catalogue=0 forces AppShell, no param defaults to catalogue in DEV.
+  const param = new URLSearchParams(window.location.search).get("catalogue");
+  const catalogueMode = param === "1" || (param !== "0" && import.meta.env.DEV);
 
   return (
     <Show when={catalogueMode} fallback={<AppShell registry={hotkeys} />}>
-      <Catalogue />
+      <Suspense>
+        <Catalogue />
+      </Suspense>
     </Show>
   );
 };

@@ -42,6 +42,10 @@ export const buttonVariant = styleVariants({
           // mix toward fg by ~12% for a perceptible but quiet hover.
           background: `color-mix(in oklab, ${tokens.theme.accent} 88%, ${tokens.theme.text0})`,
         },
+        "&:active:not(:disabled)": {
+          // deeper mix toward fg for a tactile press.
+          background: `color-mix(in oklab, ${tokens.theme.accent} 72%, ${tokens.theme.text0})`,
+        },
       },
     },
   ],
@@ -55,14 +59,20 @@ export const buttonVariant = styleVariants({
         "&:hover:not(:disabled)": {
           background: tokens.theme.bgHover,
         },
+        "&:active:not(:disabled)": {
+          background: tokens.theme.accentSoft,
+          color: tokens.theme.accent,
+          borderColor: tokens.theme.accentLine,
+        },
       },
     },
   ],
   icon: [
     base,
     {
-      background: "transparent",
-      color: tokens.theme.text1,
+      // default to accent fill, same look as the accent variant. small + square.
+      background: tokens.theme.accent,
+      color: tokens.theme.accentFg,
       inlineSize: "calc(1.75rem * var(--ui-density))",
       blockSize: "calc(1.75rem * var(--ui-density))",
       minInlineSize: "calc(1.75rem * var(--ui-density))",
@@ -72,13 +82,25 @@ export const buttonVariant = styleVariants({
       borderRadius: "0.3rem",
       selectors: {
         "&:hover:not(:disabled)": {
+          background: `color-mix(in oklab, ${tokens.theme.accent} 88%, ${tokens.theme.text0})`,
+        },
+        "&:active:not(:disabled)": {
+          background: `color-mix(in oklab, ${tokens.theme.accent} 72%, ${tokens.theme.text0})`,
+        },
+        // toggle off-state: ghost-style transparent.
+        '&[aria-pressed="false"]': {
+          background: "transparent",
+          color: tokens.theme.text1,
+        },
+        '&[aria-pressed="false"]:hover:not(:disabled)': {
           background: `color-mix(in oklab, ${tokens.theme.text0} 10%, transparent)`,
           color: tokens.theme.text0,
         },
-        '&[aria-pressed="true"]': {
+        '&[aria-pressed="false"]:active:not(:disabled)': {
           background: tokens.theme.accentSoft,
-          color: tokens.theme.text0,
+          color: tokens.theme.accent,
         },
+        // pressed-on stays at default (accent fill); no override needed.
       },
     },
   ],

@@ -3,7 +3,7 @@ import { tokens } from "~/styles/tokens.css";
 
 export const catalogueShell = style({
   display: "grid",
-  gridTemplateColumns: "minmax(180px, 240px) 1fr",
+  gridTemplateColumns: "minmax(120px, 160px) 1fr",
   blockSize: "100dvb",
   background: tokens.theme.bg0,
   color: tokens.theme.text0,
