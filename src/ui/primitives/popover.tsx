@@ -12,7 +12,12 @@ export interface PopoverProps {
   /** Fires when the popover requests to open or close. */
   onChange: (next: boolean) => void;
 
-  /** Trigger element (rendered as the anchor and toggle). */
+  /**
+   * Content shown inside the trigger button. Pass a string, icon, or other
+   * inline content — NOT a button or other interactive element. Kobalte's
+   * `Popover.Trigger` renders as a native `<button>`; passing another button
+   * creates nested interactive elements (invalid HTML and an a11y failure).
+   */
   trigger: JSX.Element;
 
   /** Floating panel contents. */

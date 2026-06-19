@@ -1,6 +1,5 @@
 import { createSignal } from "solid-js";
 import { registerCatalogueEntry } from "~/ui/catalogue/registry";
-import { Button } from "~/ui/primitives/button";
 import { Popover } from "~/ui/primitives/popover";
 
 registerCatalogueEntry({
@@ -24,25 +23,19 @@ registerCatalogueEntry({
             open={a()}
             side="bottom"
             aria-label="bottom popover"
-            trigger={<Button onClick={() => setA(!a())}>Bottom</Button>}
+            trigger="bottom ▾"
             onChange={setA}
           >
             <p>Anchored below.</p>
           </Popover>
-          <Popover
-            open={b()}
-            side="top"
-            aria-label="top popover"
-            trigger={<Button onClick={() => setB(!b())}>Top</Button>}
-            onChange={setB}
-          >
+          <Popover open={b()} side="top" aria-label="top popover" trigger="top ▴" onChange={setB}>
             <p>Anchored above.</p>
           </Popover>
           <Popover
             open={c()}
             side="left"
             aria-label="left popover"
-            trigger={<Button onClick={() => setC(!c())}>Left</Button>}
+            trigger="left ◂"
             onChange={setC}
           >
             <p>Anchored left.</p>
@@ -51,7 +44,7 @@ registerCatalogueEntry({
             open={d()}
             side="right"
             aria-label="right popover"
-            trigger={<Button onClick={() => setD(!d())}>Right</Button>}
+            trigger="right ▸"
             onChange={setD}
           >
             <p>Anchored right.</p>
