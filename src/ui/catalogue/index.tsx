@@ -20,6 +20,7 @@ import "~/ui/catalogue/entries/chip";
 import "~/ui/catalogue/entries/segmented-control";
 import "~/ui/catalogue/entries/swatch";
 import "~/ui/catalogue/entries/modal";
+import "~/ui/catalogue/entries/popover";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
