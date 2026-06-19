@@ -79,7 +79,9 @@ export const menuItemHotkey = style({
 export const menuSeparator = style({
   blockSize: "1px",
   background: tokens.theme.border,
+  border: "none",
   marginBlock: "calc(0.25rem * var(--ui-density))",
+  marginInline: "calc(0.5rem * var(--ui-density))",
 });
 
 export const menuLabel = style({
