@@ -8,6 +8,7 @@ import {
 } from "~/styles/catalogue.css";
 import "~/ui/catalogue/entries/placeholder";
 import "~/ui/catalogue/entries/button";
+import "~/ui/catalogue/entries/icon-button";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
