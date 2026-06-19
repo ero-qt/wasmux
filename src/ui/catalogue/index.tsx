@@ -13,6 +13,7 @@ import "~/ui/catalogue/entries/toggle";
 import "~/ui/catalogue/entries/pill";
 import "~/ui/catalogue/entries/status-dot";
 import "~/ui/catalogue/entries/keycap";
+import "~/ui/catalogue/entries/slider";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
