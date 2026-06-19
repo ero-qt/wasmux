@@ -14,9 +14,9 @@ artifacts/
 
 # AI assistant files
 .claude/
+.superpowers/
 audits/
 claude.md
-docs/research/
-docs/superpowers/
+docs/
 
 # User-specific files
