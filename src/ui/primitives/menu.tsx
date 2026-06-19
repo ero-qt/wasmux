@@ -2,6 +2,7 @@ import { DropdownMenu } from "@kobalte/core/dropdown-menu";
 import { type JSX, Show } from "solid-js";
 import {
   menuContent,
+  menuGroup,
   menuItem,
   menuItemGlyphSlot,
   menuItemHotkey,
@@ -36,7 +37,13 @@ export interface MenuProps {
   /** Disables the trigger; prevents the menu from opening. */
   disabled?: boolean;
 
-  /** Required when `trigger` is icon-only. */
+  /**
+   * Accessible label for the menu surface. Pass ONLY for icon-only triggers
+   * — text triggers (e.g. `trigger="Edit"`) already provide the name via
+   * Kobalte's `aria-labelledby`. Passing `aria-label` for a text trigger
+   * overrides the natural name with the supplied string (ARIA 1.2 §6.2:
+   * aria-label wins over aria-labelledby).
+   */
   "aria-label"?: string;
 
   /** Class applied to the trigger button. */
@@ -144,7 +151,9 @@ function MenuItem(props: MenuItemProps): JSX.Element {
       onSelect={() => props.onSelect?.()}
     >
       <span class={menuItemIndicatorSlot} />
-      <span class={menuItemGlyphSlot}>{props.glyph}</span>
+      <span class={menuItemGlyphSlot} aria-hidden="true">
+        {props.glyph}
+      </span>
       <span class={menuItemLabel}>{props.children}</span>
       <Hotkey {...(props.hotkey ? { hotkey: props.hotkey } : {})} />
     </DropdownMenu.Item>
@@ -173,7 +182,11 @@ function MenuCheckboxItem(props: MenuCheckboxItemProps): JSX.Element {
 
 function MenuRadioGroup<T extends string>(props: MenuRadioGroupProps<T>): JSX.Element {
   return (
-    <DropdownMenu.RadioGroup value={props.value} onChange={(v) => props.onChange(v as T)}>
+    <DropdownMenu.RadioGroup
+      class={menuGroup}
+      value={props.value}
+      onChange={(v) => props.onChange(v as T)}
+    >
       {props.children}
     </DropdownMenu.RadioGroup>
   );
@@ -204,7 +217,7 @@ function MenuSeparator(props: MenuSeparatorProps): JSX.Element {
 
 function MenuLabel(props: MenuLabelProps): JSX.Element {
   return (
-    <DropdownMenu.Group>
+    <DropdownMenu.Group class={menuGroup}>
       <DropdownMenu.GroupLabel class={menuLabel}>{props.children}</DropdownMenu.GroupLabel>
     </DropdownMenu.Group>
   );

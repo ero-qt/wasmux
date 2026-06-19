@@ -93,6 +93,14 @@ export const menuLabel = style({
   paddingInline: "calc(0.5rem * var(--ui-density))",
 });
 
+// kobalte wraps Menu.Label in <DropdownMenu.Group> and Menu.RadioGroup in
+// <DropdownMenu.RadioGroup>. those wrappers would otherwise create their own
+// box and offset the separator's margin-collapse — display:contents removes
+// the wrapper from layout so children align as direct siblings of separators.
+export const menuGroup = style({
+  display: "contents",
+});
+
 export const menuSubTriggerChevron = style({
   fontSize: "0.8em",
   color: tokens.theme.text2,

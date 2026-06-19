@@ -18,7 +18,7 @@ registerCatalogueEntry({
         <p>Themed Kobalte DropdownMenu. 4-column row: indicator | glyph | label | hotkey.</p>
 
         <div style={{ display: "flex", gap: "0.6rem", "flex-wrap": "wrap" }}>
-          <Menu trigger="Edit" aria-label="edit-menu">
+          <Menu trigger="Edit">
             <Menu.Item glyph={<span>✂</span>} hotkey="Ctrl+X" onSelect={() => {}}>
               Cut
             </Menu.Item>
@@ -34,7 +34,7 @@ registerCatalogueEntry({
             </Menu.Item>
           </Menu>
 
-          <Menu trigger="View" aria-label="view-menu">
+          <Menu trigger="View">
             <Menu.Label>Toggles</Menu.Label>
             <Menu.CheckboxItem checked={snap()} onChange={setSnap}>
               Snap
@@ -51,7 +51,7 @@ registerCatalogueEntry({
             </Menu.RadioGroup>
           </Menu>
 
-          <Menu trigger="More" aria-label="more-menu">
+          <Menu trigger="More">
             <Menu.Item onSelect={() => {}}>Open</Menu.Item>
             <Menu.Sub trigger="Share">
               <Menu.Item onSelect={() => {}}>Copy link</Menu.Item>

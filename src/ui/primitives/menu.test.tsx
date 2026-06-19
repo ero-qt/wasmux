@@ -100,8 +100,8 @@ describe("<Menu />", () => {
     // accessible name is the label only — no hotkey leakage.
     expect(item.textContent ?? "").toContain("Copy");
     // the hotkey wrapper span is aria-hidden and contains the hotkey text:
-    const hidden = item.querySelector("[aria-hidden='true']");
-    expect(hidden?.textContent).toContain("Ctrl+C");
+    const hiddenEls = Array.from(item.querySelectorAll("[aria-hidden='true']"));
+    expect(hiddenEls.some((el) => el.textContent?.includes("Ctrl+C"))).toBe(true);
   });
 
   it("separator and label expose correct ARIA roles", () => {
