@@ -24,7 +24,7 @@ describe("<StatusDot />", () => {
 
   it("applies pulse class when pulse is true", () => {
     render(() => <StatusDot pulse data-testid="dot" />);
-    expect(screen.getByTestId("dot").className).toMatch(/pulse/);
+    expect(screen.getByTestId("dot").className).toMatch(/pulse/i);
   });
 
   it("applies the tone class", () => {

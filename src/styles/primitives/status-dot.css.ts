@@ -20,7 +20,7 @@ export const statusDotTone = styleVariants({
   audio: [base, { background: tokens.theme.cAudio }],
 });
 
-export const statusDotpulse = style({
+export const statusDotPulse = style({
   "@media": {
     "(prefers-reduced-motion: no-preference)": {
       animation: `${pulseKeyframes} 2.6s ease-in-out infinite`,
