@@ -11,6 +11,7 @@ import "~/ui/catalogue/entries/button";
 import "~/ui/catalogue/entries/icon-button";
 import "~/ui/catalogue/entries/toggle";
 import "~/ui/catalogue/entries/pill";
+import "~/ui/catalogue/entries/status-dot";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
