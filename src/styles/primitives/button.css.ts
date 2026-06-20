@@ -49,6 +49,21 @@ export const buttonVariant = styleVariants({
       },
     },
   ],
+  danger: [
+    base,
+    {
+      background: tokens.theme.cDanger,
+      color: tokens.theme.text0,
+      selectors: {
+        "&:hover:not(:disabled)": {
+          background: `color-mix(in oklab, ${tokens.theme.cDanger} 88%, ${tokens.theme.text0})`,
+        },
+        "&:active:not(:disabled)": {
+          background: `color-mix(in oklab, ${tokens.theme.cDanger} 72%, ${tokens.theme.text0})`,
+        },
+      },
+    },
+  ],
   ghost: [
     base,
     {

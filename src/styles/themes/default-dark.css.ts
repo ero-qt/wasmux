@@ -24,6 +24,7 @@ export const defaultDarkTheme: AppTheme = {
   cVideo: "oklch(0.68 0.12 250)",
   cAudio: "oklch(0.72 0.12 158)",
   cOther: "oklch(0.72 0.10 205)",
+  cDanger: "oklch(0.62 0.20 25)",
 
   shadow: "0 8px 30px -6px rgba(0,0,0,.55), 0 2px 8px -2px rgba(0,0,0,.4)",
 };

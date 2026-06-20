@@ -55,6 +55,9 @@ export interface AppTheme {
   /** Type-tint: everything else (image, text, shape). */
   cOther: string;
 
+  /** Destructive-action surface (used by Button `danger` variant). */
+  cDanger: string;
+
   /** 2-layer drop shadow. */
   shadow: string;
 }
@@ -77,5 +80,6 @@ export const themeContract: Record<keyof AppTheme, null> = {
   cVideo: null,
   cAudio: null,
   cOther: null,
+  cDanger: null,
   shadow: null,
 };

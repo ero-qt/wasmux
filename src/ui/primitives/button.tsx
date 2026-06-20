@@ -1,7 +1,7 @@
 import { type ComponentProps, type JSX, splitProps } from "solid-js";
 import { buttonVariant } from "~/styles/primitives/button.css";
 
-export type ButtonVariant = "accent" | "ghost" | "icon";
+export type ButtonVariant = "accent" | "danger" | "ghost" | "icon";
 
 export interface ButtonProps extends Omit<ComponentProps<"button">, "type"> {
   /** Visual variant. Defaults to `"accent"`. */
