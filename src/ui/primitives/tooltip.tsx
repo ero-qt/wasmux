@@ -17,7 +17,7 @@ export interface TooltipProps {
   /** Controlled open state. Omit for uncontrolled. */
   open?: boolean;
 
-  /** Fires after openDelay on open and closeDelay on close. */
+  /** Fires after openDelay on hover-open, immediately on focus-open, and after closeDelay on close. */
   onChange?: (open: boolean) => void;
 
   /** Suppress the tooltip entirely without unmounting the trigger. */
@@ -33,7 +33,7 @@ export interface TooltipProps {
   /** Placement relative to trigger. Defaults to `"top"`. */
   placement?: OverlaySide;
 
-  /** Open delay in ms. Defaults to 500. */
+  /** Hover open delay in ms. Focus always opens immediately per WCAG. Defaults to 500. */
   openDelay?: number;
 
   /** Close delay in ms. Defaults to 150. */
