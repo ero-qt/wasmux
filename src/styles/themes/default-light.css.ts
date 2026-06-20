@@ -25,7 +25,7 @@ export const defaultLightTheme: AppTheme = {
   cVideo: "oklch(0.55 0.14 250)",
   cAudio: "oklch(0.56 0.13 158)",
   cOther: "oklch(0.56 0.12 205)",
-  cDanger: "oklch(0.48 0.21 25)",
+  cDanger: "oklch(0.57 0.22 25)",
   cDangerFg: "oklch(0.97 0.005 25)",
 
   shadow: "0 10px 34px -8px rgba(40,30,60,.22), 0 2px 8px -2px rgba(40,30,60,.12)",
