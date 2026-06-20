@@ -24,6 +24,7 @@ import "~/ui/catalogue/entries/popover";
 import "~/ui/catalogue/entries/menu";
 import "~/ui/catalogue/entries/tooltip";
 import "~/ui/catalogue/entries/text-field";
+import "~/ui/catalogue/entries/textarea";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
