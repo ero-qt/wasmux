@@ -1,4 +1,5 @@
 import { registerCatalogueEntry } from "~/ui/catalogue/registry";
+import { Button } from "~/ui/primitives/button";
 import { IconButton } from "~/ui/primitives/icon-button";
 import { Tooltip } from "~/ui/primitives/tooltip";
 
@@ -33,13 +34,31 @@ registerCatalogueEntry({
         </Tooltip>
       </div>
 
+      <h3 style={{ "margin-block-start": "1.4rem" }}>
+        Antipattern: text trigger + identical tooltip
+      </h3>
+      <p>These tooltips repeat the button's own label. Hover to see the redundancy.</p>
+      <div
+        style={{ display: "flex", gap: "0.6rem", "align-items": "center", "margin-block": "1rem" }}
+      >
+        <Tooltip label="Save" placement="top">
+          <Button>Save</Button>
+        </Tooltip>
+        <Tooltip label="Cancel" placement="top">
+          <Button variant="ghost">Cancel</Button>
+        </Tooltip>
+        <Tooltip label="Delete" placement="top">
+          <Button variant="danger">Delete</Button>
+        </Tooltip>
+      </div>
+
       <p style={{ "font-size": "0.78rem", color: "var(--text2)" }}>
         Icon-only triggers always benefit from a visible hint — the icon alone isn't intuitive.
         Kobalte wires the tooltip via <code>aria-describedby</code> so it complements the button's{" "}
         <code>aria-label</code> rather than replacing it. Don't use tooltips on text triggers whose
-        label already matches the tooltip text. Shortcut hints (e.g. "Toggle play (Space)") will
-        appear once the hotkey primitive lands in Phase 9 — until then there's no real binding to
-        read.
+        label already matches the tooltip text (the second row above shows the antipattern).
+        Shortcut hints (e.g. "Toggle play (Space)") will appear once the hotkey primitive lands in
+        Phase 9 — until then there's no real binding to read.
       </p>
     </section>
   ),
