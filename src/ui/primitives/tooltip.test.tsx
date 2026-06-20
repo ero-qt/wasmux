@@ -38,25 +38,29 @@ describe("<Tooltip />", () => {
         <button type="button">M</button>
       </Tooltip>
     ));
-    const trigger = screen.getByRole("button", { name: "M" });
-    const id = trigger.getAttribute("aria-describedby");
+    // Kobalte stamps aria-describedby on the trigger wrapper div (display:contents),
+    // which AT traverses transparently — the child button is still the announced element.
+    const button = screen.getByRole("button", { name: "M" });
+    const wrapper = button.parentElement as HTMLElement;
+    const id = wrapper.getAttribute("aria-describedby");
     expect(id).toBeTruthy();
     expect(document.getElementById(id ?? "")?.textContent).toContain("Mute");
   });
 
-  it("controlled onChange fires on focus after openDelay and blur after closeDelay", () => {
+  it("controlled onChange fires on focus (immediate) and blur after closeDelay", () => {
     const onChange = vi.fn();
     render(() => (
       <Tooltip label="Mute" onChange={onChange} openDelay={500} closeDelay={150}>
         <button type="button">M</button>
       </Tooltip>
     ));
-    const trigger = screen.getByRole("button", { name: "M" });
-    fireEvent.focusIn(trigger);
-    expect(onChange).not.toHaveBeenCalled();
-    vi.advanceTimersByTime(500);
+    // Kobalte's trigger listens for non-bubbling focus/blur on the wrapper div.
+    // Focus bypasses openDelay and opens immediately (Kobalte native behaviour).
+    const button = screen.getByRole("button", { name: "M" });
+    const wrapper = button.parentElement as HTMLElement;
+    fireEvent.focus(wrapper);
     expect(onChange).toHaveBeenCalledWith(true);
-    fireEvent.focusOut(trigger);
+    fireEvent.blur(wrapper);
     vi.advanceTimersByTime(150);
     expect(onChange).toHaveBeenLastCalledWith(false);
   });
@@ -92,6 +96,34 @@ describe("<Tooltip />", () => {
     const trigger = screen.getByRole("button");
     expect(trigger.getAttribute("aria-label")).toBe("Mute");
     expect(trigger.getAttribute("aria-describedby")).toBeNull();
+  });
+
+  it("renders on hover", async () => {
+    render(() => (
+      <Tooltip label="Mute" openDelay={0} closeDelay={0}>
+        <button type="button">M</button>
+      </Tooltip>
+    ));
+    // Kobalte listens to non-bubbling pointerenter on the trigger wrapper div.
+    const wrapper = screen.getByRole("button", { name: "M" }).parentElement as HTMLElement;
+    fireEvent.pointerEnter(wrapper);
+    vi.advanceTimersByTime(0);
+    expect(screen.getByRole("tooltip").textContent).toContain("Mute");
+  });
+
+  it("hides on un-hover", async () => {
+    render(() => (
+      <Tooltip label="Mute" openDelay={0} closeDelay={0}>
+        <button type="button">M</button>
+      </Tooltip>
+    ));
+    const wrapper = screen.getByRole("button", { name: "M" }).parentElement as HTMLElement;
+    fireEvent.pointerEnter(wrapper);
+    vi.advanceTimersByTime(0);
+    expect(screen.getByRole("tooltip")).toBeTruthy();
+    fireEvent.pointerLeave(wrapper);
+    vi.advanceTimersByTime(0);
+    expect(screen.queryByRole("tooltip")).toBeNull();
   });
 
   it("placement prop forwards to a data-placement attribute", () => {

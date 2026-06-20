@@ -1,4 +1,4 @@
-import { Tooltip as KTooltip, useTooltipContext } from "@kobalte/core/tooltip";
+import { Tooltip as KTooltip } from "@kobalte/core/tooltip";
 import { type JSX, Show, children, createEffect } from "solid-js";
 import { tooltipArrow, tooltipContent } from "~/styles/primitives/tooltip.css";
 import { OVERLAY_GUTTER, type OverlaySide } from "~/ui/primitives/_overlay-types";
@@ -8,10 +8,9 @@ export interface TooltipProps {
   label: string;
 
   /**
-   * Trigger element. Must be a single focusable child. Do not pass a `<Button>`
-   * or other interactive element as a wrapper — Kobalte's `Tooltip.Trigger`
-   * renders as a native `<button>`; nesting another button creates invalid HTML.
-   * Pass strings, icons, or non-interactive elements instead.
+   * The element the tooltip is anchored to. Can be any inline element —
+   * including a Button or IconButton — because the trigger is wrapped in
+   * a `display: contents` div, so Kobalte does not introduce a nested button.
    */
   children: JSX.Element;
 
@@ -48,55 +47,6 @@ export interface TooltipProps {
 }
 
 /**
- * Inner component rendered inside the Kobalte Tooltip context. Renders the
- * trigger as a transparent `div[display:contents]` to avoid nested-button
- * HTML invalidity when children is already a focusable element. Propagates
- * `aria-describedby`, pointer events, and focus events to the child element
- * directly so keyboard and hover behaviour remain correct.
- */
-function TriggerSlot(props: { children: JSX.Element }): JSX.Element {
-  const ctx = useTooltipContext();
-  const resolved = children(() => props.children);
-
-  createEffect(() => {
-    const node = resolved();
-    const el = Array.isArray(node) ? node[0] : node;
-    if (!(el instanceof Element)) {
-      return;
-    }
-
-    // sync aria-describedby from the tooltip content id
-    const id = ctx.contentId();
-    if (id) {
-      el.setAttribute("aria-describedby", id);
-    } else {
-      el.removeAttribute("aria-describedby");
-    }
-  });
-
-  return (
-    <KTooltip.Trigger
-      as="div"
-      style={{ display: "contents" }}
-      // focusin/focusout bubble up from child focusable elements. Call Kobalte's
-      // context methods directly so the openDelay is respected on focus (Kobalte
-      // normally skips the delay for focus events; this wrapper enforces it).
-      onfocusin={() => {
-        ctx.openTooltip(false);
-      }}
-      onfocusout={(e: FocusEvent) => {
-        const related = e.relatedTarget as Node | null;
-        if (!ctx.isTargetOnTooltip(related)) {
-          ctx.hideTooltip(false);
-        }
-      }}
-    >
-      {resolved()}
-    </KTooltip.Trigger>
-  );
-}
-
-/**
  * Themed Kobalte Tooltip. Text-only hover/focus hint. When `asLabel` is set,
  * the trigger receives `aria-label={label}` and no surface is rendered — used
  * on icon-only buttons to avoid double-announcement. When `disabled`, children
@@ -128,7 +78,9 @@ export function Tooltip(props: TooltipProps): JSX.Element {
       closeDelay={props.closeDelay ?? 150}
       gutter={props.gutter ?? OVERLAY_GUTTER}
     >
-      <TriggerSlot>{props.children}</TriggerSlot>
+      <KTooltip.Trigger as="div" style={{ display: "contents" }}>
+        {props.children}
+      </KTooltip.Trigger>
       <KTooltip.Portal>
         <KTooltip.Content class={tooltipContent} data-placement={props.placement ?? "top"}>
           <Show when={props.showArrow}>
