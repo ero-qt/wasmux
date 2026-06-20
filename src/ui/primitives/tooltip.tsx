@@ -1,13 +1,5 @@
 import { Tooltip as KTooltip } from "@kobalte/core/tooltip";
-import {
-  type JSX,
-  Show,
-  children,
-  createEffect,
-  createSignal,
-  onMount,
-  splitProps,
-} from "solid-js";
+import { type JSX, Show, createSignal, onMount, splitProps } from "solid-js";
 import { tooltipArrow, tooltipContent } from "~/styles/primitives/tooltip.css";
 import { OVERLAY_GUTTER, type OverlaySide } from "~/ui/primitives/_overlay-types";
 
@@ -31,13 +23,6 @@ export interface TooltipProps {
   /** Suppress the tooltip entirely without unmounting the trigger. */
   disabled?: boolean;
 
-  /**
-   * Returns `true` when the tooltip text duplicates the trigger's accessible name.
-   * When `true`, applies `label` as `aria-label` on the trigger and renders no
-   * surface — used on icon-only buttons to avoid double-announcement.
-   */
-  asLabel?: boolean;
-
   /** Placement relative to trigger. Defaults to `"top"`. */
   placement?: OverlaySide;
 
@@ -55,10 +40,12 @@ export interface TooltipProps {
 }
 
 /**
- * Themed Kobalte Tooltip. Text-only hover/focus hint. When `asLabel` is set,
- * the trigger receives `aria-label={label}` and no surface is rendered — used
- * on icon-only buttons to avoid double-announcement. When `disabled`, children
- * render verbatim with no Kobalte wrapper.
+ * Themed Kobalte Tooltip. Text-only hover/focus hint. When `disabled`, children
+ * render verbatim with no Kobalte wrapper. Authors decide whether a tooltip is
+ * warranted — don't add one whose text duplicates a text trigger's own label;
+ * icon-only triggers always benefit from one for sighted discoverability, and
+ * Kobalte wires it via `aria-describedby` so it complements the trigger's name
+ * rather than replacing it.
  */
 export function Tooltip(props: TooltipProps): JSX.Element {
   const [local, rest] = splitProps(props, [
@@ -67,7 +54,6 @@ export function Tooltip(props: TooltipProps): JSX.Element {
     "open",
     "onChange",
     "disabled",
-    "asLabel",
     "placement",
     "openDelay",
     "closeDelay",
@@ -77,18 +63,6 @@ export function Tooltip(props: TooltipProps): JSX.Element {
 
   if (local.disabled) {
     return <>{local.children}</>;
-  }
-
-  if (local.asLabel) {
-    const resolved = children(() => local.children);
-    createEffect(() => {
-      const node = resolved();
-      const el = Array.isArray(node) ? node[0] : node;
-      if (el instanceof Element) {
-        el.setAttribute("aria-label", local.label);
-      }
-    });
-    return <>{resolved()}</>;
   }
 
   let triggerRef: HTMLSpanElement | undefined;

@@ -86,18 +86,6 @@ describe("<Tooltip />", () => {
     expect(screen.getByRole("button", { name: "M" }).getAttribute("aria-describedby")).toBeNull();
   });
 
-  it("asLabel applies aria-label and skips the surface", () => {
-    render(() => (
-      <Tooltip label="Mute" asLabel open>
-        <button type="button">M</button>
-      </Tooltip>
-    ));
-    expect(screen.queryByRole("tooltip")).toBeNull();
-    const trigger = screen.getByRole("button");
-    expect(trigger.getAttribute("aria-label")).toBe("Mute");
-    expect(trigger.getAttribute("aria-describedby")).toBeNull();
-  });
-
   it("renders on hover", async () => {
     render(() => (
       <Tooltip label="Mute" openDelay={0} closeDelay={0}>

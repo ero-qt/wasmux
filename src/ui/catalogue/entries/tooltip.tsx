@@ -13,33 +13,33 @@ registerCatalogueEntry({
       <div
         style={{ display: "flex", gap: "0.6rem", "align-items": "center", "margin-block": "1rem" }}
       >
-        {/* asLabel — tooltip text matches the trigger's aria-label so AT users don't get a double-announcement. */}
-        <Tooltip label="Play" placement="top" asLabel>
+        {/* one tooltip per placement so the four sides are easy to inspect. */}
+        <Tooltip label="Play" placement="top">
           <IconButton aria-label="Play">▶</IconButton>
         </Tooltip>
-        <Tooltip label="Mute" placement="bottom" showArrow asLabel>
+        <Tooltip label="Mute" placement="bottom" showArrow>
           <IconButton aria-label="Mute">♪</IconButton>
         </Tooltip>
-        <Tooltip label="Record" placement="right" asLabel>
+        <Tooltip label="Record" placement="right">
           <IconButton aria-label="Record">●</IconButton>
         </Tooltip>
-
-        {/* Non-asLabel — tooltip adds genuinely new info (a shortcut hint) on top of the button's existing name. */}
-        <Tooltip label="Toggle play (Space)" placement="bottom">
-          <IconButton aria-label="play-pause">⏯</IconButton>
+        <Tooltip label="Stop" placement="left">
+          <IconButton aria-label="Stop">■</IconButton>
         </Tooltip>
 
-        {/* Disabled — wrapper renders the child verbatim with no surface or aria injection. */}
+        {/* disabled — wrapper renders the child verbatim with no surface or aria injection. */}
         <Tooltip label="Tooltip suppressed via disabled" disabled>
           <IconButton aria-label="suppressed">?</IconButton>
         </Tooltip>
       </div>
 
       <p style={{ "font-size": "0.78rem", color: "var(--text2)" }}>
-        <strong>asLabel</strong> mode (first three) skips the surface and applies the label as
-        aria-label on the trigger — use when the tooltip duplicates the button's name. The fourth
-        case demonstrates a tooltip that adds new info (a keyboard shortcut) and so keeps a separate
-        visible aria-label. The fifth shows <code>disabled</code> suppression.
+        Icon-only triggers always benefit from a visible hint — the icon alone isn't intuitive.
+        Kobalte wires the tooltip via <code>aria-describedby</code> so it complements the button's{" "}
+        <code>aria-label</code> rather than replacing it. Don't use tooltips on text triggers whose
+        label already matches the tooltip text. Shortcut hints (e.g. "Toggle play (Space)") will
+        appear once the hotkey primitive lands in Phase 9 — until then there's no real binding to
+        read.
       </p>
     </section>
   ),
