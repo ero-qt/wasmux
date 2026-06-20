@@ -22,6 +22,7 @@ import "~/ui/catalogue/entries/swatch";
 import "~/ui/catalogue/entries/modal";
 import "~/ui/catalogue/entries/popover";
 import "~/ui/catalogue/entries/menu";
+import "~/ui/catalogue/entries/tooltip";
 import { catalogueEntries } from "~/ui/catalogue/registry";
 
 /**
