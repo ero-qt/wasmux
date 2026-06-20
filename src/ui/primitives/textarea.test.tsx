@@ -81,6 +81,35 @@ describe("<Textarea />", () => {
     expect(ta.getAttribute("aria-describedby")).toBe("hint");
   });
 
+  it("wrapper carries data-disabled and data-readonly markers", () => {
+    const { unmount } = render(() => (
+      <Textarea value="" aria-label="x" disabled readOnly onChange={() => {}} />
+    ));
+    const wrapper = screen.getByRole("textbox").parentElement as HTMLElement;
+    expect(wrapper.getAttribute("data-disabled")).toBe("true");
+    expect(wrapper.getAttribute("data-readonly")).toBe("true");
+    unmount();
+    render(() => <Textarea value="" aria-label="x" onChange={() => {}} />);
+    const wrapper2 = screen.getByRole("textbox").parentElement as HTMLElement;
+    expect(wrapper2.getAttribute("data-disabled")).toBeNull();
+    expect(wrapper2.getAttribute("data-readonly")).toBeNull();
+  });
+
+  it("wires aria-describedby to the description span when description is set", () => {
+    const { unmount } = render(() => (
+      <Textarea value="" aria-label="x" description="Visible during playback" onChange={() => {}} />
+    ));
+    const ta = screen.getByRole("textbox");
+    const descId = ta.getAttribute("aria-describedby") ?? "";
+    expect(descId).not.toBe("");
+    const descEl = document.getElementById(descId);
+    expect(descEl).not.toBeNull();
+    expect(descEl?.textContent).toBe("Visible during playback");
+    unmount();
+    render(() => <Textarea value="" aria-label="x" onChange={() => {}} />);
+    expect(screen.getByRole("textbox").getAttribute("aria-describedby")).toBeNull();
+  });
+
   it("does not preventDefault on Tab keydown", () => {
     render(() => <Textarea value="" aria-label="x" onChange={() => {}} />);
     const ta = screen.getByRole("textbox");

@@ -1,11 +1,19 @@
 import { type JSX, Show, createUniqueId, splitProps } from "solid-js";
-import { textareaField, textareaLabel, textareaRoot } from "~/styles/primitives/textarea.css";
+import {
+  textareaDescription,
+  textareaField,
+  textareaLabel,
+  textareaRoot,
+} from "~/styles/primitives/textarea.css";
 import { createImeGuard } from "~/ui/primitives/_ime";
 
 export type TextareaResize = "none" | "block" | "inline" | "both";
 
 export interface TextareaProps
-  extends Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, "onChange" | "onInput" | "value"> {
+  extends Omit<
+    JSX.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    "onChange" | "onInput" | "value" | "disabled" | "readOnly" | "maxLength" | "autocomplete"
+  > {
   /** Controlled value. */
   value: string;
 
@@ -30,6 +38,24 @@ export interface TextareaProps
   /** Marks the field invalid; sets aria-invalid. */
   invalid?: boolean;
 
+  /** Disabled state. */
+  disabled?: boolean;
+
+  /** Read-only state. */
+  readOnly?: boolean;
+
+  /** Maximum character length. */
+  maxLength?: number;
+
+  /** Native autocomplete hint. Defaults to "off". */
+  autocomplete?: string;
+
+  /**
+   * Optional help / error text rendered below the field and wired via
+   * aria-describedby for screen readers.
+   */
+  description?: string;
+
   /** Required when label is absent. */
   "aria-label"?: string;
 }
@@ -49,9 +75,15 @@ export function Textarea(props: TextareaProps): JSX.Element {
     "maxRows",
     "resize",
     "invalid",
+    "disabled",
+    "readOnly",
+    "maxLength",
+    "autocomplete",
+    "description",
   ]);
 
-  const id = createUniqueId();
+  const inputId = createUniqueId();
+  const descId = createUniqueId();
   const minRows = (): number => local.minRows ?? 3;
   const maxRows = (): number => local.maxRows ?? 10;
   const autoGrow = (): boolean => local.autoGrow !== false;
@@ -66,6 +98,8 @@ export function Textarea(props: TextareaProps): JSX.Element {
     <div
       class={textareaRoot}
       data-invalid={local.invalid ? "true" : undefined}
+      data-disabled={local.disabled ? "true" : undefined}
+      data-readonly={local.readOnly ? "true" : undefined}
       data-no-grow={autoGrow() ? undefined : "true"}
       style={{
         "--textarea-min-rows": String(minRows()),
@@ -73,22 +107,32 @@ export function Textarea(props: TextareaProps): JSX.Element {
       }}
     >
       <Show when={local.label}>
-        <label class={textareaLabel} for={id}>
+        <label class={textareaLabel} for={inputId}>
           {local.label}
         </label>
       </Show>
       <textarea
         {...rest}
-        id={id}
+        id={inputId}
         class={textareaField}
         value={local.value}
         rows={minRows()}
+        disabled={local.disabled}
+        readOnly={local.readOnly}
+        maxLength={local.maxLength}
+        autocomplete={local.autocomplete ?? "off"}
         aria-invalid={local.invalid ? "true" : undefined}
+        aria-describedby={local.description ? descId : undefined}
         data-resize={resizeMode()}
         onCompositionStart={ime.onCompositionStart}
         onCompositionEnd={ime.onCompositionEnd}
         onInput={ime.onInput}
       />
+      <Show when={local.description}>
+        <span id={descId} class={textareaDescription}>
+          {local.description}
+        </span>
+      </Show>
     </div>
   );
 }

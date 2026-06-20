@@ -41,3 +41,13 @@ export const textFieldInput = style({
     },
   },
 });
+
+export const textFieldDescription = style({
+  fontSize: "0.72rem",
+  color: tokens.theme.text2,
+  selectors: {
+    [`${textFieldRoot}[data-invalid="true"] &`]: {
+      color: tokens.theme.cDanger,
+    },
+  },
+});

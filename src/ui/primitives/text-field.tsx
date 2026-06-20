@@ -1,5 +1,10 @@
 import { type ComponentProps, type JSX, Show, createUniqueId, splitProps } from "solid-js";
-import { textFieldInput, textFieldLabel, textFieldRoot } from "~/styles/primitives/text-field.css";
+import {
+  textFieldDescription,
+  textFieldInput,
+  textFieldLabel,
+  textFieldRoot,
+} from "~/styles/primitives/text-field.css";
 import { createImeGuard } from "~/ui/primitives/_ime";
 
 export interface TextFieldProps
@@ -41,6 +46,12 @@ export interface TextFieldProps
   /** Marks the field invalid; sets aria-invalid only when true. */
   invalid?: boolean;
 
+  /**
+   * Optional help / error text rendered below the field and wired via
+   * aria-describedby for screen readers.
+   */
+  description?: string;
+
   /** Required when label is absent. */
   "aria-label"?: string;
 }
@@ -62,9 +73,11 @@ export function TextField(props: TextFieldProps): JSX.Element {
     "maxLength",
     "autocomplete",
     "invalid",
+    "description",
   ]);
 
   const inputId = createUniqueId();
+  const descId = createUniqueId();
   const ime = createImeGuard({
     current: () => local.value,
     commit: (next) => local.onChange(next),
@@ -94,10 +107,16 @@ export function TextField(props: TextFieldProps): JSX.Element {
         maxLength={local.maxLength}
         autocomplete={local.autocomplete ?? "off"}
         aria-invalid={local.invalid ? "true" : undefined}
+        aria-describedby={local.description ? descId : undefined}
         onCompositionStart={ime.onCompositionStart}
         onCompositionEnd={ime.onCompositionEnd}
         onInput={ime.onInput}
       />
+      <Show when={local.description}>
+        <span id={descId} class={textFieldDescription}>
+          {local.description}
+        </span>
+      </Show>
     </div>
   );
 }

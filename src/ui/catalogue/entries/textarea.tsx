@@ -38,6 +38,7 @@ registerCatalogueEntry({
             onChange={setCaption}
             minRows={2}
             maxRows={6}
+            description="Visible during playback"
           />
           <Textarea label="Read-only notes" value={notes()} readOnly onChange={() => {}} />
           <Textarea
@@ -53,6 +54,7 @@ registerCatalogueEntry({
             onChange={setBad}
             invalid={bad().length < 4}
             minRows={2}
+            {...(bad().length < 4 ? { description: "Minimum 4 characters required" } : {})}
           />
         </div>
       </section>

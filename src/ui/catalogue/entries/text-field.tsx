@@ -23,7 +23,13 @@ registerCatalogueEntry({
             "max-inline-size": "32rem",
           }}
         >
-          <TextField label="Project" value={name()} onChange={setName} maxLength={64} />
+          <TextField
+            label="Project"
+            value={name()}
+            onChange={setName}
+            maxLength={64}
+            description="Letters and dashes only"
+          />
           <TextField
             label="Layer"
             value={layer()}
@@ -31,7 +37,13 @@ registerCatalogueEntry({
             onChange={setLayer}
           />
           <TextField label="Asset" value={readonly()} readOnly onChange={() => {}} />
-          <TextField label="Validated" value={bad()} invalid={bad().length < 3} onChange={setBad} />
+          <TextField
+            label="Validated"
+            value={bad()}
+            invalid={bad().length < 3}
+            onChange={setBad}
+            {...(bad().length < 3 ? { description: "Must be at least 3 characters" } : {})}
+          />
           <TextField label="Disabled" value="—" disabled onChange={() => {}} />
         </div>
       </section>

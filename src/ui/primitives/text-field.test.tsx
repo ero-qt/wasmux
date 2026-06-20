@@ -90,6 +90,26 @@ describe("<TextField />", () => {
     expect(wrapper2.getAttribute("data-readonly")).toBeNull();
   });
 
+  it("wires aria-describedby to the description span when description is set", () => {
+    const { unmount } = render(() => (
+      <TextField
+        value=""
+        aria-label="x"
+        description="Letters and dashes only"
+        onChange={() => {}}
+      />
+    ));
+    const input = screen.getByRole("textbox");
+    const descId = input.getAttribute("aria-describedby") ?? "";
+    expect(descId).not.toBe("");
+    const descEl = document.getElementById(descId);
+    expect(descEl).not.toBeNull();
+    expect(descEl?.textContent).toBe("Letters and dashes only");
+    unmount();
+    render(() => <TextField value="" aria-label="x" onChange={() => {}} />);
+    expect(screen.getByRole("textbox").getAttribute("aria-describedby")).toBeNull();
+  });
+
   it("forwards maxLength, placeholder and rest props onto the input", () => {
     render(() => (
       <TextField

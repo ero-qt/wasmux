@@ -53,3 +53,13 @@ export const textareaField = style({
     },
   },
 });
+
+export const textareaDescription = style({
+  fontSize: "0.72rem",
+  color: tokens.theme.text2,
+  selectors: {
+    [`${textareaRoot}[data-invalid="true"] &`]: {
+      color: tokens.theme.cDanger,
+    },
+  },
+});
