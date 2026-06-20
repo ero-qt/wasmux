@@ -176,4 +176,47 @@ describe("<Modal />", () => {
 
     sibling.remove();
   });
+
+  it("nested modals share scroll-lock: closing the first while second is open leaves lock in place", () => {
+    const sibling = document.createElement("div");
+    sibling.id = "nested-sibling";
+    document.body.appendChild(sibling);
+
+    document.documentElement.style.overflow = "";
+
+    const [openA, setOpenA] = createSignal(false);
+    const [openB, setOpenB] = createSignal(false);
+
+    render(() => (
+      <>
+        <Modal open={openA()} title="Modal A" onChange={() => {}}>
+          a
+        </Modal>
+        <Modal open={openB()} title="Modal B" onChange={() => {}}>
+          b
+        </Modal>
+      </>
+    ));
+
+    // open modal A
+    setOpenA(true);
+    expect(document.documentElement.style.overflow).toBe("hidden");
+    expect(sibling.hasAttribute("inert")).toBe(true);
+
+    // open modal B on top
+    setOpenB(true);
+    expect(document.documentElement.style.overflow).toBe("hidden");
+
+    // close modal A while B is still up — lock must stay
+    setOpenA(false);
+    expect(document.documentElement.style.overflow).toBe("hidden");
+    expect(sibling.hasAttribute("inert")).toBe(true);
+
+    // close modal B — now lock releases
+    setOpenB(false);
+    expect(document.documentElement.style.overflow).toBe("");
+    expect(sibling.hasAttribute("inert")).toBe(false);
+
+    sibling.remove();
+  });
 });

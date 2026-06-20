@@ -1,5 +1,5 @@
 import { DropdownMenu } from "@kobalte/core/dropdown-menu";
-import { type JSX, Show, splitProps } from "solid-js";
+import { type JSX, Show, createSignal, onMount, splitProps } from "solid-js";
 import {
   menuContent,
   menuGroup,
@@ -270,6 +270,21 @@ export function Menu(props: MenuProps): JSX.Element {
     "triggerClass",
   ]);
 
+  let triggerRef: HTMLButtonElement | undefined;
+
+  // portal into the ancestor <dialog> when one exists so the overlay renders
+  // inside the top-layer instead of below it. falls back to document.body
+  // (the default) when no dialog ancestor is found.
+  // onMount defers the lookup until after the trigger is inserted into the DOM
+  // — closest() returns null if queried while the element is still detached.
+  const [portalMount, setPortalMount] = createSignal<Node>(document.body);
+  onMount(() => {
+    const dialog = triggerRef?.closest("dialog");
+    if (dialog) {
+      setPortalMount(dialog);
+    }
+  });
+
   return (
     <DropdownMenu
       placement={local.placement ?? "bottom-start"}
@@ -279,10 +294,15 @@ export function Menu(props: MenuProps): JSX.Element {
         ? { onOpenChange: (o: boolean) => local.onChange?.(o) }
         : {})}
     >
-      <DropdownMenu.Trigger {...rest} class={local.triggerClass} disabled={local.disabled}>
+      <DropdownMenu.Trigger
+        {...rest}
+        ref={triggerRef}
+        class={local.triggerClass}
+        disabled={local.disabled}
+      >
         {local.trigger}
       </DropdownMenu.Trigger>
-      <DropdownMenu.Portal>
+      <DropdownMenu.Portal mount={portalMount()}>
         <DropdownMenu.Content
           class={menuContent}
           aria-label={local["aria-label"]}

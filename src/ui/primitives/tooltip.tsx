@@ -1,5 +1,13 @@
 import { Tooltip as KTooltip } from "@kobalte/core/tooltip";
-import { type JSX, Show, children, createEffect, splitProps } from "solid-js";
+import {
+  type JSX,
+  Show,
+  children,
+  createEffect,
+  createSignal,
+  onMount,
+  splitProps,
+} from "solid-js";
 import { tooltipArrow, tooltipContent } from "~/styles/primitives/tooltip.css";
 import { OVERLAY_GUTTER, type OverlaySide } from "~/ui/primitives/_overlay-types";
 
@@ -83,6 +91,21 @@ export function Tooltip(props: TooltipProps): JSX.Element {
     return <>{resolved()}</>;
   }
 
+  let triggerRef: HTMLSpanElement | undefined;
+
+  // portal into the ancestor <dialog> when one exists so the overlay renders
+  // inside the top-layer instead of below it. falls back to document.body
+  // (the default) when no dialog ancestor is found.
+  // onMount defers the lookup until after the trigger is inserted into the DOM
+  // — closest() returns null if queried while the element is still detached.
+  const [portalMount, setPortalMount] = createSignal<Node>(document.body);
+  onMount(() => {
+    const dialog = triggerRef?.closest("dialog");
+    if (dialog) {
+      setPortalMount(dialog);
+    }
+  });
+
   return (
     <KTooltip
       {...(local.open !== undefined ? { open: local.open } : {})}
@@ -92,10 +115,10 @@ export function Tooltip(props: TooltipProps): JSX.Element {
       closeDelay={local.closeDelay ?? 150}
       gutter={local.gutter ?? OVERLAY_GUTTER}
     >
-      <KTooltip.Trigger as="span" {...rest}>
+      <KTooltip.Trigger as="span" ref={triggerRef} {...rest}>
         {local.children}
       </KTooltip.Trigger>
-      <KTooltip.Portal>
+      <KTooltip.Portal mount={portalMount()}>
         <KTooltip.Content class={tooltipContent} data-placement={local.placement ?? "top"}>
           <Show when={local.showArrow}>
             <KTooltip.Arrow class={tooltipArrow} />

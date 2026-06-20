@@ -16,6 +16,12 @@ import {
   modalTitle,
 } from "~/styles/primitives/modal.css";
 
+// shared across all Modal instances so nested/stacked modals don't clobber each other.
+// only the first modal in the stack writes the scroll lock + inert; the last one to close restores.
+let modalLockCount = 0;
+let originalOverflow = "";
+const inertedSiblings = new Set<Element>();
+
 export interface ModalProps extends ParentProps {
   /** Controlled open state. */
   open: boolean;
@@ -44,6 +50,9 @@ export interface ModalProps extends ParentProps {
  * via createEffect — never the `open` attribute — so the platform's top-layer
  * focus trap engages. Esc → cancel → onChange(false); backdrop click compares
  * event.target to the dialog element so only the backdrop dismisses.
+ *
+ * Scroll-lock and sibling-inert state is shared across all Modal instances via
+ * module-level counters, so nested or stacked modals don't clobber each other.
  */
 export function Modal(props: ModalProps): JSX.Element {
   const [local, rest] = splitProps(props, [
@@ -61,42 +70,55 @@ export function Modal(props: ModalProps): JSX.Element {
   const descId = createUniqueId();
 
   let dialogEl: HTMLDialogElement | undefined;
-  let prevOverflow = "";
-  let inertedSiblings: Element[] = [];
+
+  const openModal = (): void => {
+    if (!dialogEl) {
+      return;
+    }
+    if (modalLockCount === 0) {
+      originalOverflow = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = "hidden";
+      for (const child of document.body.children) {
+        if (!child.contains(dialogEl) && !inertedSiblings.has(child)) {
+          inertedSiblings.add(child);
+          child.setAttribute("inert", "");
+        }
+      }
+    }
+    modalLockCount += 1;
+    dialogEl.showModal();
+  };
+
+  const closeModal = (): void => {
+    if (!dialogEl) {
+      return;
+    }
+    dialogEl.close();
+    modalLockCount -= 1;
+    if (modalLockCount === 0) {
+      document.documentElement.style.overflow = originalOverflow;
+      for (const el of inertedSiblings) {
+        el.removeAttribute("inert");
+      }
+      inertedSiblings.clear();
+    }
+  };
 
   createEffect(() => {
     if (!dialogEl) {
       return;
     }
     if (local.open && !dialogEl.open) {
-      prevOverflow = document.documentElement.style.overflow;
-      document.documentElement.style.overflow = "hidden";
-      inertedSiblings = Array.from(document.body.children).filter(
-        (child) => !child.contains(dialogEl),
-      );
-      for (const el of inertedSiblings) {
-        el.setAttribute("inert", "");
-      }
-      dialogEl.showModal();
+      openModal();
     } else if (!local.open && dialogEl.open) {
-      dialogEl.close();
-      document.documentElement.style.overflow = prevOverflow;
-      for (const el of inertedSiblings) {
-        el.removeAttribute("inert");
-      }
-      inertedSiblings = [];
+      closeModal();
     }
   });
 
   onCleanup(() => {
     if (dialogEl?.open) {
-      dialogEl.close();
+      closeModal();
     }
-    document.documentElement.style.overflow = prevOverflow;
-    for (const el of inertedSiblings) {
-      el.removeAttribute("inert");
-    }
-    inertedSiblings = [];
   });
 
   const dismissBackdrop = (): boolean => local.dismissOnBackdrop !== false;

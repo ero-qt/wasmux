@@ -1,5 +1,5 @@
 import { Popover as KPopover } from "@kobalte/core/popover";
-import { type JSX, Show, splitProps } from "solid-js";
+import { type JSX, Show, createSignal, onMount, splitProps } from "solid-js";
 import { popoverArrow, popoverContent } from "~/styles/primitives/popover.css";
 import { OVERLAY_GUTTER, type OverlaySide } from "~/ui/primitives/_overlay-types";
 
@@ -62,6 +62,21 @@ export function Popover(props: PopoverProps): JSX.Element {
     "aria-labelledby",
   ]);
 
+  let triggerRef: HTMLButtonElement | undefined;
+
+  // portal into the ancestor <dialog> when one exists so the overlay renders
+  // inside the top-layer instead of below it. falls back to document.body
+  // (the default) when no dialog ancestor is found.
+  // onMount defers the lookup until after the trigger is inserted into the DOM
+  // — closest() returns null if queried while the element is still detached.
+  const [portalMount, setPortalMount] = createSignal<Node>(document.body);
+  onMount(() => {
+    const dialog = triggerRef?.closest("dialog");
+    if (dialog) {
+      setPortalMount(dialog);
+    }
+  });
+
   return (
     <KPopover
       open={local.open}
@@ -69,10 +84,10 @@ export function Popover(props: PopoverProps): JSX.Element {
       placement={local.placement ?? "bottom"}
       gutter={local.gutter ?? OVERLAY_GUTTER}
     >
-      <KPopover.Trigger {...rest} disabled={local.disabled}>
+      <KPopover.Trigger {...rest} ref={triggerRef} disabled={local.disabled}>
         {local.trigger}
       </KPopover.Trigger>
-      <KPopover.Portal>
+      <KPopover.Portal mount={portalMount()}>
         <KPopover.Content
           class={popoverContent}
           aria-label={local["aria-label"]}

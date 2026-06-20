@@ -124,4 +124,18 @@ describe("<Popover />", () => {
     ));
     expect(screen.getByRole("dialog").getAttribute("aria-modal")).toBeNull();
   });
+
+  it("portals content into ancestor <dialog> when one is present", () => {
+    render(() => (
+      // use `open` attribute directly — no showModal needed for .closest("dialog") to work
+      <dialog open>
+        <Popover open trigger="Open" aria-label="picker" onChange={() => {}}>
+          <span data-testid="in-dialog">content</span>
+        </Popover>
+      </dialog>
+    ));
+    const leaf = screen.getByTestId("in-dialog");
+    // the popover content must be a descendant of the dialog, not document.body directly
+    expect(leaf.closest("dialog")).not.toBeNull();
+  });
 });
