@@ -78,9 +78,7 @@ export function Tooltip(props: TooltipProps): JSX.Element {
       closeDelay={props.closeDelay ?? 150}
       gutter={props.gutter ?? OVERLAY_GUTTER}
     >
-      <KTooltip.Trigger as="div" style={{ display: "contents" }}>
-        {props.children}
-      </KTooltip.Trigger>
+      <KTooltip.Trigger as="span">{props.children}</KTooltip.Trigger>
       <KTooltip.Portal>
         <KTooltip.Content class={tooltipContent} data-placement={props.placement ?? "top"}>
           <Show when={props.showArrow}>
