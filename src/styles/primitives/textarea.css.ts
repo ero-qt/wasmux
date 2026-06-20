@@ -26,7 +26,6 @@ export const textareaField = style({
   fontSize: "0.86rem",
   lineHeight: "var(--textarea-line-height)",
   outline: "none",
-  resize: "none",
   fieldSizing: "content",
   minBlockSize: "calc(var(--textarea-line-height) * var(--textarea-min-rows, 3))",
   maxBlockSize: "calc(var(--textarea-line-height) * var(--textarea-max-rows, 10))",
@@ -41,8 +40,13 @@ export const textareaField = style({
       opacity: 0.4,
       cursor: "not-allowed",
     },
+    // resize driven by data-resize attribute so consumer `style` isn't clobbered.
+    '&[data-resize="none"]': { resize: "none" },
+    '&[data-resize="block"]': { resize: "block" },
+    '&[data-resize="inline"]': { resize: "inline" },
+    '&[data-resize="both"]': { resize: "both" },
     [`${textareaRoot}[data-invalid="true"] &`]: {
-      borderColor: "var(--danger, oklch(0.65 0.18 25))",
+      borderColor: tokens.theme.cDanger,
     },
     [`${textareaRoot}[data-no-grow="true"] &`]: {
       fieldSizing: "fixed",

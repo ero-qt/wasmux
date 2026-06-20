@@ -84,7 +84,7 @@ export function Textarea(props: TextareaProps): JSX.Element {
         value={local.value}
         rows={minRows()}
         aria-invalid={local.invalid ? "true" : undefined}
-        style={{ resize: resizeMode() }}
+        data-resize={resizeMode()}
         onCompositionStart={ime.onCompositionStart}
         onCompositionEnd={ime.onCompositionEnd}
         onInput={ime.onInput}

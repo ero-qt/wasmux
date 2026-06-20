@@ -10,6 +10,7 @@ registerCatalogueEntry({
     const [caption, setCaption] = createSignal("");
     const [notes] = createSignal("Locked notes.");
     const [short, setShort] = createSignal("");
+    const [bad, setBad] = createSignal("oop");
 
     return (
       <section>
@@ -45,6 +46,13 @@ registerCatalogueEntry({
             onChange={setShort}
             autoGrow={false}
             minRows={4}
+          />
+          <Textarea
+            label="Invalid (min 4 chars)"
+            value={bad()}
+            onChange={setBad}
+            invalid={bad().length < 4}
+            minRows={2}
           />
         </div>
       </section>
