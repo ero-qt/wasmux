@@ -12,10 +12,18 @@ import {
   menuSeparator,
   menuSubTriggerChevron,
 } from "~/styles/primitives/menu.css";
-import { OVERLAY_GUTTER } from "~/ui/primitives/_overlay-types";
+import {
+  OVERLAY_GUTTER,
+  type OverlayAlign,
+  type OverlaySide,
+} from "~/ui/primitives/_overlay-types";
 import { Keycap } from "~/ui/primitives/keycap";
 
-export type MenuPlacement = "bottom-start" | "bottom-end" | "top-start" | "top-end";
+// menus only flip vertically and only align by edge; compose from the shared
+// overlay vocabulary so additions there stay in sync (or are explicitly excluded).
+type MenuSide = Extract<OverlaySide, "bottom" | "top">;
+type MenuAlign = Extract<OverlayAlign, "start" | "end">;
+export type MenuPlacement = `${MenuSide}-${MenuAlign}`;
 
 export interface MenuProps {
   /**
