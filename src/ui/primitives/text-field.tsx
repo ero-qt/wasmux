@@ -62,7 +62,6 @@ export function TextField(props: TextFieldProps): JSX.Element {
     "maxLength",
     "autocomplete",
     "invalid",
-    "class",
   ]);
 
   const inputId = createUniqueId();
