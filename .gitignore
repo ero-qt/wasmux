@@ -1,7 +1,6 @@
-# IDE options/cache directories
+# IDE options/cache
 .vs/*
 .vscode/*
-.fleet/*
 .idea/*
 .zed/*
 
@@ -9,14 +8,15 @@
 !.vscode/extensions.json
 
 # Build artifacts
-node_modules/
 artifacts/
+node_modules/
 
 # AI assistant files
 .claude/
 .superpowers/
 audits/
-claude.md
 docs/
+
+claude.md
 
 # User-specific files
