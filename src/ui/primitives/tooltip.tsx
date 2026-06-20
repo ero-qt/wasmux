@@ -1,16 +1,32 @@
 import { Tooltip as KTooltip } from "@kobalte/core/tooltip";
-import { type JSX, Show, createSignal, onMount, splitProps } from "solid-js";
-import { tooltipArrow, tooltipContent } from "~/styles/primitives/tooltip.css";
+import { type JSX, Show, children, createMemo, createSignal, onMount, splitProps } from "solid-js";
+import { tooltipArrow, tooltipContent, tooltipInner } from "~/styles/primitives/tooltip.css";
 import { OVERLAY_GUTTER, type OverlaySide } from "~/ui/primitives/_overlay-types";
+import { Keycap } from "~/ui/primitives/keycap";
 
 export interface TooltipProps {
-  /** Tooltip text content. Plain string only — tooltips are text-only by ARIA spec. */
-  label: string;
+  /**
+   * Plain-text descriptive message. Suppressed automatically when it equals
+   * the trigger's own text content (case- and whitespace-insensitive) —
+   * the trigger's name already conveys the same information. If `hotkey` is
+   * also set in that case, the surface still renders showing only the key
+   * combination.
+   */
+  message?: string;
+
+  /**
+   * Key combination hint rendered as a `Keycap` badge (e.g. `"Ctrl+S"`,
+   * `"Space"`). When `message` is suppressed via the redundancy rule and
+   * `hotkey` is present, the surface shows the key combination alone — no
+   * parens, no redundant label. Phase 9 will wire real bindings; until then
+   * this is a visual hint only.
+   */
+  hotkey?: string;
 
   /**
    * The element the tooltip is anchored to. Can be any inline element —
-   * including a Button or IconButton — because the trigger is wrapped in
-   * a `display: contents` div, so Kobalte does not introduce a nested button.
+   * including a Button or IconButton — because the trigger is wrapped in a
+   * `<span>` so Kobalte does not introduce a nested button.
    */
   children: JSX.Element;
 
@@ -39,17 +55,41 @@ export interface TooltipProps {
   showArrow?: boolean;
 }
 
+function normalize(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function nodeText(value: unknown): string {
+  if (value == null) {
+    return "";
+  }
+  if (Array.isArray(value)) {
+    return value.map(nodeText).join(" ");
+  }
+  if (value instanceof Node) {
+    return value.textContent ?? "";
+  }
+  return "";
+}
+
 /**
- * Themed Kobalte Tooltip. Text-only hover/focus hint. When `disabled`, children
- * render verbatim with no Kobalte wrapper. Authors decide whether a tooltip is
- * warranted — don't add one whose text duplicates a text trigger's own label;
- * icon-only triggers always benefit from one for sighted discoverability, and
- * Kobalte wires it via `aria-describedby` so it complements the trigger's name
- * rather than replacing it.
+ * Themed Kobalte Tooltip. Hover/focus hint composed of a message and/or a
+ * key combination. Suppression rules:
+ *
+ * - `disabled` — children render verbatim, no wrapper.
+ * - `message` equals the trigger's text content AND no `hotkey` — children
+ *   render verbatim. The message would only restate the button's own name.
+ * - `message` equals the trigger's text content AND `hotkey` set — surface
+ *   shows the key combination only.
+ * - neither `message` nor `hotkey` — children render verbatim.
+ *
+ * Kobalte wires the surface via `aria-describedby`, so it complements the
+ * trigger's accessible name rather than replacing it.
  */
 export function Tooltip(props: TooltipProps): JSX.Element {
   const [local, rest] = splitProps(props, [
-    "label",
+    "message",
+    "hotkey",
     "children",
     "open",
     "onChange",
@@ -64,6 +104,14 @@ export function Tooltip(props: TooltipProps): JSX.Element {
   if (local.disabled) {
     return <>{local.children}</>;
   }
+
+  const resolved = children(() => local.children);
+  const triggerText = createMemo(() => normalize(nodeText(resolved())));
+  const messageRedundant = createMemo(
+    () => !!local.message && normalize(local.message) === triggerText(),
+  );
+  const showMessage = createMemo(() => !!local.message && !messageRedundant());
+  const hasSurface = createMemo(() => showMessage() || !!local.hotkey);
 
   let triggerRef: HTMLSpanElement | undefined;
 
@@ -81,25 +129,34 @@ export function Tooltip(props: TooltipProps): JSX.Element {
   });
 
   return (
-    <KTooltip
-      {...(local.open !== undefined ? { open: local.open } : {})}
-      {...(local.onChange !== undefined ? { onOpenChange: local.onChange } : {})}
-      placement={local.placement ?? "top"}
-      openDelay={local.openDelay ?? 500}
-      closeDelay={local.closeDelay ?? 150}
-      gutter={local.gutter ?? OVERLAY_GUTTER}
-    >
-      <KTooltip.Trigger as="span" ref={triggerRef} {...rest}>
-        {local.children}
-      </KTooltip.Trigger>
-      <KTooltip.Portal mount={portalMount()}>
-        <KTooltip.Content class={tooltipContent} data-placement={local.placement ?? "top"}>
-          <Show when={local.showArrow}>
-            <KTooltip.Arrow class={tooltipArrow} />
-          </Show>
-          {local.label}
-        </KTooltip.Content>
-      </KTooltip.Portal>
-    </KTooltip>
+    <Show when={hasSurface()} fallback={resolved()}>
+      <KTooltip
+        {...(local.open !== undefined ? { open: local.open } : {})}
+        {...(local.onChange !== undefined ? { onOpenChange: local.onChange } : {})}
+        placement={local.placement ?? "top"}
+        openDelay={local.openDelay ?? 500}
+        closeDelay={local.closeDelay ?? 150}
+        gutter={local.gutter ?? OVERLAY_GUTTER}
+      >
+        <KTooltip.Trigger as="span" ref={triggerRef} {...rest}>
+          {resolved()}
+        </KTooltip.Trigger>
+        <KTooltip.Portal mount={portalMount()}>
+          <KTooltip.Content class={tooltipContent} data-placement={local.placement ?? "top"}>
+            <Show when={local.showArrow}>
+              <KTooltip.Arrow class={tooltipArrow} />
+            </Show>
+            <span class={tooltipInner}>
+              <Show when={showMessage()}>
+                <span>{local.message}</span>
+              </Show>
+              <Show when={local.hotkey}>
+                <Keycap>{local.hotkey}</Keycap>
+              </Show>
+            </span>
+          </KTooltip.Content>
+        </KTooltip.Portal>
+      </KTooltip>
+    </Show>
   );
 }

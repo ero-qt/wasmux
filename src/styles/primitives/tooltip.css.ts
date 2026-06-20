@@ -35,3 +35,9 @@ export const tooltipArrow = style({
   fill: tokens.theme.bg1,
   stroke: tokens.theme.border,
 });
+
+export const tooltipInner = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "0.4em",
+});

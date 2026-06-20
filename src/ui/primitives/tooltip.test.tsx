@@ -14,7 +14,7 @@ beforeEach(() => {
 describe("<Tooltip />", () => {
   it("renders trigger child without tooltip content initially", () => {
     render(() => (
-      <Tooltip label="Mute">
+      <Tooltip message="Mute">
         <button type="button">M</button>
       </Tooltip>
     ));
@@ -22,9 +22,9 @@ describe("<Tooltip />", () => {
     expect(screen.queryByRole("tooltip")).toBeNull();
   });
 
-  it("controlled open=true mounts role=tooltip with the label text", () => {
+  it("controlled open=true mounts role=tooltip with the message text", () => {
     render(() => (
-      <Tooltip label="Mute" open>
+      <Tooltip message="Mute" open>
         <button type="button">M</button>
       </Tooltip>
     ));
@@ -34,12 +34,13 @@ describe("<Tooltip />", () => {
 
   it("trigger receives aria-describedby when open", () => {
     render(() => (
-      <Tooltip label="Mute" open>
+      <Tooltip message="Mute" open>
         <button type="button">M</button>
       </Tooltip>
     ));
-    // Kobalte stamps aria-describedby on the trigger wrapper div (display:contents),
-    // which AT traverses transparently — the child button is still the announced element.
+    // Kobalte stamps aria-describedby on the trigger wrapper (display:contents
+    // span), which AT traverses transparently — the child button is still the
+    // announced element.
     const button = screen.getByRole("button", { name: "M" });
     const wrapper = button.parentElement as HTMLElement;
     const id = wrapper.getAttribute("aria-describedby");
@@ -50,11 +51,11 @@ describe("<Tooltip />", () => {
   it("controlled onChange fires on focus (immediate) and blur after closeDelay", () => {
     const onChange = vi.fn();
     render(() => (
-      <Tooltip label="Mute" onChange={onChange} openDelay={500} closeDelay={150}>
+      <Tooltip message="Mute" onChange={onChange} openDelay={500} closeDelay={150}>
         <button type="button">M</button>
       </Tooltip>
     ));
-    // Kobalte's trigger listens for non-bubbling focus/blur on the wrapper div.
+    // Kobalte's trigger listens for non-bubbling focus/blur on the wrapper span.
     // Focus bypasses openDelay and opens immediately (Kobalte native behaviour).
     const button = screen.getByRole("button", { name: "M" });
     const wrapper = button.parentElement as HTMLElement;
@@ -68,7 +69,7 @@ describe("<Tooltip />", () => {
   it("Escape closes an open tooltip", () => {
     const onChange = vi.fn();
     render(() => (
-      <Tooltip label="Mute" open onChange={onChange}>
+      <Tooltip message="Mute" open onChange={onChange}>
         <button type="button">M</button>
       </Tooltip>
     ));
@@ -78,7 +79,62 @@ describe("<Tooltip />", () => {
 
   it("disabled suppresses tooltip entirely", () => {
     render(() => (
-      <Tooltip label="Mute" disabled open>
+      <Tooltip message="Mute" disabled open>
+        <button type="button">M</button>
+      </Tooltip>
+    ));
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    expect(screen.getByRole("button", { name: "M" }).getAttribute("aria-describedby")).toBeNull();
+  });
+
+  it("auto-suppresses surface when message matches trigger text and no hotkey", () => {
+    render(() => (
+      <Tooltip message="Save" open>
+        <button type="button">Save</button>
+      </Tooltip>
+    ));
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    const button = screen.getByRole("button", { name: "Save" });
+    expect(button.getAttribute("aria-describedby")).toBeNull();
+  });
+
+  it("redundancy match is case- and whitespace-insensitive", () => {
+    render(() => (
+      <Tooltip message="  save  " open>
+        <button type="button">SAVE</button>
+      </Tooltip>
+    ));
+    expect(screen.queryByRole("tooltip")).toBeNull();
+  });
+
+  it("shows only the hotkey when message matches trigger text and hotkey is set", () => {
+    render(() => (
+      <Tooltip message="Save" hotkey="Ctrl+S" open>
+        <button type="button">Save</button>
+      </Tooltip>
+    ));
+    const tip = screen.getByRole("tooltip");
+    expect(tip.textContent).toContain("Ctrl+S");
+    // The redundant message is NOT in the surface.
+    expect(tip.textContent).not.toContain("Save");
+  });
+
+  it("shows message and hotkey side by side when both differ from trigger text", () => {
+    render(() => (
+      <Tooltip message="Toggle playback" hotkey="Space" open>
+        <button type="button" aria-label="play-pause">
+          ⏯
+        </button>
+      </Tooltip>
+    ));
+    const tip = screen.getByRole("tooltip");
+    expect(tip.textContent).toContain("Toggle playback");
+    expect(tip.textContent).toContain("Space");
+  });
+
+  it("renders nothing when neither message nor hotkey is provided", () => {
+    render(() => (
+      <Tooltip open>
         <button type="button">M</button>
       </Tooltip>
     ));
@@ -88,11 +144,11 @@ describe("<Tooltip />", () => {
 
   it("renders on hover", async () => {
     render(() => (
-      <Tooltip label="Mute" openDelay={0} closeDelay={0}>
+      <Tooltip message="Mute" openDelay={0} closeDelay={0}>
         <button type="button">M</button>
       </Tooltip>
     ));
-    // Kobalte listens to non-bubbling pointerenter on the trigger wrapper div.
+    // Kobalte listens to non-bubbling pointerenter on the trigger wrapper span.
     const wrapper = screen.getByRole("button", { name: "M" }).parentElement as HTMLElement;
     fireEvent.pointerEnter(wrapper);
     vi.advanceTimersByTime(0);
@@ -101,7 +157,7 @@ describe("<Tooltip />", () => {
 
   it("hides on un-hover", async () => {
     render(() => (
-      <Tooltip label="Mute" openDelay={0} closeDelay={0}>
+      <Tooltip message="Mute" openDelay={0} closeDelay={0}>
         <button type="button">M</button>
       </Tooltip>
     ));
@@ -116,7 +172,7 @@ describe("<Tooltip />", () => {
 
   it("placement prop forwards to a data-placement attribute", () => {
     render(() => (
-      <Tooltip label="Mute" open placement="bottom">
+      <Tooltip message="Mute" open placement="bottom">
         <button type="button">M</button>
       </Tooltip>
     ));

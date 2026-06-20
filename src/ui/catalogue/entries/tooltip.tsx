@@ -9,57 +9,80 @@ registerCatalogueEntry({
   render: () => (
     <section>
       <h2>tooltip</h2>
-      <p>Text-only hover/focus hint. 500ms hover-open delay, 150ms close delay.</p>
+      <p>
+        Hover/focus hint composed of a <code>message</code> and/or a <code>hotkey</code>. 500ms
+        hover-open delay, 150ms close delay. Phase 9 will wire real bindings; the key combinations
+        below are visual hints only.
+      </p>
 
+      <h3>Icon triggers — message describes the icon</h3>
       <div
         style={{ display: "flex", gap: "0.6rem", "align-items": "center", "margin-block": "1rem" }}
       >
-        {/* one tooltip per placement so the four sides are easy to inspect. */}
-        <Tooltip label="Play" placement="top">
+        <Tooltip message="Play" placement="top">
           <IconButton aria-label="Play">▶</IconButton>
         </Tooltip>
-        <Tooltip label="Mute" placement="bottom" showArrow>
+        <Tooltip message="Mute" placement="bottom" showArrow>
           <IconButton aria-label="Mute">♪</IconButton>
         </Tooltip>
-        <Tooltip label="Record" placement="right">
+        <Tooltip message="Record" placement="right">
           <IconButton aria-label="Record">●</IconButton>
         </Tooltip>
-        <Tooltip label="Stop" placement="left">
+        <Tooltip message="Stop" placement="left">
           <IconButton aria-label="Stop">■</IconButton>
-        </Tooltip>
-
-        {/* disabled — wrapper renders the child verbatim with no surface or aria injection. */}
-        <Tooltip label="Tooltip suppressed via disabled" disabled>
-          <IconButton aria-label="suppressed">?</IconButton>
         </Tooltip>
       </div>
 
-      <h3 style={{ "margin-block-start": "1.4rem" }}>
-        Antipattern: text trigger + identical tooltip
-      </h3>
-      <p>These tooltips repeat the button's own label. Hover to see the redundancy.</p>
+      <h3>Text triggers — redundant message is auto-suppressed</h3>
+      <p>
+        Hover the buttons below. Nothing appears: the message matches the trigger's own text, so the
+        primitive skips the surface entirely.
+      </p>
       <div
         style={{ display: "flex", gap: "0.6rem", "align-items": "center", "margin-block": "1rem" }}
       >
-        <Tooltip label="Save" placement="top">
+        <Tooltip message="Save">
           <Button>Save</Button>
         </Tooltip>
-        <Tooltip label="Cancel" placement="top">
+        <Tooltip message="Cancel">
           <Button variant="ghost">Cancel</Button>
         </Tooltip>
-        <Tooltip label="Delete" placement="top">
+        <Tooltip message="Delete">
           <Button variant="danger">Delete</Button>
         </Tooltip>
       </div>
 
-      <p style={{ "font-size": "0.78rem", color: "var(--text2)" }}>
-        Icon-only triggers always benefit from a visible hint — the icon alone isn't intuitive.
-        Kobalte wires the tooltip via <code>aria-describedby</code> so it complements the button's{" "}
-        <code>aria-label</code> rather than replacing it. Don't use tooltips on text triggers whose
-        label already matches the tooltip text (the second row above shows the antipattern).
-        Shortcut hints (e.g. "Toggle play (Space)") will appear once the hotkey primitive lands in
-        Phase 9 — until then there's no real binding to read.
+      <h3>With key combinations</h3>
+      <p>
+        When the message is redundant but a <code>hotkey</code> is provided, only the key
+        combination is shown — no parens, no restated label. Differing messages render side by side
+        with the Keycap.
       </p>
+      <div
+        style={{ display: "flex", gap: "0.6rem", "align-items": "center", "margin-block": "1rem" }}
+      >
+        {/* redundant message + hotkey → shows only the Keycap. */}
+        <Tooltip message="Save" hotkey="Ctrl+S">
+          <Button>Save</Button>
+        </Tooltip>
+        {/* icon trigger + message + hotkey → message and Keycap both render. */}
+        <Tooltip message="Toggle playback" hotkey="Space">
+          <IconButton aria-label="play-pause">⏯</IconButton>
+        </Tooltip>
+        {/* hotkey-only (no message) → just the Keycap. */}
+        <Tooltip hotkey="Esc">
+          <IconButton aria-label="Close">×</IconButton>
+        </Tooltip>
+      </div>
+
+      <h3>Disabled</h3>
+      <div
+        style={{ display: "flex", gap: "0.6rem", "align-items": "center", "margin-block": "1rem" }}
+      >
+        <Tooltip message="Tooltip suppressed via disabled" disabled>
+          <IconButton aria-label="suppressed">?</IconButton>
+        </Tooltip>
+      </div>
     </section>
   ),
 });
