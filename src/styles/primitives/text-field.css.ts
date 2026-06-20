@@ -37,7 +37,7 @@ export const textFieldInput = style({
       cursor: "not-allowed",
     },
     [`${textFieldRoot}[data-invalid="true"] &`]: {
-      borderColor: "var(--danger, oklch(0.65 0.18 25))",
+      borderColor: tokens.theme.cDanger,
     },
   },
 });

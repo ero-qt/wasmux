@@ -21,6 +21,8 @@ const REQUIRED_KEYS: ReadonlyArray<keyof AppTheme> = [
   "cVideo",
   "cAudio",
   "cOther",
+  "cDanger",
+  "cDangerFg",
   "shadow",
 ];
 

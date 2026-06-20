@@ -155,3 +155,9 @@ describe("accent button contrast", () => {
     expect((hi + 0.05) / (lo + 0.05)).toBeGreaterThanOrEqual(AA_NORMAL);
   });
 });
+
+describe.each(Object.entries(themes))("danger button contrast (%s)", (_, p) => {
+  test("cDangerFg-on-cDanger satisfies WCAG AA normal text (4.5:1)", () => {
+    expect(contrast(p.cDangerFg, p.cDanger)).toBeGreaterThanOrEqual(AA_NORMAL);
+  });
+});

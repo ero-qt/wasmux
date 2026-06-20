@@ -58,6 +58,9 @@ export interface AppTheme {
   /** Destructive-action surface (used by Button `danger` variant). */
   cDanger: string;
 
+  /** Legible-on-`cDanger` text colour. */
+  cDangerFg: string;
+
   /** 2-layer drop shadow. */
   shadow: string;
 }
@@ -81,5 +84,6 @@ export const themeContract: Record<keyof AppTheme, null> = {
   cAudio: null,
   cOther: null,
   cDanger: null,
+  cDangerFg: null,
   shadow: null,
 };
