@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@solidjs/testing-library";
+import { createSignal } from "solid-js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Menu } from "~/ui/primitives/menu";
 
@@ -104,6 +105,19 @@ describe("<Menu />", () => {
     expect(hiddenEls.some((el) => el.textContent?.includes("Ctrl+C"))).toBe(true);
   });
 
+  it("hotkey item exposes aria-keyshortcuts for AT users", () => {
+    render(() => (
+      <Menu trigger="Edit" aria-label="edit-menu">
+        <Menu.Item hotkey="Ctrl+X" onSelect={() => {}}>
+          Cut
+        </Menu.Item>
+      </Menu>
+    ));
+    openMenu(screen.getByRole("button", { name: "Edit" }));
+    const item = screen.getByRole("menuitem", { name: /cut/i });
+    expect(item.getAttribute("aria-keyshortcuts")).toBe("Ctrl+X");
+  });
+
   it("separator and label expose correct ARIA roles", () => {
     render(() => (
       <Menu trigger="View" aria-label="view-menu">
@@ -131,5 +145,37 @@ describe("<Menu />", () => {
     fireEvent.keyDown(subTrigger, { key: "ArrowRight" });
     // sub-menu mounts as a second role=menu in the DOM.
     expect(screen.getAllByRole("menu").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("controlled open + onChange propagate state changes", () => {
+    const onChange = vi.fn();
+    const [open, setOpen] = createSignal(false);
+    render(() => (
+      <Menu
+        trigger="Edit"
+        aria-label="edit-menu"
+        open={open()}
+        onChange={(next) => {
+          setOpen(next);
+          onChange(next);
+        }}
+      >
+        <Menu.Item onSelect={() => {}}>Cut</Menu.Item>
+      </Menu>
+    ));
+    expect(screen.queryByRole("menu")).toBeNull();
+    openMenu(screen.getByRole("button", { name: "Edit" }));
+    expect(onChange).toHaveBeenCalledWith(true);
+  });
+
+  it("data-placement is stamped on the menu content", () => {
+    render(() => (
+      <Menu trigger="Edit" aria-label="edit-menu" placement="bottom-end">
+        <Menu.Item onSelect={() => {}}>Cut</Menu.Item>
+      </Menu>
+    ));
+    openMenu(screen.getByRole("button", { name: "Edit" }));
+    const menu = screen.getByRole("menu");
+    expect(menu.getAttribute("data-placement")).toBe("bottom-end");
   });
 });

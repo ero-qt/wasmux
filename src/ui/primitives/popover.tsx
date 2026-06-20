@@ -1,6 +1,6 @@
 import { Popover as KPopover } from "@kobalte/core/popover";
-import type { JSX } from "solid-js";
-import { popoverContent } from "~/styles/primitives/popover.css";
+import { type JSX, Show, splitProps } from "solid-js";
+import { popoverArrow, popoverContent } from "~/styles/primitives/popover.css";
 import { OVERLAY_GUTTER, type OverlaySide } from "~/ui/primitives/_overlay-types";
 
 export type PopoverSide = OverlaySide;
@@ -23,14 +23,17 @@ export interface PopoverProps {
   /** Floating panel contents. */
   children: JSX.Element;
 
-  /** Preferred side relative to the trigger. Default "bottom". */
-  side?: PopoverSide;
+  /** Preferred placement relative to the trigger. Default "bottom". */
+  placement?: PopoverSide;
 
   /** Distance in px between trigger and panel. Default OVERLAY_GUTTER (6). */
   gutter?: number;
 
   /** Disables the trigger; prevents opening. */
   disabled?: boolean;
+
+  /** Renders a small arrow pointing at the trigger. Default false. */
+  showArrow?: boolean;
 
   /** Required accessible label when the panel has no visible heading. */
   "aria-label"?: string;
@@ -46,22 +49,40 @@ export interface PopoverProps {
  * Kobalte's focus scope.
  */
 export function Popover(props: PopoverProps): JSX.Element {
+  const [local, rest] = splitProps(props, [
+    "open",
+    "onChange",
+    "trigger",
+    "children",
+    "placement",
+    "gutter",
+    "disabled",
+    "showArrow",
+    "aria-label",
+    "aria-labelledby",
+  ]);
+
   return (
     <KPopover
-      open={props.open}
-      onOpenChange={props.onChange}
-      placement={props.side ?? "bottom"}
-      gutter={props.gutter ?? OVERLAY_GUTTER}
+      open={local.open}
+      onOpenChange={local.onChange}
+      placement={local.placement ?? "bottom"}
+      gutter={local.gutter ?? OVERLAY_GUTTER}
     >
-      <KPopover.Trigger disabled={props.disabled}>{props.trigger}</KPopover.Trigger>
+      <KPopover.Trigger {...rest} disabled={local.disabled}>
+        {local.trigger}
+      </KPopover.Trigger>
       <KPopover.Portal>
         <KPopover.Content
           class={popoverContent}
-          aria-label={props["aria-label"]}
-          aria-labelledby={props["aria-labelledby"]}
-          data-side={props.side ?? "bottom"}
+          aria-label={local["aria-label"]}
+          aria-labelledby={local["aria-labelledby"]}
+          data-placement={local.placement ?? "bottom"}
         >
-          {props.children}
+          <Show when={local.showArrow}>
+            <KPopover.Arrow class={popoverArrow} />
+          </Show>
+          {local.children}
         </KPopover.Content>
       </KPopover.Portal>
     </KPopover>

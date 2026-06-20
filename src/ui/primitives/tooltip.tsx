@@ -1,5 +1,5 @@
 import { Tooltip as KTooltip } from "@kobalte/core/tooltip";
-import { type JSX, Show, children, createEffect } from "solid-js";
+import { type JSX, Show, children, createEffect, splitProps } from "solid-js";
 import { tooltipArrow, tooltipContent } from "~/styles/primitives/tooltip.css";
 import { OVERLAY_GUTTER, type OverlaySide } from "~/ui/primitives/_overlay-types";
 
@@ -53,17 +53,31 @@ export interface TooltipProps {
  * render verbatim with no Kobalte wrapper.
  */
 export function Tooltip(props: TooltipProps): JSX.Element {
-  if (props.disabled) {
-    return <>{props.children}</>;
+  const [local, rest] = splitProps(props, [
+    "label",
+    "children",
+    "open",
+    "onChange",
+    "disabled",
+    "asLabel",
+    "placement",
+    "openDelay",
+    "closeDelay",
+    "gutter",
+    "showArrow",
+  ]);
+
+  if (local.disabled) {
+    return <>{local.children}</>;
   }
 
-  if (props.asLabel) {
-    const resolved = children(() => props.children);
+  if (local.asLabel) {
+    const resolved = children(() => local.children);
     createEffect(() => {
       const node = resolved();
       const el = Array.isArray(node) ? node[0] : node;
       if (el instanceof Element) {
-        el.setAttribute("aria-label", props.label);
+        el.setAttribute("aria-label", local.label);
       }
     });
     return <>{resolved()}</>;
@@ -71,20 +85,22 @@ export function Tooltip(props: TooltipProps): JSX.Element {
 
   return (
     <KTooltip
-      {...(props.open !== undefined ? { open: props.open } : {})}
-      {...(props.onChange !== undefined ? { onOpenChange: props.onChange } : {})}
-      placement={props.placement ?? "top"}
-      openDelay={props.openDelay ?? 500}
-      closeDelay={props.closeDelay ?? 150}
-      gutter={props.gutter ?? OVERLAY_GUTTER}
+      {...(local.open !== undefined ? { open: local.open } : {})}
+      {...(local.onChange !== undefined ? { onOpenChange: local.onChange } : {})}
+      placement={local.placement ?? "top"}
+      openDelay={local.openDelay ?? 500}
+      closeDelay={local.closeDelay ?? 150}
+      gutter={local.gutter ?? OVERLAY_GUTTER}
     >
-      <KTooltip.Trigger as="span">{props.children}</KTooltip.Trigger>
+      <KTooltip.Trigger as="span" {...rest}>
+        {local.children}
+      </KTooltip.Trigger>
       <KTooltip.Portal>
-        <KTooltip.Content class={tooltipContent} data-placement={props.placement ?? "top"}>
-          <Show when={props.showArrow}>
+        <KTooltip.Content class={tooltipContent} data-placement={local.placement ?? "top"}>
+          <Show when={local.showArrow}>
             <KTooltip.Arrow class={tooltipArrow} />
           </Show>
-          {props.label}
+          {local.label}
         </KTooltip.Content>
       </KTooltip.Portal>
     </KTooltip>

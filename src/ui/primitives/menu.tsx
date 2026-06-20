@@ -1,5 +1,5 @@
 import { DropdownMenu } from "@kobalte/core/dropdown-menu";
-import { type JSX, Show } from "solid-js";
+import { type JSX, Show, splitProps } from "solid-js";
 import {
   menuContent,
   menuGroup,
@@ -36,6 +36,12 @@ export interface MenuProps {
 
   /** Disables the trigger; prevents the menu from opening. */
   disabled?: boolean;
+
+  /** Controlled open state. Omit for uncontrolled. */
+  open?: boolean;
+
+  /** Fires when open state changes. */
+  onChange?: (next: boolean) => void;
 
   /**
    * Accessible label for the menu surface. Pass ONLY for icon-only triggers
@@ -148,6 +154,7 @@ function MenuItem(props: MenuItemProps): JSX.Element {
     <DropdownMenu.Item
       class={menuItem}
       {...(props.disabled ? { disabled: true } : {})}
+      {...(props.hotkey ? { "aria-keyshortcuts": props.hotkey } : {})}
       onSelect={() => props.onSelect?.()}
     >
       <span class={menuItemIndicatorSlot} />
@@ -167,6 +174,7 @@ function MenuCheckboxItem(props: MenuCheckboxItemProps): JSX.Element {
       checked={props.checked}
       onChange={props.onChange}
       {...(props.disabled ? { disabled: true } : {})}
+      {...(props.hotkey ? { "aria-keyshortcuts": props.hotkey } : {})}
     >
       <span class={menuItemIndicatorSlot}>
         <DropdownMenu.ItemIndicator>
@@ -198,6 +206,7 @@ function MenuRadioItem<T extends string>(props: MenuRadioItemProps<T>): JSX.Elem
       class={menuItem}
       value={props.value}
       {...(props.disabled ? { disabled: true } : {})}
+      {...(props.hotkey ? { "aria-keyshortcuts": props.hotkey } : {})}
     >
       <span class={menuItemIndicatorSlot}>
         <DropdownMenu.ItemIndicator>
@@ -249,17 +258,37 @@ function MenuSub(props: MenuSubProps): JSX.Element {
  * unconditionally so labels align across plain / checkbox / radio items.
  */
 export function Menu(props: MenuProps): JSX.Element {
+  const [local, rest] = splitProps(props, [
+    "trigger",
+    "children",
+    "placement",
+    "gutter",
+    "disabled",
+    "open",
+    "onChange",
+    "aria-label",
+    "triggerClass",
+  ]);
+
   return (
     <DropdownMenu
-      placement={props.placement ?? "bottom-start"}
-      gutter={props.gutter ?? OVERLAY_GUTTER}
+      placement={local.placement ?? "bottom-start"}
+      gutter={local.gutter ?? OVERLAY_GUTTER}
+      {...(local.open !== undefined ? { open: local.open } : {})}
+      {...(local.onChange !== undefined
+        ? { onOpenChange: (o: boolean) => local.onChange?.(o) }
+        : {})}
     >
-      <DropdownMenu.Trigger class={props.triggerClass} disabled={props.disabled}>
-        {props.trigger}
+      <DropdownMenu.Trigger {...rest} class={local.triggerClass} disabled={local.disabled}>
+        {local.trigger}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content class={menuContent} aria-label={props["aria-label"]}>
-          {props.children}
+        <DropdownMenu.Content
+          class={menuContent}
+          aria-label={local["aria-label"]}
+          data-placement={local.placement ?? "bottom-start"}
+        >
+          {local.children}
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu>

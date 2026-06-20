@@ -133,7 +133,7 @@ describe("<Tooltip />", () => {
       </Tooltip>
     ));
     const tip = screen.getByRole("tooltip");
-    const placement = tip.getAttribute("data-placement") ?? tip.getAttribute("data-side") ?? "";
+    const placement = tip.getAttribute("data-placement") ?? "";
     expect(placement).toContain("bottom");
   });
 });

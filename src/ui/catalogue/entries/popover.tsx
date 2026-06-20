@@ -10,6 +10,7 @@ registerCatalogueEntry({
     const [b, setB] = createSignal(false);
     const [c, setC] = createSignal(false);
     const [d, setD] = createSignal(false);
+    const [e, setE] = createSignal(false);
 
     return (
       <section>
@@ -21,19 +22,25 @@ registerCatalogueEntry({
         >
           <Popover
             open={a()}
-            side="bottom"
+            placement="bottom"
             aria-label="bottom popover"
             trigger="bottom ▾"
             onChange={setA}
           >
             <p>Anchored below.</p>
           </Popover>
-          <Popover open={b()} side="top" aria-label="top popover" trigger="top ▴" onChange={setB}>
+          <Popover
+            open={b()}
+            placement="top"
+            aria-label="top popover"
+            trigger="top ▴"
+            onChange={setB}
+          >
             <p>Anchored above.</p>
           </Popover>
           <Popover
             open={c()}
-            side="left"
+            placement="left"
             aria-label="left popover"
             trigger="left ◂"
             onChange={setC}
@@ -42,12 +49,22 @@ registerCatalogueEntry({
           </Popover>
           <Popover
             open={d()}
-            side="right"
+            placement="right"
             aria-label="right popover"
             trigger="right ▸"
             onChange={setD}
           >
             <p>Anchored right.</p>
+          </Popover>
+          <Popover
+            open={e()}
+            placement="bottom"
+            showArrow
+            aria-label="arrow popover"
+            trigger="arrow ▾"
+            onChange={setE}
+          >
+            <p>With arrow.</p>
           </Popover>
         </div>
       </section>

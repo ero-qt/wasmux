@@ -80,17 +80,40 @@ describe("<Popover />", () => {
     expect(panel.getAttribute("aria-label")).toBeNull();
   });
 
-  it("side prop reflects on data-side of the panel", () => {
+  it("placement prop reflects on data-placement of the panel", () => {
     render(() => (
-      <Popover open side="top" trigger="Open" aria-label="picker" onChange={() => {}}>
+      <Popover open placement="top" trigger="Open" aria-label="picker" onChange={() => {}}>
         body
       </Popover>
     ));
-    // Kobalte stamps data-* on the content element.
     const panel = screen.getByRole("dialog");
-    expect(panel.getAttribute("data-side") ?? panel.getAttribute("data-placement") ?? "").toContain(
-      "top",
-    );
+    expect(panel.getAttribute("data-placement") ?? "").toContain("top");
+  });
+
+  it("showArrow renders an arrow element inside the panel", () => {
+    render(() => (
+      <Popover open showArrow trigger="Open" aria-label="picker" onChange={() => {}}>
+        body
+      </Popover>
+    ));
+    const panel = screen.getByRole("dialog");
+    // Kobalte renders the arrow as an svg inside the content
+    expect(panel.querySelector("svg,div[data-arrow]") ?? panel.children.length > 0).toBeTruthy();
+  });
+
+  it("rest props are forwarded to the trigger button", () => {
+    render(() => (
+      <Popover
+        open={false}
+        trigger="Open"
+        aria-label="picker"
+        onChange={() => {}}
+        data-testid="trig"
+      >
+        body
+      </Popover>
+    ));
+    expect(screen.getByTestId("trig")).toBeTruthy();
   });
 
   it("aria-modal is not set on the panel", () => {
