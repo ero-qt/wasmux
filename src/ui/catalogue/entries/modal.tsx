@@ -31,8 +31,10 @@ registerCatalogueEntry({
               "margin-top": "1rem",
             }}
           >
-            <Button onClick={() => setA(false)}>Cancel</Button>
-            <Button variant="accent" onClick={() => setA(false)}>
+            <Button variant="ghost" onClick={() => setA(false)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={() => setA(false)}>
               Discard
             </Button>
           </div>
