@@ -7,7 +7,7 @@ export const menuContent = style({
   borderRadius: "0.4rem",
   boxShadow: tokens.theme.shadow,
   padding: "calc(0.25rem * var(--ui-density))",
-  minInlineSize: "12rem",
+  minInlineSize: "14rem",
   outline: "none",
   zIndex: 2000,
   selectors: {
